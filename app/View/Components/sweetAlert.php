@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class tab-data extends Component
+class sweetAlert extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class tab-data extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.tab-data');
+        return view('components.sweet-alert');
     }
 }

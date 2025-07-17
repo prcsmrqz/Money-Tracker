@@ -26,6 +26,8 @@
 
 <body class="font-sans antialiased ">
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex ">
+        @include('components.sweet-alert')
+
         <!-- Left Navigation -->
         <aside x-data="{ open: false }" @toggle-sidebar.window="open = !open" :class="{ 'w-14': !open, 'w-80': open }"
             class="bg-gray-800 text-white flex flex-col transition-all duration-300 ease-in-out lg:w-80 ">

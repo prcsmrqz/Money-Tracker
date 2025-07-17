@@ -1,4 +1,5 @@
-<ul class="text-sm font-medium text-center text-gray-600 rounded-lg sm:flex dark:divide-gray-700 dark:text-gray-400">
+<ul class="flex text-sm font-medium text-center text-gray-600 rounded-lg dark:divide-gray-700 dark:text-gray-400">
+
     <li class="focus-within:z-10">
         <a href="#" @click.prevent="activeTab = 'icon'"
             :class="activeTab === 'icon'
