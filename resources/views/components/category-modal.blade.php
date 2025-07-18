@@ -1,6 +1,7 @@
 {{-- resources/views/components/category-modal.blade.php --}}
-<div x-show="open" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div @click.away="open = false; $dispatch('close-modal')"
+<div x-show="open" x-transition @click.self="open = false; $dispatch('close-modal')"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div @click.stop
         class="relative bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-4xl p-6">
 
         <!-- Modal header -->
@@ -44,6 +45,12 @@
                         value="{{ old('name') }}"
                         class="rounded-md w-full p-2 border border-gray-300 focus:ring focus:ring-emerald-200 focus:outline-none">
 
+                    <div @click.stop>
+                        <div id="color-picker"></div>
+                        <input type="hidden" name="color" id="selectedColor" value="{{ old('color', '#88E773') }}">
+
+                    </div>
+
                     <button type="submit"
                         class="bg-emerald-500 flex items-center text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition duration-200">
                         <x-heroicon-s-plus class="w-4 h-4 mr-2" />
@@ -74,3 +81,28 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectedColorInput = document.getElementById('selectedColor');
+        const pickr = Pickr.create({
+            el: '#color-picker',
+            theme: 'nano',
+            default: selectedColorInput?.value || '#88E773',
+            components: {
+                preview: true,
+                opacity: true,
+                hue: true,
+                interaction: {
+                    input: true,
+                    save: true,
+                    clear: true
+                }
+            }
+        });
+
+        pickr.on('save', (color) => {
+            document.getElementById('selectedColor').value = color.toHEXA().toString();
+            pickr.hide();
+        });
+    });
+</script>

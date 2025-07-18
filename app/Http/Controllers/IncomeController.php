@@ -10,7 +10,7 @@ class IncomeController extends Controller
     public function index()
     {
 
-        $categories = auth()->user()->categories()->where('type', 'income')->get();
+        $categories = auth()->user()->categories()->where('type', 'income')->orderBy('name', 'ASC')->get();
         return view('income.index', compact('categories'));
     }
 

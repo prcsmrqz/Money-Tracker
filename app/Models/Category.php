@@ -13,7 +13,8 @@ class Category extends Model
         'name',
         'user_id',
         'type',
-        'icon'
+        'icon',
+        'color'
     ];
     
     public function user() {

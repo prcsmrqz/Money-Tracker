@@ -33,6 +33,7 @@ class StoreCategoryRequest extends FormRequest
             }),
         ],
             'type' => 'required',
+            'color' => 'required',
             'icon' => 'nullable|mimes:png,jpg,jpeg,webp,svg|max:2048',
         ];
     }

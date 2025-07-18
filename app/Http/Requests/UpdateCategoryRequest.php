@@ -36,8 +36,10 @@ class UpdateCategoryRequest extends FormRequest
                         return $query->where('type', $this->type);
                     }),
             ],
+            
                 'type' => 'required',
                 "iconEdit_$id" => 'nullable|mimes:png,jpg,jpeg,webp,svg|max:2048',
+                "color_$id" => 'required',
             ];
         }
         

@@ -31,6 +31,7 @@ class CategoryController extends Controller
         try {
             $data = $request->validated();
             $field['name'] = $data['name_' . $id] ?? null;
+            $field['color'] = $data['color_' . $id] ?? null;
             $field['icon'] = $request->file('iconEdit_' . $id)
                 ? $request->file('iconEdit_' . $id)->store('icons', 'public')
                 : $category->icon;
