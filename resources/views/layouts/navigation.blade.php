@@ -24,7 +24,7 @@
         </div>
 
         <div class="flex flex-col flex-1">
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('transaction.income') }}"
                 class="flex items-center justify-center w-full mb-10 bg-gray-300 font-black text-black p-2 text-center rounded-sm hover:bg-gray-400 transition duration-200">
                 <x-heroicon-o-plus class="w-4 h-4 mr-2" />
                 Add Transaction
