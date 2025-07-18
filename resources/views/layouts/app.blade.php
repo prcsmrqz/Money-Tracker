@@ -19,6 +19,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/monolith.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr"></script>
+
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -26,6 +32,8 @@
 
 <body class="font-sans antialiased ">
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex ">
+        @include('components.sweet-alert')
+
         <!-- Left Navigation -->
         <aside x-data="{ open: false }" @toggle-sidebar.window="open = !open" :class="{ 'w-14': !open, 'w-80': open }"
             class="bg-gray-800 text-white flex flex-col transition-all duration-300 ease-in-out lg:w-80 ">

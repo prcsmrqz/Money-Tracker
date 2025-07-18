@@ -3,6 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Category;
+use App\Models\Transaction;
+use App\Models\SavingsAccount;
+
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,8 +22,24 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var list<string>
      */
+
+
+    public function categories() {
+        return $this->hasMany(Category::class);
+    }
+
+    public function transactions() {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function savingsAccounts(){
+        return $this->hasMany(SavingsAccount::class); 
+    }
+
     protected $fillable = [
         'name',
+        'birthday',
+        'profile_picture',
         'email',
         'password',
     ];
