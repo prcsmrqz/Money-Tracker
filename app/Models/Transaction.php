@@ -14,7 +14,11 @@ class Transaction extends Model
         'amount',
         'source_type',
         'notes',
-        'type'
+        'type',
+        'date',
+    ];
+    protected $casts = [
+        'date' => 'datetime',
     ];
 
 

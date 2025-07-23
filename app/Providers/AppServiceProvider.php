@@ -20,10 +20,35 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $currencyList = json_decode(file_get_contents(storage_path('app/full_currency_list.json')), true);
+        
+        View::composer('*', function ($view) {
+            $currencyList = json_decode(file_get_contents(storage_path('app/full_currency_list.json')), true);
+            
+            $remainingIncome = 0;
 
-        View::composer('*', function ($view) use ($currencyList) {
-            $view->with('currencyList', $currencyList);
+            if (auth()->check()) {
+                $user = auth()->user();
+
+                $expenses = $user->transactions()
+                    ->where('source_type', 0)
+                    ->where('type', 'expenses')
+                    ->sum('amount');
+
+                $savings = $user->transactions()
+                    ->where('type', 'savings')
+                    ->sum('amount');
+
+                $income = $user->transactions()
+                    ->where('type', 'income')
+                    ->sum('amount');
+
+                $remainingIncome = $income - $expenses - $savings;
+            }
+
+            $view->with([
+                'currencyList' => $currencyList,
+                'remainingIncome' => $remainingIncome,
+            ]);
         });
     }
 }

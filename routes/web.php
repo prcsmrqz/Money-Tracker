@@ -23,8 +23,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('income', IncomeController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('transaction', TransactionController::class);
-    
-    Route::get('/income-transaction', [TransactionController::class, 'income'])->name('transaction.income');
 
 });
 

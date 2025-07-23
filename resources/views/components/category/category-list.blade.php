@@ -2,6 +2,7 @@
     <div x-data="{
         isEditing: false,
         previewUrlEdit: '{{ $category->icon ? asset("storage/$category->icon") : '' }}',
+        originalPreviewUrlEdit: '{{ $category->icon ? asset("storage/$category->icon") : '' }}',
         action: '{{ $action }}',
         formId: {{ $category->id }},
         pickrInstance: null,
@@ -74,8 +75,29 @@
                     </template>
 
                     <input type="file" id="iconEdit{{ $category->id }}" name="iconEdit_{{ $category->id }}"
-                        x-ref="fileInput" class="hidden"
-                        @change="if (isEditing) { const file = $event.target.files[0]; if(file) previewUrlEdit = URL.createObjectURL(file); }">
+                        accept=".png, .jpg, .jpeg, .webp, .svg" x-ref="fileInput" class="hidden"
+                        @change="
+                        if (isEditing) {
+                            const file = $event.target.files[0];
+                            const validTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+                            const maxSize = 2 * 1024 * 1024;
+
+                            if (file) {
+                                if (!validTypes.includes(file.type)) {
+                                    Swal.fire('Error', 'Only PNG, JPG, JPEG, WEBP, and SVG files are allowed.', 'error');
+                                    $event.target.value = '';
+                                    previewUrlEdit = originalPreviewUrlEdit;
+                                } else if (file.size > maxSize) {
+                                    Swal.fire('Error', 'File size must be 2MB or less.', 'error');
+                                    $event.target.value = '';
+                                    previewUrlEdit = originalPreviewUrlEdit;
+                                } else {
+                                    previewUrlEdit = URL.createObjectURL(file);
+                                }
+                            }
+                        }
+                    ">
+
                 </label>
 
                 <input type="hidden" name="type" value="{{ $type }}">
