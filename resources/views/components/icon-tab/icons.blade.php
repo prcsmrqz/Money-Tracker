@@ -5,24 +5,25 @@
                 style="background-image: 
                         radial-gradient(circle at left center, {{ $category->color }} 10%, transparent 90%),
                         radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
-                class="w-full rounded-xl shadow p-4 border border-gray-200 text-white">
+                class="w-full rounded-xl shadow p-4 border border-gray-200 text-white ">
 
                 <div class="flex items-center gap-4">
                     @if ($category->icon)
                         <img src="{{ asset("storage/$category->icon") }}" alt="Icon"
                             class="w-12 h-12 rounded-full object-cover shadow-lg" />
                     @else
-                        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center shadow-lg">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center shadow-lg  cursor-pointer">
                             <x-heroicon-o-photo class="w-6 h-6 text-black" />
                         </div>
                     @endif
 
-                    <div class="max-w-[8rem]">
+                    <div class="max-w-[8rem] ">
                         <label
-                            class="block text-base truncate whitespace-nowrap overflow-hidden sm:text-lg font-medium">
+                            class="block text-base truncate whitespace-nowrap overflow-hidden sm:text-lg font-medium  cursor-pointer">
                             {{ $category->name }}
                         </label>
-                        <label class="block text-base sm:text-lg font-bold">
+                        <label class="block text-base sm:text-lg font-bold  cursor-pointer">
                             {{ Auth::user()->currency_symbol }}
                             {{ floor($category->totalIncome ?? 0) != ($category->totalIncome ?? 0)
                                 ? number_format($category->totalIncome ?? 0, 2)

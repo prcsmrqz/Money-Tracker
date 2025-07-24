@@ -13,18 +13,22 @@ class CategoryController extends Controller
 {
     public function show(Category $category)
     {
-        $groupedTransactions = auth()->user()
+        // paginated the raw transactions
+        $paginated = auth()->user()
             ->transactions()
             ->where('category_id', $category->id)
             ->with('category')
             ->latest()
-            ->get()
+            ->paginate(5); 
+
+        // group paginated transactions by date
+        $groupedTransactions = $paginated->getCollection()
             ->groupBy(function ($transaction) {
                 return $transaction->created_at->format('Y-m-d');
             });
-
+        
+        // sum transactions by type per date
         $sumByTypePerDate = [];
-
         foreach ($groupedTransactions as $date => $transactions) {
             $sumByTypePerDate[$date] = [
                 'income' => $transactions->where('type', 'income')->sum('amount'),
@@ -33,12 +37,16 @@ class CategoryController extends Controller
             ];
         }
 
+        // Replace the original collection with the grouped one
+        $paginated->setCollection($groupedTransactions);
+
         return view('category.show', [
-            'transactions' => $groupedTransactions,
+            'transactions' => $paginated,
             'sumByTypePerDate' => $sumByTypePerDate,
             'category' => $category,
         ]);
     }
+
 
      public function store(StoreCategoryRequest $request)
     {

@@ -7,20 +7,25 @@
     </x-title-header>
 
     <div class="px-4 sm:px-6 lg:px-10">
-        <div class="mt-4 py-8 px-4 bg-white sm:px-6 lg:px-10 dark:bg-gray-800 rounded-md shadow-lg w-full">
+        <div class="mb-10 py-5 px-4 bg-white sm:px-6 lg:px-10 dark:bg-gray-800 rounded-md shadow-lg w-full">
             <div style="background-image: 
                         radial-gradient(circle at left center, {{ $category->color }} 10%, transparent 90%),
                         radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
-                class="mb-5 p-4 rounded-md shadow text-white text-center">
-                <h1 class="text-2xl sm:text-3xl font-bold capitalize">{{ $category->name }} Transaction List</h1>
+                class="mb-4 p-3 rounded-md shadow text-white text-center">
+                <h1 class="text-xl sm:text-2xl font-bold capitalize">{{ $category->name }} Transaction List
+                </h1>
             </div>
+
+
+
+
             <table
                 class="hidden sm:table w-full table-fixed text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
 
                 <tbody>
                     @foreach ($transactions as $date => $dailyTransactions)
                         <tr class="bg-gray-100 border-b border-gray-300 rounded-md">
-                            <td colspan="5" class="px-4 py-5 ">
+                            <td colspan="5" class="px-4 py-4 ">
                                 <div
                                     class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 sm:gap-6 font-semibold text-sm sm:text-lg">
                                     <div class="text-black px-6 dark:text-gray-200 min-w-[140px]">
@@ -62,24 +67,25 @@
                             @endphp
                             <tr
                                 class="border-b border-gray-200 text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="w-1/6 px-10 py-4 whitespace-nowrap">
+                                <td class="w-1/6 px-10 py-3 whitespace-nowrap text-sm">
                                     {{ $transaction->date->format('h:i A') }}
                                 </td>
-                                <td class="w-1/6 px-4 py-4 capitalize font-semibold">
+                                <td class="w-1/6 px-4 py-3 capitalize font-semibold">
                                     <span class="{{ $typeClass }} px-3 py-1 rounded-full text-sm inline-block">
                                         {{ $transaction->type }}
                                     </span>
                                 </td>
-                                <td class="w-1/6 px-4 py-4 whitespace-nowrap">
-                                    {{ Auth::user()->currency_symbol }} {{ number_format($transaction->amount, 2) }}
+                                <td class="w-1/6 px-4 py-3 whitespace-nowrap text-sm">
+                                    {{ Auth::user()->currency_symbol }}
+                                    {{ number_format($transaction->amount, 2) }}
                                 </td>
-                                <td class="w-2/6 px-4 py-4">
+                                <td class="w-2/6 px-4 py-3">
                                     <div
-                                        class="line-clamp-2 break-words text-ellipsis {{ $transaction->notes ? '' : 'text-gray-400 italic text-sm' }}">
+                                        class="line-clamp-2 break-words text-ellipsis text-sm {{ $transaction->notes ? '' : 'text-gray-400 italic' }}">
                                         {{ $transaction->notes ?: 'No notes provided' }}
                                     </div>
                                 </td>
-                                <td class="w-1/5 px-4 py-4 space-x-2 whitespace-nowrap flex gap-2">
+                                <td class="w-1/5 px-4 py-3 space-x-2 whitespace-nowrap flex gap-2">
                                     <a href="#" class="text-blue-500 hover:underline ">
                                         <x-heroicon-s-eye class="w-5 h-5" />
                                     </a>
@@ -95,6 +101,11 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <div class="mt-4 hidden sm:block">
+                {{-- Pagination links --}}
+                {{ $transactions->links('pagination::tailwind') }}
+            </div>
 
             {{-- Mobile Card View --}}
             <div class="block sm:hidden space-y-4">
@@ -141,6 +152,11 @@
                         </div>
                     @endforeach
                 @endforeach
+                <div class="mt-4 block sm:hidden">
+                    {{-- Pagination links --}}
+                    {{ $transactions->links('pagination::tailwind') }}
+                </div>
+
             </div>
 
         </div>
