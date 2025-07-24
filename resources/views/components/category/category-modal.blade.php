@@ -37,7 +37,28 @@
                         </template>
                         <input type="hidden" name="type" value="{{ $type }}">
                         <input type="file" id="icon" name="icon" class="hidden"
-                            @change="const file = $event.target.files[0]; if(file) previewUrl = URL.createObjectURL(file)">
+                            accept=".png, .jpg, .jpeg, .webp, .svg"
+                            @change="
+                            const file = $event.target.files[0];
+                            const validTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+                            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+
+                            if (file) {
+                                if (!validTypes.includes(file.type)) {
+                                    Swal.fire('Error', 'Only PNG, JPG, JPEG, WEBP, and SVG files are allowed.', 'error');
+                                    $event.target.value = '';
+                                    previewUrl = null;
+                                } else if (file.size > maxSize) {
+                                    Swal.fire('Error', 'File size must be 2MB or less.', 'error');
+                                    $event.target.value = '';
+                                    previewUrl = null;
+                                } else {
+                                    previewUrl = URL.createObjectURL(file);
+                                }
+                            }
+                        ">
+
+
                     </label>
 
 
@@ -74,7 +95,7 @@
             </div>
 
             <div class="max-h-[500px] overflow-y-auto overflow-x-hidden space-y-2 px-3 sm:px-5">
-                <x-category-list :categories="$categories" :action="$updateAction" :type="$type" />
+                <x-category.category-list :categories="$categories" :action="$updateAction" :type="$type" />
             </div>
 
 

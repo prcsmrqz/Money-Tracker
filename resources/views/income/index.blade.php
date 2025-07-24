@@ -13,14 +13,20 @@
                 </button>
             </div>
 
-            <x-category-modal title="Income Category" :storeAction="route('category.store')" updateAction="/category" :categories="$categories"
-                :type="'income'" :open="true" />
+            <x-category.category-modal title="Income Category" :storeAction="route('category.store')" updateAction="/category"
+                :categories="$categories" :type="'income'" :open="true" />
         </div>
 
         <div x-data="{ activeTab: 'icon' }" class="w-full">
-            <x-tab-buttons />
-            <x-tab-data icon-message="This is the icons loaded from layout"
-                chart-message="This is the charts loaded from layout" />
+            <x-category.tab-buttons />
+            <div class="mt-4 py-8 px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 rounded-md shadow w-full">
+                <div x-show="activeTab === 'icon'" x-cloak>
+                    <x-icon-tab.icons :categories="$categories" />
+                </div>
+                <div x-show="activeTab === 'chart'" x-cloak>
+                    <p class="text-gray-800 dark:text-gray-200 text-base sm:text-lg">hi</p>
+                </div>
+            </div>
         </div>
 
     </div>

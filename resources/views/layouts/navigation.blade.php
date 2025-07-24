@@ -19,12 +19,16 @@
         </a>
 
         <div class="mb-5 bg-gray-300 rounded-sm p-2 text-black">
-            <h1 class="text-center font-black text-3xl">{{ Auth::user()->currency_symbol }} 1,000</h1>
-            <h1 class="text-center text-sm">Income</h1>
+            <h1 class="text-center font-black text-3xl">{{ Auth::user()->currency_symbol }}
+                {{ floor($remainingIncome) != $remainingIncome
+                    ? number_format($remainingIncome, 2)
+                    : number_format($remainingIncome, 0) }}
+            </h1>
+            <h1 class="text-center text-sm">Remaining Income</h1>
         </div>
 
         <div class="flex flex-col flex-1">
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('transaction.index') }}"
                 class="flex items-center justify-center w-full mb-10 bg-gray-300 font-black text-black p-2 text-center rounded-sm hover:bg-gray-400 transition duration-200">
                 <x-heroicon-o-plus class="w-4 h-4 mr-2" />
                 Add Transaction

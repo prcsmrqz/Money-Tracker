@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreCategoryRequest;
@@ -10,9 +11,43 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function show(Category $category)
+    {
+        // paginated the raw transactions
+        $paginated = auth()->user()
+            ->transactions()
+            ->where('category_id', $category->id)
+            ->with('category')
+            ->latest()
+            ->paginate(5); 
+
+        // group paginated transactions by date
+        $groupedTransactions = $paginated->getCollection()
+            ->groupBy(function ($transaction) {
+                return $transaction->created_at->format('Y-m-d');
+            });
+        
+        // sum transactions by type per date
+        $sumByTypePerDate = [];
+        foreach ($groupedTransactions as $date => $transactions) {
+            $sumByTypePerDate[$date] = [
+                'income' => $transactions->where('type', 'income')->sum('amount'),
+                'expenses' => $transactions->where('type', 'expenses')->sum('amount'),
+                'savings' => $transactions->where('type', 'savings')->sum('amount'),
+            ];
+        }
+
+        // Replace the original collection with the grouped one
+        $paginated->setCollection($groupedTransactions);
+
+        return view('category.show', [
+            'transactions' => $paginated,
+            'sumByTypePerDate' => $sumByTypePerDate,
+            'category' => $category,
+        ]);
+    }
+
+
      public function store(StoreCategoryRequest $request)
     {
         $data = $request->validated();
