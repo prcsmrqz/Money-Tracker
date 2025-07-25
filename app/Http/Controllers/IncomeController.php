@@ -18,7 +18,9 @@ class IncomeController extends Controller
                 ->where('category_id', $category->id)
                 ->sum('amount');
         }
-        return view('income.index', compact('categories'));
+
+        $totalIncome = auth()->user()->transactions()->where('type', 'income')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        return view('income.index', compact('categories', 'totalIncome'));
     }
 
 

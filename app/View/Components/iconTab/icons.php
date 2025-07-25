@@ -6,12 +6,14 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class icons extends Component
+class Icons extends Component
 {
     public $categories;
-    public function __construct($categories)
+    public $type;
+    public function __construct($categories, $type)
     {
         $this->categories = $categories;
+        $this->type = $type;
     }
 
     /**

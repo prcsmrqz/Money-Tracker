@@ -9,25 +9,69 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use Illuminate\Validation\ValidationException;
 
+use Carbon\Carbon;
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
+
 class CategoryController extends Controller
 {
+    
     public function show(Category $category)
     {
-        // paginated the raw transactions
-        $paginated = auth()->user()
-            ->transactions()
-            ->where('category_id', $category->id)
-            ->with('category')
-            ->latest()
-            ->paginate(5); 
+       // Get base query
+    $baseQuery = auth()->user()
+        ->transactions()
+        ->where('category_id', $category->id);
 
-        // group paginated transactions by date
+    // Get oldest date's year
+    $oldestDate = (clone $baseQuery)->orderBy('date', 'asc')->value('date');
+    $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
+
+    // Build the main query (filtered with Spatie QueryBuilder)
+    $query = QueryBuilder::for($baseQuery)
+        ->with('category')
+        ->allowedFilters([
+            AllowedFilter::callback('search', function ($query, $value) {
+                $query->where(function ($q) use ($value) {
+                    $q->where('notes', 'like', "%{$value}%")
+                        ->orWhere('type', 'like', "%{$value}%")
+                        ->orWhere('amount', 'like', "%{$value}%");
+                });
+            }),
+        ])
+        ->orderBy('date', 'desc');
+
+
+        if (request('date_filter')) {
+            $dateFilter = request('date_filter');
+            if($dateFilter == 'today'){
+                $query->whereDate('date', Carbon::today());
+            } else if ($dateFilter == 'last_7_days'){
+                $query->whereDate('date', '>=', Carbon::now()->subDays(7)->startOfDay());
+            } else if ($dateFilter == 'last_30_days') {
+                $query->whereDate('date', '>=', Carbon::now()->subDays(30)->startOfDay());
+            } 
+            
+        }
+
+        if (request('month_filter') && request('year_filter')) {
+            $monthFilter = request('month_filter');
+            $yearFilter = request('year_filter');
+                $query->whereMonth('date', $monthFilter )->whereYear('date', $yearFilter);
+        }
+
+        if (request('start') && request('end')) {
+            $query->whereBetween('date', [
+                Carbon::parse(request('start'))->startOfDay(),
+                Carbon::parse(request('end'))->endOfDay()
+            ]);
+        }
+
+        $paginated = $query->paginate(5)->withQueryString();
+
         $groupedTransactions = $paginated->getCollection()
-            ->groupBy(function ($transaction) {
-                return $transaction->created_at->format('Y-m-d');
-            });
-        
-        // sum transactions by type per date
+            ->groupBy(fn($transaction) => $transaction->date->format('Y-m-d'));
+
         $sumByTypePerDate = [];
         foreach ($groupedTransactions as $date => $transactions) {
             $sumByTypePerDate[$date] = [
@@ -37,13 +81,14 @@ class CategoryController extends Controller
             ];
         }
 
-        // Replace the original collection with the grouped one
         $paginated->setCollection($groupedTransactions);
+
 
         return view('category.show', [
             'transactions' => $paginated,
             'sumByTypePerDate' => $sumByTypePerDate,
             'category' => $category,
+            'oldestYear' => $oldestYear,
         ]);
     }
 

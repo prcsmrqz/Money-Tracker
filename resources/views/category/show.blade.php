@@ -5,27 +5,25 @@
             > {{ $category->name }}
         </a>
     </x-title-header>
-
     <div class="px-4 sm:px-6 lg:px-10">
         <div class="mb-10 py-5 px-4 bg-white sm:px-6 lg:px-10 dark:bg-gray-800 rounded-md shadow-lg w-full">
             <div style="background-image: 
                         radial-gradient(circle at left center, {{ $category->color }} 10%, transparent 90%),
                         radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
-                class="mb-4 p-3 rounded-md shadow text-white text-center">
+                class="mb-5 p-3 rounded-md shadow text-white text-center">
                 <h1 class="text-xl sm:text-2xl font-bold capitalize">{{ $category->name }} Transaction List
                 </h1>
             </div>
 
-
-
+            <x-category.search-filter :category="$category" :oldestYear="$oldestYear" />
 
             <table
                 class="hidden sm:table w-full table-fixed text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
 
                 <tbody>
-                    @foreach ($transactions as $date => $dailyTransactions)
+                    @forelse ($transactions as $date => $dailyTransactions)
                         <tr class="bg-gray-100 border-b border-gray-300 rounded-md">
-                            <td colspan="5" class="px-4 py-4 ">
+                            <td colspan="5" class="px-4 py-3 ">
                                 <div
                                     class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 sm:gap-6 font-semibold text-sm sm:text-lg">
                                     <div class="text-black px-6 dark:text-gray-200 min-w-[140px]">
@@ -56,7 +54,7 @@
                             </td>
                         </tr>
 
-                        @foreach ($dailyTransactions as $transaction)
+                        @forelse ($dailyTransactions as $transaction)
                             @php
                                 $typeClass = match ($transaction->type) {
                                     'income' => 'text-blue-600 bg-blue-100 dark:bg-blue-700',
@@ -85,7 +83,8 @@
                                         {{ $transaction->notes ?: 'No notes provided' }}
                                     </div>
                                 </td>
-                                <td class="w-1/5 px-4 py-3 space-x-2 whitespace-nowrap flex gap-2">
+                                <td
+                                    class="w-full px-4 py-3 space-x-2 whitespace-nowrap flex items-center justify-center mt-1 gap-2">
                                     <a href="#" class="text-blue-500 hover:underline ">
                                         <x-heroicon-s-eye class="w-5 h-5" />
                                     </a>
@@ -97,8 +96,20 @@
                                     </a>
                                 </td>
                             </tr>
-                        @endforeach
-                    @endforeach
+                        @empty
+                            <tr class="border-b border-gray-200 text-gray-500 dark:border-gray-600">
+                                <td colspan="5" class="px-4 py-3 text-center text-sm italic text-gray-400">
+                                    No transactions found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    @empty
+                        <tr class="border-b border-gray-200 text-gray-500 dark:border-gray-600">
+                            <td colspan="5" class="px-4 py-3 text-center text-sm italic text-gray-400">
+                                No transactions found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
 
