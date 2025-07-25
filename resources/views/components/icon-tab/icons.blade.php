@@ -1,11 +1,13 @@
 <div class="flex flex-col items-center w-full">
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5 w-full">
         @forelse ($categories as $category)
-            <a href="{{ route('category.show', $category->id) }} "
+            <a href="{{ route('category.show', $category->id) }}"
                 style="background-image: 
-                        radial-gradient(circle at left center, {{ $category->color }} 10%, transparent 90%),
-                        radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
-                class="w-full rounded-xl shadow p-4 border border-gray-200 text-white ">
+            radial-gradient(circle at left center, {{ $category->color }} 10%, transparent 90%),
+            radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
+                class="w-full rounded-xl shadow p-4 border border-gray-200 text-white 
+                        transition-transform duration-200 ease-in-out transform 
+                        hover:-translate-y-1 hover:scale-105 hover:shadow-lg">
 
                 <div class="flex items-center gap-4">
                     @if ($category->icon)
