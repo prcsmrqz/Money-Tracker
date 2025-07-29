@@ -11,11 +11,13 @@
                         radial-gradient(circle at left center, {{ $category->color }} 10%, transparent 90%),
                         radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
                 class="mb-5 p-3 rounded-md shadow text-white text-center">
-                <h1 class="text-xl sm:text-2xl font-bold capitalize">{{ $category->name }} Transaction List
+                <h1 class="text-xl sm:text-2xl font-bold capitalize">
+                    {{ $category->name }} Transaction List
                 </h1>
             </div>
 
-            <x-category.search-filter :category="$category" :oldestYear="$oldestYear" />
+            <x-category.search-filter :category="$category" :oldestYear="$oldestYear" :search="true" />
+
 
             <table
                 class="hidden sm:table w-full table-fixed text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
@@ -84,16 +86,33 @@
                                     </div>
                                 </td>
                                 <td
-                                    class="w-full px-4 py-3 space-x-2 whitespace-nowrap flex items-center justify-center mt-1 gap-2">
-                                    <a href="#" class="text-blue-500 hover:underline ">
-                                        <x-heroicon-s-eye class="w-5 h-5" />
-                                    </a>
-                                    <a href="#" class="text-yellow-500 hover:underline ">
-                                        <x-heroicon-s-pencil-square class="w-5 h-5" />
-                                    </a>
-                                    <a href="#" class="text-red-500 hover:underline">
-                                        <x-heroicon-s-trash class="w-5 h-5" />
-                                    </a>
+                                    class="w-full px-4 py-3 space-x-2 whitespace-nowrap flex items-center justify-center mt-1 ">
+
+                                    <div x-data="{
+                                        open: {{ session('error_transaction_id') == $transaction->id ? 'true' : 'false' }},
+                                        edit: {{ session('error_transaction_id') == $transaction->id ? 'true' : 'false' }}
+                                    }" class="flex gap-2">
+                                        <button @click=" open = true; edit = false"
+                                            class="bg-blue-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-blue-600 shadow-sm">
+                                            <x-heroicon-s-eye class="w-4 h-4" />
+                                        </button>
+                                        <button @click=" open = true; edit = true"
+                                            class="bg-orange-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-orange-600 shadow-sm">
+                                            <x-heroicon-s-pencil-square class="w-4 w-4" />
+                                        </button>
+
+                                        <x-transaction.modal :transaction="$transaction" />
+                                    </div>
+
+                                    <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
+                                        method="POST" @submit.prevent="confirmDelete($event, 'transaction')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="bg-red-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-red-600 shadow-sm">
+                                            <x-heroicon-s-trash class="w-4 w-4" />
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @empty
@@ -150,21 +169,35 @@
                                 {{ $transaction->notes }}
                             </div>
                             <div class="mt-3 flex gap-3 text-sm flex gap-2">
-                                <a href="#" class="text-blue-500 hover:underline">
-                                    <x-heroicon-s-eye class="w-5 h-5" />
-                                </a>
-                                <a href="#" class="text-yellow-500 hover:underline">
-                                    <x-heroicon-s-pencil-square class="w-5 h-5" />
-                                </a>
-                                <a href="#" class="text-red-500 hover:underline">
-                                    <x-heroicon-s-trash class="w-5 h-5" />
-                                </a>
+                                <div x-data="{
+                                    open: {{ session('error_transaction_id') == $transaction->id ? 'true' : 'false' }},
+                                    edit: {{ session('error_transaction_id') == $transaction->id ? 'true' : 'false' }}
+                                }" class="flex gap-2">
+                                    <button @click=" open = true; edit = false"
+                                        class="bg-blue-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-blue-600 shadow-sm">
+                                        <x-heroicon-s-eye class="w-4 h-4" />
+                                    </button>
+                                    <button @click=" open = true; edit = true"
+                                        class="bg-orange-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-orange-600 shadow-sm">
+                                        <x-heroicon-s-pencil-square class="w-4 w-4" />
+                                    </button>
+
+                                    <x-transaction.modal :transaction="$transaction" />
+                                </div>
+                                <form action="{{ route('category.destroy', $transaction->id) }}" method="POST"
+                                    @submit.prevent="confirmDelete($event)">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="bg-red-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-red-600 shadow-sm">
+                                        <x-heroicon-s-trash class="w-4 w-4" />
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     @endforeach
                 @endforeach
                 <div class="mt-4 block sm:hidden">
-                    {{-- Pagination links --}}
                     {{ $transactions->links('pagination::tailwind') }}
                 </div>
 

@@ -9,9 +9,11 @@ use Illuminate\View\Component;
 class SearchFilter extends Component
 {
     public $oldestYear;
-    public function __construct($oldestYear)
+    public $search;
+    public function __construct($oldestYear, $search)
     {
         $this->oldestYear = $oldestYear;
+        $this->search = $search;
     }
 
     /**

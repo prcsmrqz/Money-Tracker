@@ -136,7 +136,7 @@
                     </button>
 
                     <!-- Delete Form -->
-                    <form :action="formAction()" method="POST" @submit.prevent="confirmDelete($event)">
+                    <form :action="formAction()" method="POST" @submit.prevent="confirmDelete($event, 'category')">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
@@ -169,21 +169,3 @@
 @empty
     <p class="text-gray-500">No categories available.</p>
 @endforelse
-
-<script>
-    function confirmDelete(event) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Delete this category?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e3342f',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                event.target.submit();
-            }
-        });
-    }
-</script>

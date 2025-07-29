@@ -1,3 +1,4 @@
+@props(['search' => false])
 <div class="flex flex-wrap items-start gap-4 mb-5 px-5">
     <!-- Left Side: Filter + Date Range -->
     <div class="flex flex-col md:flex-row md:items-end gap-4 w-full md:w-auto">
@@ -86,23 +87,24 @@
                         class="h-[42px] ps-10 pe-3 w-full text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
                 </div>
 
-                <!-- Hidden input to persist "custom" filter -->
                 <input type="hidden" name="date_filter" value="custom" />
             </div>
         </form>
     </div>
 
     <!-- Right Side: Search Input -->
-    <div class="w-full md:w-1/4 ml-auto">
-        <form method="GET" action="{{ request()->url() }}" class="w-full">
-            <div class="flex items-center border border-gray-300 rounded-lg px-2 bg-white shadow-sm">
-                <x-heroicon-o-magnifying-glass class="w-5 h-5 text-gray-500" />
-                <input type="text" name="filter[search]" value="{{ request('filter.search') }}"
-                    placeholder="Search..."
-                    class="ml-2 text-sm bg-transparent ring-0 focus:outline-none focus:ring-0 border-none w-full">
-            </div>
-        </form>
-    </div>
+    @if ($search)
+        <div class="w-full md:w-1/4 ml-auto">
+            <form method="GET" action="{{ request()->url() }}" class="w-full">
+                <div class="flex items-center border border-gray-300 rounded-lg px-2 bg-white shadow-sm">
+                    <x-heroicon-o-magnifying-glass class="w-5 h-5 text-gray-500" />
+                    <input type="text" name="filter[search]" value="{{ request('filter.search') }}"
+                        placeholder="Search..."
+                        class="ml-2 text-sm bg-transparent ring-0 focus:outline-none focus:ring-0 border-none w-full">
+                </div>
+            </form>
+        </div>
+    @endif
 </div>
 
 <script>
@@ -120,7 +122,6 @@
         const monthSelect = document.getElementById('month_filter_select');
         const yearSelect = document.getElementById('year_filter_select');
 
-        // Hide both forms by default
         customForm.style.display = 'none';
         monthForm.style.display = 'none';
 
@@ -140,12 +141,10 @@
         const customForm = document.getElementById('custom_date_form');
         const monthForm = document.getElementById('select_month_form');
 
-        // Show custom date form if previously selected
         if (dateSelect && dateSelect.value === 'custom') {
             customForm.style.display = 'flex';
         }
 
-        // Show month form if selected
         if (dateSelect && dateSelect.value === 'month') {
             monthForm.style.display = 'flex';
         }
