@@ -15,7 +15,12 @@
                 <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Today</option>
                 <option value="last_7_days" {{ request('date_filter') == 'last_7_days' ? 'selected' : '' }}>Last 7 Days
                 </option>
-                <option value="month" {{ request('date_filter') == 'month' ? 'selected' : '' }}> Month & Year
+                <option value="last_30_days" {{ request('date_filter') == 'last_30_days' ? 'selected' : '' }}>Last 30
+                    Days
+                </option>
+                <option value="month"
+                    {{ request('date_filter') == 'month' || (request('month_filter') && request('year_filter')) ? 'selected' : '' }}>
+                    Month & Year
                 </option>
                 <option value="custom" {{ request('date_filter') == 'custom' ? 'selected' : '' }}>Custom</option>
             </select>

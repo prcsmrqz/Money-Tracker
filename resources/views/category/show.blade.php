@@ -184,8 +184,9 @@
 
                                     <x-transaction.modal :transaction="$transaction" />
                                 </div>
-                                <form action="{{ route('category.destroy', $transaction->id) }}" method="POST"
-                                    @submit.prevent="confirmDelete($event)">
+
+                                <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
+                                    method="POST" @submit.prevent="confirmDelete($event, 'transaction')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"

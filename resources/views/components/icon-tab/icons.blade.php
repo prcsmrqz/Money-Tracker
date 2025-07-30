@@ -20,7 +20,7 @@
                         </div>
                     @endif
 
-                    <div class="max-w-[8rem] ">
+                    <div class="max-w-[6rem] sm:max-w-[8rem] ">
                         <label
                             class="block text-base truncate whitespace-nowrap overflow-hidden sm:text-lg font-medium  cursor-pointer">
                             {{ $category->name }}
