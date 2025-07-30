@@ -24,6 +24,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('category', CategoryController::class);
     Route::resource('transaction', TransactionController::class);
 
+    Route::get('/income-chart', [IncomeController::class, 'incomeChart']);
+
+
 });
 
 

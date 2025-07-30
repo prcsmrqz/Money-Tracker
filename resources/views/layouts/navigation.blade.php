@@ -35,31 +35,31 @@
             </a>
 
             <a href="{{ route('dashboard') }}"
-                class="flex items-center justify-start font-black p-2 text-white text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200">
+                class="flex items-center justify-start font-black p-2 text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200 {{ request()->segment(1) == 'dashboard' ? 'bg-white text-gray-900' : 'text-white' }} ">
                 <x-heroicon-s-home class="w-10 h-10 mr-4 shrink-0" />
                 Dashboard
             </a>
 
             <a href="{{ route('income.index') }}"
-                class="flex items-center justify-start font-black p-2 text-white text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200">
+                class="flex items-center justify-start font-black p-2 text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200 {{ request()->segment(1) == 'income' ? 'bg-white text-gray-900' : 'text-white' }}">
                 <x-heroicon-s-banknotes class="w-10 h-10 mr-4 text-blue-500" />
                 Income
             </a>
 
             <a href="{{ route('dashboard') }}"
-                class="flex items-center justify-start font-black p-2 text-white text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200">
+                class="flex items-center justify-start font-black p-2 text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200 {{ request()->segment(1) == 'expenses' ? 'bg-white text-gray-900' : 'text-white' }}">
                 <x-heroicon-s-credit-card class="w-10 h-10 mr-4 text-red-500" />
                 Expenses
             </a>
 
             <a href="{{ route('dashboard') }}"
-                class="flex items-center justify-start font-black p-2 text-white text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200">
+                class="flex items-center justify-start font-black p-2 text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200 {{ request()->segment(1) == 'savings' ? 'bg-white text-gray-900' : 'text-white' }}">
                 <x-heroicon-s-currency-dollar class="w-10 h-10 mr-4 text-green-500" />
                 Savings
             </a>
 
             <a href="{{ route('dashboard') }}"
-                class="flex items-center justify-start font-black p-2 mb-5 text-white text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200">
+                class="flex items-center justify-start font-black p-2 mb-5 text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200 {{ request()->segment(1) == 'settings' ? 'bg-white text-gray-900' : 'text-white' }}">
                 <x-heroicon-s-cog-8-tooth class="w-10 h-10 mr-4 text-gray-400" />
                 Settings
             </a>
