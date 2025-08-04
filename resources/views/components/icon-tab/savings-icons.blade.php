@@ -3,7 +3,7 @@
 
         @forelse ($savingsAccounts as $savingsAccount)
             <div class="relative w-full group transition-all duration-200 ease-in-out">
-                <div href=""
+                <div @click="window.location='{{ route('savings.show', $savingsAccount->id) }}'"
                     style="background-image: 
                             radial-gradient(circle at left center, {{ $savingsAccount->color }} 10%, transparent 85%),
                             radial-gradient(circle at right center, {{ $savingsAccount->color }} 10%, transparent 85%);"
@@ -80,4 +80,8 @@
             <p> No savings available. </p>
         @endforelse
     </div>
+</div>
+
+<div class="mt-5">
+    {{ $savingsAccounts->links('pagination::tailwind') }}
 </div>

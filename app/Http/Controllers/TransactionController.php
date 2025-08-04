@@ -40,10 +40,14 @@ class TransactionController extends Controller
             ])->validate();
 
             $transaction->update($data);
-
-            return redirect()
-                ->route('category.show', $transaction->category_id)
+            
+            if ($transaction->category_id){
+                return redirect()->route('category.show', $transaction->category_id)
                 ->with('success', 'Transaction updated successfully.');
+            } else if ($transaction->savings_account_id){
+                return redirect()->route('savings.show', $transaction->savings_account_id)
+                ->with('success', 'Transaction updated successfully.');
+            }
 
         } catch (ValidationException $e) {
             return redirect()
@@ -58,6 +62,7 @@ class TransactionController extends Controller
         $transaction = auth()->user()->transactions()->findOrFail($id);
 
         $transaction->delete();
+        
         return redirect()->back()->with('success','Transaction deleted successfully.');
     }
 }

@@ -12,7 +12,7 @@ class IncomeController extends Controller
     {
         $user = auth()->user();
         //icons
-        $categories = $user->categories()->where('type', 'income')->orderBy('name', 'ASC')->get();
+        $categories = $user->categories()->where('type', 'income')->orderBy('name', 'ASC')->paginate(15);
 
         foreach ($categories as $category) {
             $category->totalIncome = $user->transactions()

@@ -9,11 +9,15 @@ use Dotenv\Exception\ValidationException;
 use App\Http\Requests\StoreSavingsRequest;
 use App\Http\Requests\UpdateSavingsRequest;
 
+use Carbon\Carbon;
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
+
 class SavingsController extends Controller
 {
     public function index() 
     {
-        $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name', 'ASC')->get();
+        $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name', 'ASC')->paginate(15);
         foreach( $savingsAccounts as $savingsAccount) {
             $savingsAccount->totalSavings = auth()->user()->transactions()
                 ->where('savings_account_id', $savingsAccount->id)
@@ -21,6 +25,82 @@ class SavingsController extends Controller
         }
 
         return view('savings.index', compact('savingsAccounts'));
+    }
+
+    public function show (SavingsAccount $saving)
+    {
+        $baseQuery = auth()->user()->transactions()->where('savings_account_id', $saving->id);
+
+        // Get oldest date's year
+        $oldestDate = (clone $baseQuery)->orderBy('date', 'asc')->value('date');
+        $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
+
+        // Build the main query (filtered with Spatie QueryBuilder)
+        $query = QueryBuilder::for($baseQuery)
+            ->with('savingsAccounts')
+            ->allowedFilters([
+                AllowedFilter::callback('search', function ($query, $value) {
+                    $query->where(function ($q) use ($value) {
+                        $q->where('notes', 'like', "%{$value}%")
+                            ->orWhere('type', 'like', "%{$value}%")
+                            ->orWhere('amount', 'like', "%{$value}%");
+                    });
+                }),
+            ])
+            ->orderBy('date', 'desc');
+
+
+            if (request('date_filter')) {
+                $dateFilter = request('date_filter');
+                if($dateFilter == 'today'){
+                    $query->whereDate('date', Carbon::today());
+                } else if ($dateFilter == 'last_7_days'){
+                    $query->whereBetween('date', [
+                        Carbon::now()->subDays(6)->startOfDay(),
+                        Carbon::now()->endOfDay(),
+                    ]);
+                } else if ($dateFilter == 'last_30_days') {
+                    $query->whereDate('date', '>=', Carbon::now()->subDays(30)->startOfDay());
+                } 
+                
+            }
+
+            if (request('month_filter') && request('year_filter')) {
+                $monthFilter = request('month_filter');
+                $yearFilter = request('year_filter');
+                    $query->whereMonth('date', $monthFilter )->whereYear('date', $yearFilter);
+            }
+
+            if (request('start') && request('end')) {
+                $query->whereBetween('date', [
+                    Carbon::parse(request('start'))->startOfDay(),
+                    Carbon::parse(request('end'))->endOfDay()
+                ]);
+            }
+
+            $paginated = $query->paginate(5)->withQueryString();
+
+            $groupedTransactions = $paginated->getCollection()
+                ->groupBy(fn($transaction) => $transaction->date->format('Y-m-d'));
+
+            $sumByTypePerDate = [];
+            foreach ($groupedTransactions as $date => $transactions) {
+                $sumByTypePerDate[$date] = [
+                    'income' => $transactions->where('type', 'income')->sum('amount'),
+                    'expenses' => $transactions->where('type', 'expenses')->sum('amount'),
+                    'savings' => $transactions->where('type', 'savings')->sum('amount'),
+                ];
+            }
+
+            $paginated->setCollection($groupedTransactions);
+
+
+            return view('savings.show', [
+                'transactions' => $paginated,
+                'sumByTypePerDate' => $sumByTypePerDate,
+                'savingsAccount' => $saving,
+                'oldestYear' => $oldestYear,
+            ]);
     }
 
     public function store(StoreSavingsRequest $request) 

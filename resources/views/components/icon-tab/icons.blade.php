@@ -34,9 +34,14 @@
                         </label>
                     </div>
                 </div>
+
             </a>
         @empty
             <p>No categories available.</p>
         @endforelse
     </div>
+</div>
+
+<div class="mt-5">
+    {{ $categories->links('pagination::tailwind') }}
 </div>

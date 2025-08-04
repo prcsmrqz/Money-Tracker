@@ -47,9 +47,15 @@ class CategoryController extends Controller
             if($dateFilter == 'today'){
                 $query->whereDate('date', Carbon::today());
             } else if ($dateFilter == 'last_7_days'){
-                $query->whereDate('date', '>=', Carbon::now()->subDays(7)->startOfDay());
+                $query->whereBetween('date', [
+                    Carbon::now()->subDays(6)->startOfDay(),
+                    Carbon::now()->endOfDay(),
+                ]);
             } else if ($dateFilter == 'last_30_days') {
-                $query->whereDate('date', '>=', Carbon::now()->subDays(30)->startOfDay());
+                $query->whereBetween('date', [
+                    Carbon::now()->subDays(30)->startOfDay(),
+                    Carbon::now()->endOfDay(),
+                ]);
             } 
             
         }
