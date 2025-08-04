@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SavingsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
@@ -20,10 +21,13 @@ Route::middleware('auth')->group(function () {
     //currency update
     Route::patch('/currency', [DashboardController::class, 'updateCurrency'])->name('currency.update');
 
+    //resource controllers
     Route::resource('income', IncomeController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('transaction', TransactionController::class);
+    Route::resource('savings', SavingsController::class);
 
+    //chart
     Route::get('/income-chart', [IncomeController::class, 'incomeChart']);
 
 

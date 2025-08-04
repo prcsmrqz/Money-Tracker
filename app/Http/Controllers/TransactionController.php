@@ -13,16 +13,19 @@ class TransactionController extends Controller
     public function index()
     {
         $categories = auth()->user()->categories()->where('type', 'income')->orderBy('name', 'ASC')->get();
+        $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name','ASC')->get();
+        $activeTab = session('activeTab', 'income'); 
         
-        return view("transaction.index", compact("categories"));
+        return view("transaction.index", compact('categories', 'savingsAccounts', 'activeTab'));
     }
 
     public function store(TransactionRequest $request)
     {
         $data = $request->validated();
         $data['user_id'] = auth()->id();
+        $type = $data['type'];
         auth()->user()->transactions()->create($data);
-        return redirect()->back()->with('success', 'Income transaction created successfully.');
+        return redirect()->back()->with('success', "{$type} transaction created successfully.")->with('activeTab', $type);
     }
 
     public function update(Request $request, $id)

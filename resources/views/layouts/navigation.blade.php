@@ -52,7 +52,7 @@
                 Expenses
             </a>
 
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('savings.index') }}"
                 class="flex items-center justify-start font-black p-2 text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200 {{ request()->segment(1) == 'savings' ? 'bg-white text-gray-900' : 'text-white' }}">
                 <x-heroicon-s-currency-dollar class="w-10 h-10 mr-4 text-green-500" />
                 Savings

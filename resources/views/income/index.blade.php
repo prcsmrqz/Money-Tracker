@@ -9,12 +9,12 @@
                 <button @click="open = true"
                     class="w-full sm:w-auto flex items-center justify-center bg-emerald-500 text-white text-base 
                             sm:text-lg font-bold py-2 px-4 rounded-md hover:bg-emerald-600 transition duration-200">
-                    <x-heroicon-s-tag class="w-5 h-5 mr-2" />
-                    List of Categories
+                    <x-heroicon-s-list-bullet class="w-5 h-5 mr-2" />
+                    Manage Categories
                 </button>
             </div>
 
-            <x-category.category-modal title="Income Category" :storeAction="route('category.store')" updateAction="/category"
+            <x-category.category-modal title="Income Category List" :storeAction="route('category.store')" updateAction="/category"
                 :categories="$categories" :type="'income'" :open="true" />
         </div>
 

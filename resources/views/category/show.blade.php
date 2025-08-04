@@ -98,19 +98,20 @@
                                         </button>
                                         <button @click=" open = true; edit = true"
                                             class="bg-orange-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-orange-600 shadow-sm">
-                                            <x-heroicon-s-pencil-square class="w-4 w-4" />
+                                            <x-heroicon-s-pencil-square class="w-4 h-4" />
                                         </button>
 
                                         <x-transaction.modal :transaction="$transaction" />
                                     </div>
 
                                     <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
-                                        method="POST" @submit.prevent="confirmDelete($event, 'transaction')">
+                                        method="POST"
+                                        @submit.prevent="confirmDelete($event, 'transaction', 'Delete this transaction?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                             class="bg-red-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-red-600 shadow-sm">
-                                            <x-heroicon-s-trash class="w-4 w-4" />
+                                            <x-heroicon-s-trash class="w-4 h-4" />
                                         </button>
                                     </form>
                                 </td>
@@ -172,26 +173,27 @@
                                 <div x-data="{
                                     open: {{ session('error_transaction_id') == $transaction->id ? 'true' : 'false' }},
                                     edit: {{ session('error_transaction_id') == $transaction->id ? 'true' : 'false' }}
-                                }" class="flex gap-2">
+                                }" class="flex gap-3">
                                     <button @click=" open = true; edit = false"
                                         class="bg-blue-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-blue-600 shadow-sm">
                                         <x-heroicon-s-eye class="w-4 h-4" />
                                     </button>
                                     <button @click=" open = true; edit = true"
                                         class="bg-orange-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-orange-600 shadow-sm">
-                                        <x-heroicon-s-pencil-square class="w-4 w-4" />
+                                        <x-heroicon-s-pencil-square class="w-4 h-4" />
                                     </button>
 
                                     <x-transaction.modal :transaction="$transaction" />
                                 </div>
 
                                 <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
-                                    method="POST" @submit.prevent="confirmDelete($event, 'transaction')">
+                                    method="POST"
+                                    @submit.prevent="confirmDelete($event, 'transaction', 'Delete this transaction?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
                                         class="bg-red-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-red-600 shadow-sm">
-                                        <x-heroicon-s-trash class="w-4 w-4" />
+                                        <x-heroicon-s-trash class="w-4 h-4" />
                                     </button>
                                 </form>
                             </div>

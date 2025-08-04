@@ -136,7 +136,8 @@
                     </button>
 
                     <!-- Delete Form -->
-                    <form :action="formAction()" method="POST" @submit.prevent="confirmDelete($event, 'category')">
+                    <form :action="formAction()" method="POST"
+                        @submit.prevent="confirmDelete($event, 'category', 'All transactions in this category will be removed.')">
                         @csrf
                         @method('DELETE')
                         <button type="submit"

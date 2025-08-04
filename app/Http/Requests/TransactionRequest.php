@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class TransactionRequest extends FormRequest
 {
@@ -50,4 +52,16 @@ class TransactionRequest extends FormRequest
 
         ];
     }
+
+    protected function failedValidation(Validator $validator)
+{
+    $type = request('type', 'default');
+
+    throw new HttpResponseException(
+        redirect()->back()
+            ->withErrors($validator, "{$type}Form")
+            ->withInput()
+            ->with('activeTab', $type)
+    );
+}
 }

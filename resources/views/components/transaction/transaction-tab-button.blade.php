@@ -9,15 +9,15 @@
         </div>
 
         <div class="flex flex-col lg:flex-row justify-between transition-all duration-300">
-            <!-- Form Section -->
+
             <div :class="calculator ? 'lg:w-3/4' : 'w-full'" class="px-6 transition-all duration-300">
                 <div x-show="activeTab === 'income'" x-cloak>
                     <x-transaction.transaction-income :categories="$categories" type="income" />
                 </div>
-
-                <!-- Expenses & Savings Tabs -->
                 <div x-show="activeTab === 'expenses'" x-cloak></div>
-                <div x-show="activeTab === 'savings'" x-cloak></div>
+                <div x-show="activeTab === 'savings'" x-cloak>
+                    <x-transaction.transaction-income :savingsAccounts="$savingsAccounts" type="savings" />
+                </div>
             </div>
 
             <x-transaction.calculator />
