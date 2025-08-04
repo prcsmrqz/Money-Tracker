@@ -20,13 +20,13 @@
                         </div>
                     @endif
 
-                    <div class="max-w-[6rem] sm:max-w-[8rem] min-w-0 overflow-hidden">
+                    <div class="max-w-[6rem] sm:max-w-[8rem] min-w-0 overflow-hidden cursor-pointer">
                         <label
-                            class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight">
+                            class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
                             {{ $category->name }}
                         </label>
                         <label
-                            class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight">
+                            class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
                             {{ Auth::user()->currency_symbol }}
                             {{ floor($category->totalIncome ?? 0) != ($category->totalIncome ?? 0)
                                 ? number_format($category->totalIncome ?? 0, 2)

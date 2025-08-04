@@ -22,18 +22,18 @@
                             </div>
                         @endif
 
-                        <div class="max-w-[6rem] sm:max-w-[8rem] min-w-0 overflow-hidden">
+                        <div class="max-w-[6rem] sm:max-w-[8rem] min-w-0 overflow-hidden cursor-pointer">
 
                             <label
-                                class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight">
+                                class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
                                 {{ $savingsAccount->name }}
                             </label>
 
-                            <span class="text-xs -mt-1 mb-1 block leading-tight">
+                            <span class="text-xs -mt-1 mb-1 block leading-tight cursor-pointer">
                                 {{ $savingsAccount->type }}
                             </span>
                             <label
-                                class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight">
+                                class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
                                 {{ Auth::user()->currency_symbol }}
                                 {{ floor($savingsAccount->totalSavings ?? 0) != ($savingsAccount->totaltotalSavingsIncome ?? 0)
                                     ? number_format($savingsAccount->totalSavings ?? 0, 2)
@@ -46,10 +46,10 @@
                 <div x-data="{
                     openDropdown: false,
                     open: {{ session('errors') && session('errors')->hasBag('update_' . $savingsAccount->id) ? 'true' : 'false' }}
-                }" class="absolute top-2 right-2 z-20">
+                }" class="absolute top-2 right-2 z-20 ">
                     <button @click="openDropdown = !openDropdown" @click.away="openDropdown = false"
                         class="p-1 transition-transform duration-200 ease-in-out group-hover:-translate-y-1 group-hover:scale-105">
-                        <x-heroicon-s-ellipsis-vertical class="w-5 h-5 text-white" />
+                        <x-heroicon-s-ellipsis-vertical class="w-5 h-5 text-white hover:text-gray-900" />
                     </button>
 
                     <div x-show="openDropdown" x-transition
