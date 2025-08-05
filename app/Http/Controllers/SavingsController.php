@@ -21,10 +21,39 @@ class SavingsController extends Controller
         foreach( $savingsAccounts as $savingsAccount) {
             $savingsAccount->totalSavings = auth()->user()->transactions()
                 ->where('savings_account_id', $savingsAccount->id)
+                ->where('type', 'savings')
                 ->sum('amount');
         }
 
-        return view('savings.index', compact('savingsAccounts'));
+        $totalIncome = auth()->user()->transactions()->where('type', 'savings')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+
+        $savings = auth()->user()->transactions()->where('type', 'savings')->sum('amount');
+        $expenses = auth()->user()->transactions()->where('type', 'expenses')->whereNotNull('savings_account_id')->sum('amount');
+        $totalSavings = $savings - $expenses;
+
+        $top3Savings = $savingsAccounts->sortByDesc('totalSavings')->take(3);
+
+        //chart
+        $oldestDate = auth()->user()->transactions()
+            ->where('type', 'income')
+            ->orderBy('date', 'asc')
+            ->value('date');
+        $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
+
+        $activeTab = '';
+        $dateFilter = request('date_filter');
+
+        $monthFilter = request('month_filter');
+        $yearFilter = request('year_filter');
+
+        $startFilter = request('start');
+        $endFilter = request('end');
+
+        if ($dateFilter || ($monthFilter && $yearFilter) || ($startFilter && $endFilter)) {
+                $activeTab = 'chart';
+        }
+
+        return view('savings.index', compact('savingsAccounts', 'totalIncome', 'activeTab', 'oldestYear', 'totalSavings', 'top3Savings'));
     }
 
     public function show (SavingsAccount $saving)
@@ -60,7 +89,10 @@ class SavingsController extends Controller
                         Carbon::now()->endOfDay(),
                     ]);
                 } else if ($dateFilter == 'last_30_days') {
-                    $query->whereDate('date', '>=', Carbon::now()->subDays(30)->startOfDay());
+                    $query->whereBetween('date', [
+                        Carbon::now()->subDays(30)->startOfDay(),
+                        Carbon::now()->endOfDay(),
+                    ]);
                 } 
                 
             }
@@ -174,5 +206,47 @@ class SavingsController extends Controller
             return redirect()->back()->with('success', 'Savings Account deleted successfully.');
         }
         return redirect()->back()->with('error', 'Savings Account not found.');
+    }
+
+    public function savingsChart(Request $request)
+    {
+        $user = auth()->user();
+        $savings = $user->savingsAccounts()->orderBy('name')->get();
+
+        foreach ($savings as $saving) {
+            $transactions = $user->transactions()
+                ->where('type', 'savings')
+                ->where('savings_account_id', $saving->id);
+
+            if ($request->date_filter === 'today') {
+                $transactions->whereDate('date', Carbon::today());
+            } elseif ($request->date_filter === 'last_7_days') {
+                $transactions->whereBetween('date', [
+                    Carbon::now()->subDays(6)->startOfDay(),
+                    Carbon::now()->endOfDay(),
+                ]);
+            } elseif ($request->date_filter === 'last_30_days') {
+                $transactions->whereBetween('date', [
+                    Carbon::now()->subDays(30)->startOfDay(),
+                    Carbon::now()->endOfDay(),
+                ]);
+            }
+
+            if ($request->month_filter && $request->year_filter) {
+                $transactions->whereMonth('date', $request->month_filter)
+                            ->whereYear('date', $request->year_filter);
+            }
+
+            if ($request->start && $request->end) {
+                $transactions->whereBetween('date', [
+                    Carbon::parse($request->start)->startOfDay(),
+                    Carbon::parse($request->end)->endOfDay()
+                ]);
+            }
+
+            $saving->totalSavings = $transactions->sum('amount');
+        }
+
+        return response()->json($savings);
     }
 }

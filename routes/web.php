@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
     //chart
     Route::get('/income-chart', [IncomeController::class, 'incomeChart']);
+    Route::get('/savings-chart', [SavingsController::class, 'savingsChart']);
 
 
 });

@@ -59,9 +59,15 @@ class IncomeController extends Controller
             if ($request->date_filter === 'today') {
                 $transactions->whereDate('date', Carbon::today());
             } elseif ($request->date_filter === 'last_7_days') {
-                $transactions->whereDate('date', '>=', Carbon::now()->subDays(7));
+                $transactions->whereBetween('date', [
+                        Carbon::now()->subDays(6)->startOfDay(),
+                        Carbon::now()->endOfDay(),
+                    ]);
             } elseif ($request->date_filter === 'last_30_days') {
-                $transactions->whereDate('date', '>=', Carbon::now()->subDays(30));
+                $transactions->whereBetween('date', [
+                        Carbon::now()->subDays(30)->startOfDay(),
+                        Carbon::now()->endOfDay(),
+                    ]);
             }
 
             if ($request->month_filter && $request->year_filter) {

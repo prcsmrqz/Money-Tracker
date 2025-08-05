@@ -42,8 +42,8 @@
             </div>
 
             {{-- Monthly summary --}}
-            <div x-show="activeTab === 'icon'" class="px-4 sm:px-6 lg:px-10 mt-8">
-                <div class="mt-8 rounded-md shadow-lg bg-white dark:bg-gray-800 p-6 py-10 text-center">
+            <div x-show="activeTab === 'icon'" class="px-4 sm:px-6 lg:px-10 mt-8 mb-10">
+                <div class="mt-8 rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-10 text-center">
                     <p class="text-xl sm:text-5xl font-bold text-gray-700 dark:text-gray-300">
                         <span>You earned</span>
                         {{ Auth::user()->currency_symbol }}
@@ -79,8 +79,8 @@
                             const hasData = incomes.length > 0 && incomes.some(v => v > 0);
 
                             if (!hasData) {
-                                labels = ['No Income Data'];
-                                incomes = [1];
+                                this.chart = null;
+                                return;
                             }
 
                             this.renderChart(ids, labels, incomes, colors);
@@ -163,7 +163,7 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: 'My Income Overview',
+                                    text: 'Income Overview',
                                     align: 'center',
                                     color: '#111827',
                                     font: {

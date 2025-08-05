@@ -6,16 +6,9 @@
         action: '{{ $action }}',
         formId: {{ $category->id }},
         pickrInstance: null,
-        resetEdit() {
-            this.isEditing = false;
-            this.previewUrlEdit = '{{ $category->icon ? asset("storage/$category->icon") : '' }}';
-            this.$refs.fileInput.value = null;
-            if (this.pickrInstance) this.pickrInstance.disable();
-        },
-        formAction() {
-            return `${this.action}/${this.formId}`;
-        },
-        init() {
+    
+        // sets up the color picker and called when the component is ready
+        setupPickr() {
             this.pickrInstance = Pickr.create({
                 el: '#color-picker-{{ $category->id }}',
                 theme: 'nano',
@@ -37,6 +30,7 @@
                 this.pickrInstance.hide();
             });
     
+            // Watch for changes in isEditing and enable/disable the color picker
             this.$watch('isEditing', (val) => {
                 if (this.pickrInstance) {
                     if (val) {
@@ -47,22 +41,28 @@
                 }
             });
     
-            // Start disabled
-            this.$nextTick(() => {
-                if (this.pickrInstance) this.pickrInstance.disable();
-            });
+            this.pickrInstance.disable(); // Start disabled by default
+        },
+    
+        //reset the form state
+        resetEdit() {
+            this.isEditing = false;
+            this.previewUrlEdit = this.originalPreviewUrlEdit;
+            this.$refs.fileInput.value = null;
+            if (this.pickrInstance) this.pickrInstance.disable();
+        },
+        formAction() {
+            return `${this.action}/${this.formId}`;
         }
-    }" x-init="init()" @custom-close-modal.window="resetEdit()"
+    }" x-init="setupPickr()" @custom-close-modal.window="resetEdit()"
         class="w-full border-b border-gray-200 p rounded-lg dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-900 dark:text-white">
 
         <div class="flex items-center justify-between w-full gap-2 flex-wrap sm:flex-nowrap">
-            <!-- Edit Form -->
             <form :action="formAction()" method="POST" enctype="multipart/form-data"
                 class="flex flex-1 items-center gap-2 flex-wrap sm:flex-nowrap">
                 @csrf
                 @method('PATCH')
 
-                <!-- File Upload -->
                 <label for="iconEdit{{ $category->id }}" :class="isEditing ? '' : 'pointer-events-none'"
                     class="cursor-pointer w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden transition shrink-0">
                     <template x-if="previewUrlEdit">
@@ -102,21 +102,17 @@
 
                 <input type="hidden" name="type" value="{{ $type }}">
 
-                <!-- Name Input -->
                 <input type="text" name="name_{{ $category->id }}" :disabled="!isEditing"
                     class="flex-1 min-w-0 rounded-md border-gray-200 text-gray-900 dark:text-white disabled:opacity-100"
                     value="{{ old('name_' . $category->id, $category->name) }}" />
 
-                <!-- Color Picker -->
                 <div @click.stop>
-                    <div id="color-picker-{{ $category->id }}"
-                        :class="isEditing ? '' : 'pointer-events-none opacity-50'"></div>
+                    <div id="color-picker-{{ $category->id }}"></div>
                     <input type="hidden" name="color_{{ $category->id }}" id="selectedColor{{ $category->id }}"
                         :disabled="!isEditing" value="{{ old('color_' . $category->id, $category->color) }}"
                         class="rounded-md border-gray-200 text-gray-900 dark:text-white disabled:opacity-100">
                 </div>
 
-                <!-- Save Button -->
                 <template x-if="isEditing">
                     <button type="submit"
                         class="bg-emerald-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-emerald-600 shadow-sm shrink-0">
@@ -126,16 +122,13 @@
                 </template>
             </form>
 
-            <!-- Edit & Delete Buttons -->
             <template x-if="!isEditing">
                 <div class="flex space-x-2 shrink-0">
-                    <!-- Edit Button -->
                     <button type="button" @click="isEditing = true"
                         class="bg-orange-500 text-white p-2 px-3 rounded-md flex items-center justify-center hover:bg-orange-600 shadow-sm">
                         <x-heroicon-s-pencil-square class="w-4 h-4" />
                     </button>
 
-                    <!-- Delete Form -->
                     <form :action="formAction()" method="POST"
                         @submit.prevent="confirmDelete($event, 'category', 'All transactions in this category will be removed.')">
                         @csrf
@@ -145,7 +138,6 @@
                             <x-heroicon-s-trash class="w-4 h-4" />
                         </button>
                     </form>
-
                 </div>
             </template>
         </div>
