@@ -42,7 +42,12 @@
                     <template x-if="selected">
                         <div class="flex items-center gap-2">
                             <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
-                                <img :src="selected.icon" alt="selected icon" class="w-full h-full object-cover">
+                                <template x-if="selected.icon">
+                                    <img :src="selected.icon" alt="selected icon" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!selected.icon">
+                                    <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                </template>
                             </div>
                             <span x-text="selected.name"></span>
                         </div>
@@ -59,11 +64,16 @@
             <div x-show="open" @click.away="open = false" @click.stop
                 class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
                 @foreach ($type == 'income' ? $categories : $savingsAccounts as $category)
-                    <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}', icon: '{{ asset('storage/' . $category->icon) }}' }; open = false"
+                    <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
+                        icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
                         class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
                         <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
-                            <img src="{{ asset('storage/' . $category->icon) }}" alt="icon"
-                                class="w-full h-full object-cover">
+                            @if ($category->icon)
+                                <img src="{{ asset('storage/' . $category->icon) }}" alt="icon"
+                                    class="w-full h-full object-cover">
+                            @else
+                                <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                            @endif
                         </div>
                         <span>{{ $category->name }}</span>
                     </div>
