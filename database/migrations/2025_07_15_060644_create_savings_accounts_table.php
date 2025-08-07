@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
             $table->string('name');
-            $table->string('account_number')->unique()->nullable(); // Unique account number for savings account
+            $table->string('account_number')->nullable();
             $table->string('type')->nullable(); // debit, credit, ewallet, investment
             $table->string('icon')->nullable();
             $table->timestamps();

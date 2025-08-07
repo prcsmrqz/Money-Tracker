@@ -50,6 +50,7 @@ class UpdateCategoryRequest extends FormRequest
             return [
                 "name_$id.required" => 'The category name is required.',
                 "name_$id.min" => 'The category name must be at least 3 characters.',
+                "name_$id.unique" => 'The category name already exists.',
                 "iconEdit_$id.mimes" => 'The icon must be an image file (jpg, png, jpeg, svg, or webp).',
                 "iconEdit_$id.max" => 'The icon must not exceed 2MB in size.',
             ];

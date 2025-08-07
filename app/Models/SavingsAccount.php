@@ -14,7 +14,8 @@ class SavingsAccount extends Model
         'user_id',
         'account_number',
         'type',
-        'icon'
+        'icon',
+        'color'
     ];
 
 

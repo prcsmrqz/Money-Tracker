@@ -1,22 +1,22 @@
 <x-app-layout>
     <x-title-header>
-        <a href="{{ route($category->type . '.index') }}" class="capitalize">
-            <span class="hover:underline">{{ $category->type }}</span>
-            > {{ $category->name }}
+        <a href="{{ route('savings.index') }}" class="capitalize">
+            <span class="hover:underline">Savings</span>
+            > {{ $savingsAccount->name }}
         </a>
     </x-title-header>
     <div class="px-4 sm:px-6 lg:px-10">
         <div class="mb-10 py-5 px-4 bg-white sm:px-6 lg:px-10 dark:bg-gray-800 rounded-md shadow-lg w-full">
             <div style="background-image: 
-                        radial-gradient(circle at left center, {{ $category->color }} 10%, transparent 90%),
-                        radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
+                        radial-gradient(circle at left center, {{ $savingsAccount->color }} 10%, transparent 90%),
+                        radial-gradient(circle at right center, {{ $savingsAccount->color }} 10%, transparent 90%);"
                 class="mb-5 p-3 rounded-md shadow text-white text-center">
                 <h1 class="text-xl sm:text-2xl font-bold capitalize">
-                    {{ $category->name }} Transaction List
+                    {{ $savingsAccount->name }} Transaction List
                 </h1>
             </div>
 
-            <x-category.search-filter :category="$category" :oldestYear="$oldestYear" :search="true" />
+            <x-category.search-filter :savingsAccount="$savingsAccount" :oldestYear="$oldestYear" :search="true" />
 
 
             <table
@@ -134,7 +134,6 @@
             </table>
 
             <div class="mt-4 hidden sm:block">
-                {{-- Pagination links --}}
                 {{ $transactions->links('pagination::tailwind') }}
             </div>
 

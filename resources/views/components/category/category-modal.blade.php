@@ -22,7 +22,6 @@
 
                 <div class="flex items-center space-x-3">
 
-                    <!-- Circle Preview + File Input -->
                     <label for="icon"
                         class="cursor-pointer w-14 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
 

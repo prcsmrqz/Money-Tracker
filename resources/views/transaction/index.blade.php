@@ -4,9 +4,9 @@
     </x-title-header>
 
     <div class="px-4 sm:px-6 lg:px-10 mb-10">
-        <div x-data="{ activeTab: 'income' }" class="w-full">
+        <div x-data="{ activeTab: '{{ $activeTab ?? 'income' }}' }" class="w-full">
             <x-transaction.transaction-tab />
-            <x-transaction.transaction-tab-button :categories="$categories" />
+            <x-transaction.transaction-tab-button :categories="$categories" :savingsAccounts="$savingsAccounts" />
         </div>
     </div>
 

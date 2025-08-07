@@ -1,8 +1,8 @@
-export function confirmDelete(event, type) {
+export function confirmDelete(event, type, message) {
     event.preventDefault();
         Swal.fire({
             title: 'Are you sure?',
-            text: `Delete this ${type}?`,
+            text: message,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#e3342f',
