@@ -2,43 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Requests\CategoryRequest;
+use Carbon\Carbon;
 
-class IncomeController extends Controller
+class ExpensesController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
         //icons
-        $categories = $user->categories()->where('type', 'income')->orderBy('name', 'ASC')->paginate(15);
+        $categories = $user->categories()->where('type', 'expenses')->orderBy('name', 'ASC')->paginate(15);
 
         foreach ($categories as $category) {
-
-            $income = $user->transactions()
-                            ->where('category_id', $category->id)
-                            ->where('type', 'income')
-                            ->sum('amount');
-                
-            $expenses = $user->transactions()
-                            ->where('source_income', $category->id)
-                            ->where('type', 'expenses')
-                            ->sum('amount');
-
-            $savings = $user->transactions()
-                            ->where('category_id', $category->id)
-                            ->where('type', 'savings')
-                            ->sum('amount');
-                
-            $category->totalIncome =  $income - $expenses - $savings;
-
+            $category->totalIncome = $user->transactions()
+                ->where('type', 'expenses')
+                ->where('category_id', $category->id)
+                ->sum('amount');
         }
-        $totalIncome = $user->transactions()->where('type', 'income')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        $totalIncome = $user->transactions()->where('type', 'expenses')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
 
         //chart
         $oldestDate = $user->transactions()
-            ->where('type', 'income')
+            ->where('type', 'expenses')
             ->orderBy('date', 'asc')
             ->value('date');
         $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
@@ -56,18 +41,19 @@ class IncomeController extends Controller
                 $activeTab = 'chart';
         }
 
+        
 
-        return view('income.index', compact('categories', 'totalIncome', 'activeTab', 'oldestYear'));
+        return view('expenses.index', compact('categories', 'totalIncome', 'activeTab', 'oldestYear'));
     }
 
-    public function incomeChart(Request $request)
+    public function expensesChart(Request $request)
     {
         $user = auth()->user();
-        $categories = $user->categories()->where('type', 'income')->orderBy('name')->get();
+        $categories = $user->categories()->where('type', 'expenses')->orderBy('name')->get();
 
         foreach ($categories as $category) {
             $transactions = $user->transactions()
-                ->where('type', 'income')
+                ->where('type', 'expenses')
                 ->where('category_id', $category->id);
 
             if ($request->date_filter === 'today') {
@@ -96,11 +82,9 @@ class IncomeController extends Controller
                 ]);
             }
 
-            $category->totalIncome = $transactions->sum('amount');
+            $category->totalExpenses = $transactions->sum('amount');
         }
 
         return response()->json($categories);
     }
-
-
 }

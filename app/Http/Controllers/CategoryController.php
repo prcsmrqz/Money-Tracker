@@ -19,9 +19,23 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
        // Get base query
-    $baseQuery = auth()->user()
-        ->transactions()
-        ->where('category_id', $category->id);
+    
+    
+    if ($category->type === 'income') {
+        $baseQuery = auth()->user()->transactions()
+            ->where(function ($query) use ($category) {
+                $query->where('category_id', $category->id)
+                    ->orWhere('source_income', $category->id);
+            });
+
+            
+
+
+
+    } else {
+        $baseQuery = auth()->user()->transactions()
+            ->where('category_id', $category->id);
+    }
 
     // Get oldest date's year
     $oldestDate = (clone $baseQuery)->orderBy('date', 'asc')->value('date');
@@ -79,6 +93,7 @@ class CategoryController extends Controller
             ->groupBy(fn($transaction) => $transaction->date->format('Y-m-d'));
 
         $sumByTypePerDate = [];
+        
         foreach ($groupedTransactions as $date => $transactions) {
             $sumByTypePerDate[$date] = [
                 'income' => $transactions->where('type', 'income')->sum('amount'),
@@ -86,15 +101,19 @@ class CategoryController extends Controller
                 'savings' => $transactions->where('type', 'savings')->sum('amount'),
             ];
         }
+        
 
         $paginated->setCollection($groupedTransactions);
 
+
+        $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name', 'ASC')->get();
 
         return view('category.show', [
             'transactions' => $paginated,
             'sumByTypePerDate' => $sumByTypePerDate,
             'category' => $category,
             'oldestYear' => $oldestYear,
+            'savingsAccounts' => $savingsAccounts,
         ]);
     }
 

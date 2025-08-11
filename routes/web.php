@@ -5,6 +5,7 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SavingsController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
 
@@ -26,10 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('category', CategoryController::class);
     Route::resource('transaction', TransactionController::class);
     Route::resource('savings', SavingsController::class);
+    Route::resource('expenses', ExpensesController::class);
 
     //chart
     Route::get('/income-chart', [IncomeController::class, 'incomeChart']);
     Route::get('/savings-chart', [SavingsController::class, 'savingsChart']);
+    Route::get('/expenses-chart', [ExpensesController::class, 'expensesChart']);
 
 
 });

@@ -26,31 +26,44 @@
                     @forelse ($transactions as $date => $dailyTransactions)
                         <tr class="bg-gray-100 border-b border-gray-300 rounded-md">
                             <td colspan="5" class="px-4 py-3 ">
+
                                 <div
                                     class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 sm:gap-6 font-semibold text-sm sm:text-lg">
                                     <div class="text-black px-6 dark:text-gray-200 min-w-[140px]">
                                         {{ \Carbon\Carbon::parse($date)->format('F d, Y') }}
                                     </div>
                                     <div class="flex gap-4 sm:gap-20 flex-wrap sm:flex-nowrap text-sm sm:text-lg">
-                                        <div class="text-blue-500 min-w-[100px] flex flex-col items-center text-center">
-                                            <span class="whitespace-nowrap font-semibold">
-                                                {{ Auth::user()->currency_symbol }}{{ number_format($sumByTypePerDate[$date]['income'] ?? 0, 2) }}
-                                            </span>
-                                            <span class="text-xs font-normal text-gray-500">Income</span>
-                                        </div>
-                                        <div class="text-red-500 min-w-[100px] flex flex-col items-center text-center">
-                                            <span class="whitespace-nowrap font-semibold">
-                                                {{ Auth::user()->currency_symbol }}{{ number_format($sumByTypePerDate[$date]['expenses'] ?? 0, 2) }}
-                                            </span>
-                                            <span class="text-xs font-normal text-gray-500">Expenses</span>
-                                        </div>
-                                        <div
-                                            class="text-emerald-500 min-w-[100px] flex flex-col items-center text-center mr-10">
-                                            <span class="whitespace-nowrap font-semibold">
-                                                {{ Auth::user()->currency_symbol }}{{ number_format($sumByTypePerDate[$date]['savings'] ?? 0, 2) }}
-                                            </span>
-                                            <span class="text-xs font-normal text-gray-500">Savings</span>
-                                        </div>
+                                        @if ($category->type == 'income')
+                                            <div
+                                                class="text-blue-500 min-w-[100px] flex flex-col items-center text-center">
+                                                <span class="whitespace-nowrap font-semibold">
+                                                    {{ Auth::user()->currency_symbol }}{{ number_format($sumByTypePerDate[$date]['income'] ?? 0, 2) }}
+                                                </span>
+                                                <span class="text-xs font-normal text-gray-500">Income</span>
+                                            </div>
+                                            <div
+                                                class="text-red-500 min-w-[100px] flex flex-col items-center text-center">
+                                                <span class="whitespace-nowrap font-semibold">
+                                                    {{ Auth::user()->currency_symbol }}{{ number_format($sumByTypePerDate[$date]['expenses'] ?? 0, 2) }}
+                                                </span>
+                                                <span class="text-xs font-normal text-gray-500">Expenses</span>
+                                            </div>
+                                            <div
+                                                class="text-emerald-500 min-w-[100px] flex flex-col items-center text-center mr-10">
+                                                <span class="whitespace-nowrap font-semibold">
+                                                    {{ Auth::user()->currency_symbol }}{{ number_format($sumByTypePerDate[$date]['savings'] ?? 0, 2) }}
+                                                </span>
+                                                <span class="text-xs font-normal text-gray-500">Savings</span>
+                                            </div>
+                                        @else
+                                            <div
+                                                class="text-red-500 min-w-[100px] flex flex-col items-center text-center">
+                                                <span class="whitespace-nowrap font-semibold">
+                                                    {{ Auth::user()->currency_symbol }}{{ number_format($sumByTypePerDate[$date]['expenses'] ?? 0, 2) }}
+                                                </span>
+                                                <span class="text-xs font-normal text-gray-500">Expenses</span>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -101,7 +114,7 @@
                                             <x-heroicon-s-pencil-square class="w-4 h-4" />
                                         </button>
 
-                                        <x-transaction.modal :transaction="$transaction" />
+                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" />
                                     </div>
 
                                     <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"

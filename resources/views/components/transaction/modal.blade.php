@@ -44,6 +44,102 @@
                 @enderror
             </div>
 
+            @if ($transaction->type == 'expenses' && $savingsAccounts)
+                <div class="flex flex-col space-y-1 mb-7">
+                    <p class="font-bold text-gray-600 dark:text-gray-400">
+                        SOURCE:
+                    </p>
+
+                    @php
+                        $defaultSourceTypeId = old('source_type', $transaction->source_type ?? null);
+                        $defaultSelected = null;
+
+                        if ($defaultSourceTypeId == 0) {
+                            $defaultSelected = ['id' => 0, 'name' => 'REMAINING INCOME', 'icon' => null];
+                        } else {
+                            $selectedSavings = $savingsAccounts->firstWhere('id', $defaultSourceTypeId);
+                            if ($selectedSavings) {
+                                $defaultSelected = [
+                                    'id' => $selectedSavings->id,
+                                    'name' => $selectedSavings->name,
+                                    'icon' => $selectedSavings->icon
+                                        ? asset('storage/' . $selectedSavings->icon)
+                                        : null,
+                                ];
+                            }
+                        }
+                    @endphp
+
+                    <div x-data="{ open: false, selected: @js($defaultSelected) }" class="relative">
+                        <button type="button" @click="open = !open" :disabled="!edit"
+                            class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center dark:bg-gray-800 dark:text-white">
+                            <div class="flex items-center gap-2">
+                                <template x-if="selected">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
+                                            <template x-if="selected.icon">
+                                                <img :src="selected.icon" alt="selected icon"
+                                                    class="w-full h-full object-cover">
+                                            </template>
+                                            <template x-if="!selected.icon">
+                                                <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                            </template>
+                                        </div>
+                                        <span x-text="selected.name"></span>
+                                    </div>
+                                </template>
+                                <template x-if="!selected">
+                                    <span>Select a source type</span>
+                                </template>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" @click.away="open = false" @click.stop
+                            class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
+                            <div @click.prevent.stop="selected = { id: 0, name: 'REMAINING INCOME', icon: null }; open = false"
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                                <div
+                                    class="w-6 h-6 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                    <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                </div>
+                                <span>REMAINING INCOME</span>
+                            </div>
+
+                            @foreach ($savingsAccounts as $savings)
+                                <div @click.prevent.stop="selected = {
+                            id: {{ $savings->id }},
+                            name: '{{ addslashes($savings->name) }}',
+                            icon: {{ $savings->icon ? '\'' . asset('storage/' . $savings->icon) . '\'' : 'null' }}
+                        }; open = false"
+                                    class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
+                                        @if ($savings->icon)
+                                            <img src="{{ asset('storage/' . $savings->icon) }}" alt="icon"
+                                                class="w-full h-full object-cover">
+                                        @else
+                                            <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                        @endif
+                                    </div>
+                                    <span>{{ $savings->name }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <input type="hidden" name="source_type" :value="selected?.id ?? ''">
+                        @error('source_type', 'expensesForm')
+                            <div class="text-red-500 text-sm">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+            @endif
+
+
             <div class="mb-6">
                 <label class="block font-bold text-gray-600 dark:text-gray-400 mb-1">NOTES:</label>
                 <textarea name="notes" :disabled="!edit" rows="3"

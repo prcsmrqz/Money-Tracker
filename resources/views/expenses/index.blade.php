@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-title-header>
-        {{ __('Income') }}
+        {{ __('Expenses') }}
     </x-title-header>
 
     <div class="px-4 sm:px-6 lg:px-10">
@@ -14,8 +14,8 @@
                 </button>
             </div>
 
-            <x-category.category-modal title="Income Category List" :storeAction="route('category.store')" updateAction="/category"
-                :categories="$categories" :type="'income'" :open="true" />
+            <x-category.category-modal title="Expenses Category List" :storeAction="route('category.store')" updateAction="/category"
+                :categories="$categories" :type="'expenses'" :open="true" />
         </div>
 
         <div x-data="{ activeTab: '{{ $activeTab ?: 'icon' }}', chart: null }" class="w-full">
@@ -24,7 +24,7 @@
 
             <div class="mt-4 py-8 px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 rounded-md shadow-md w-full">
                 <div x-show="activeTab === 'icon'" x-cloak>
-                    <x-icon-tab.icons :categories="$categories" :type="'income'" />
+                    <x-icon-tab.icons :categories="$categories" :type="'expenses'" />
                 </div>
 
                 <div x-show="activeTab === 'chart'" x-cloak>
@@ -42,16 +42,7 @@
             </div>
 
             {{-- Monthly summary --}}
-            <div x-show="activeTab === 'icon'" class="px-4 sm:px-6 lg:px-10 mt-8 mb-5">
-                <div class="mt-5 rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-10 text-center">
-                    <p class="text-xl sm:text-5xl font-bold text-gray-700 dark:text-gray-300">
-                        <span>You earned</span>
-                        {{ Auth::user()->currency_symbol }}
-                        {{ floor($totalIncome ?? 0) != ($totalIncome ?? 0) ? number_format($totalIncome ?? 0, 2) : number_format($totalIncome ?? 0) }}
-                        <span>this month!</span>
-                    </p>
-                </div>
-            </div>
+
         </div>
     </div>
 
@@ -68,22 +59,22 @@
                         end: '{{ request('end') }}',
                     });
 
-                    fetch(`/income-chart?${params.toString()}`)
+                    fetch(`/expenses-chart?${params.toString()}`)
                         .then(res => res.json())
                         .then(data => {
                             const ids = data.map(c => c.id);
                             const labels = data.map(c => c.name);
-                            const incomes = data.map(c => c.totalIncome);
+                            const expenses = data.map(c => c.totalExpenses);
                             const colors = data.map(c => c.color || '#3b82f6');
 
-                            const hasData = incomes.length > 0 && incomes.some(v => v > 0);
+                            const hasData = expenses.length > 0 && expenses.some(v => v > 0);
 
                             if (!hasData) {
                                 this.chart = null;
                                 return;
                             }
 
-                            this.renderChart(ids, labels, incomes, colors);
+                            this.renderChart(ids, labels, expenses, colors);
                         });
                 },
                 renderChart(ids, labels, data, colors) {
@@ -95,7 +86,7 @@
                         data: {
                             labels: labels,
                             datasets: [{
-                                label: 'Income',
+                                label: 'Expenses',
                                 data: data,
                                 backgroundColor: colors,
                                 hoverOffset: 40
@@ -163,7 +154,7 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: 'Income Overview',
+                                    text: 'Expenses Overview',
                                     align: 'center',
                                     color: '#111827',
                                     font: {

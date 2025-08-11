@@ -31,7 +31,6 @@ class StoreSavingsRequest extends FormRequest
             $user = auth()->user();
 
             $expenses = $user->transactions()
-                ->where('source_type', 0)
                 ->where('type', 'expenses')
                 ->sum('amount');
 

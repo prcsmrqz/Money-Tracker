@@ -6,7 +6,7 @@
     <div class="px-4 sm:px-6 lg:px-10">
 
         <div x-data="{ open: {{ session()->get('errors') && session()->get('errors')->hasBag('create') ? 'true' : 'false' }} }">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 mb-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 mb-5 sm:mb-0">
                 <button @click="open = true"
                     class="w-full sm:w-auto flex items-center justify-center bg-emerald-500 text-white text-base 
                             sm:text-lg font-bold py-2 px-4 rounded-md hover:bg-emerald-600 transition duration-200">
@@ -44,8 +44,8 @@
             </div>
 
 
-            <div x-show="activeTab === 'icon'" class="px-4 sm:px-6 lg:px-10 mt-5">
-                <div class="mt-8 rounded-md shadow-md bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-10 text-center">
+            <div x-show="activeTab === 'icon'" class="px-4 sm:px-6 lg:px-10 ">
+                <div class="mt-5 rounded-md shadow-md bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-10 text-center">
                     <p class="text-xl sm:text-5xl font-bold text-gray-700 dark:text-gray-300">
                         <span>Total Saved</span>
                         {{ Auth::user()->currency_symbol }}
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <div x-show="activeTab === 'icon'" class="grid grid-cols-2 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-10">
+            <div x-show="activeTab === 'icon'" class="grid grid-cols-2 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
                 <div
                     class="rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-8 flex flex-col items-center justify-center text-center">
                     <p class="text-lg sm:text-2xl font-bold mb-3 text-gray-700">Net Savings</p>

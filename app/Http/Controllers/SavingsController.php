@@ -19,16 +19,23 @@ class SavingsController extends Controller
     {
         $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name', 'ASC')->paginate(15);
         foreach( $savingsAccounts as $savingsAccount) {
-            $savingsAccount->totalSavings = auth()->user()->transactions()
-                ->where('savings_account_id', $savingsAccount->id)
-                ->where('type', 'savings')
-                ->sum('amount');
+            $savings = auth()->user()->transactions()
+                            ->where('savings_account_id', $savingsAccount->id)
+                            ->where('type', 'savings')
+                            ->sum('amount');
+                
+            $expenses = auth()->user()->transactions()
+                            ->where('source_savings', $savingsAccount->id)
+                            ->where('type', 'expenses')
+                            ->sum('amount');
+
+            $savingsAccount->totalSavings =  $savings - $expenses;
         }
 
         $totalIncome = auth()->user()->transactions()->where('type', 'savings')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
 
         $savings = auth()->user()->transactions()->where('type', 'savings')->sum('amount');
-        $expenses = auth()->user()->transactions()->where('type', 'expenses')->whereNotNull('savings_account_id')->sum('amount');
+        $expenses = auth()->user()->transactions()->where('type', 'expenses')->whereNotNull('source_savings')->sum('amount');
         $totalSavings = $savings - $expenses;
 
         $top3Savings = $savingsAccounts->sortByDesc('totalSavings')->take(3);
@@ -58,7 +65,11 @@ class SavingsController extends Controller
 
     public function show (SavingsAccount $saving)
     {
-        $baseQuery = auth()->user()->transactions()->where('savings_account_id', $saving->id);
+        $baseQuery = auth()->user()->transactions()
+                        ->where(function ($query) use ($saving) {
+                            $query->where('savings_account_id', $saving->id)
+                                ->orWhere('source_savings', $saving->id);
+                        });
 
         // Get oldest date's year
         $oldestDate = (clone $baseQuery)->orderBy('date', 'asc')->value('date');
