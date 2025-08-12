@@ -2,60 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ActiveTab;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
 
 class IncomeController extends Controller
 {
+    use ActiveTab;
+
     public function index()
     {
         $user = auth()->user();
-        //icons
-        $categories = $user->categories()->where('type', 'income')->orderBy('name', 'ASC')->paginate(15);
+
+        $categories = $user->categories()
+            ->where('type', 'income')
+            ->withSum(['transactions as income_total' => function ($query) {
+                $query->where('type', 'income');
+            }], 'amount')
+            ->withSum(['expenseTransactionsFromIncome as expenses_total' => function ($query) {
+                $query->where('type', 'expenses');
+                $query->whereColumn('source_income', 'categories.id'); 
+            }], 'amount')
+            ->withSum(['transactions as savings_total' => function ($query) {
+                $query->where('type', 'savings');
+                $query->whereColumn('category_id', 'categories.id'); 
+            }], 'amount')
+            ->orderBy('name', 'ASC')
+            ->paginate(15);
 
         foreach ($categories as $category) {
-
-            $income = $user->transactions()
-                            ->where('category_id', $category->id)
-                            ->where('type', 'income')
-                            ->sum('amount');
-                
-            $expenses = $user->transactions()
-                            ->where('source_income', $category->id)
-                            ->where('type', 'expenses')
-                            ->sum('amount');
-
-            $savings = $user->transactions()
-                            ->where('category_id', $category->id)
-                            ->where('type', 'savings')
-                            ->sum('amount');
-                
-            $category->totalIncome =  $income - $expenses - $savings;
-
+            $category->total = ($category->income_total ?? 0) - ($category->expenses_total ?? 0) - ($category->savings_total ?? 0);
         }
+
         $totalIncome = $user->transactions()->where('type', 'income')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
 
-        //chart
         $oldestDate = $user->transactions()
             ->where('type', 'income')
             ->orderBy('date', 'asc')
             ->value('date');
         $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
 
-        $activeTab = '';
-        $dateFilter = request('date_filter');
-
-        $monthFilter = request('month_filter');
-        $yearFilter = request('year_filter');
-
-        $startFilter = request('start');
-        $endFilter = request('end');
-
-        if ($dateFilter || ($monthFilter && $yearFilter) || ($startFilter && $endFilter)) {
-                $activeTab = 'chart';
-        }
-
+        $activeTab = $this->getActiveTab();
 
         return view('income.index', compact('categories', 'totalIncome', 'activeTab', 'oldestYear'));
     }

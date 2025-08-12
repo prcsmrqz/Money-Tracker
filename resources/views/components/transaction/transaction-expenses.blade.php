@@ -32,8 +32,6 @@
         @enderror
     </div>
 
-
-
     <div class="flex flex-col space-y-1 mb-7">
         <p class="font-bold text-gray-600 dark:text-gray-400">
             CATEGORY:

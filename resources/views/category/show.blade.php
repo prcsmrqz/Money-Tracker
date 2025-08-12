@@ -25,8 +25,7 @@
                 <tbody>
                     @forelse ($transactions as $date => $dailyTransactions)
                         <tr class="bg-gray-100 border-b border-gray-300 rounded-md">
-                            <td colspan="5" class="px-4 py-3 ">
-
+                            <td colspan="{{ $category->type === 'income' ? '5' : '7' }}" class="px-4 py-3 ">
                                 <div
                                     class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 sm:gap-6 font-semibold text-sm sm:text-lg">
                                     <div class="text-black px-6 dark:text-gray-200 min-w-[140px]">
@@ -68,6 +67,32 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr class="bg-gray-100 border-b border-gray-400 font-medium">
+                            <td class="px-10 py-2 text-sm text-gray-600">
+                                TIME
+                            </td>
+                            <td class="px-5 py-2 text-sm text-gray-600">
+                                TYPE
+                            </td>
+                            @if ($category->type === 'expenses')
+                                <td class="px-4 py-2 text-sm text-gray-600">
+                                    SOURCE ACCOUNT
+                                </td>
+                                <td class="px-4 py-2 text-sm text-gray-600">
+                                    SOURCE TYPE
+                                </td>
+                            @endif
+                            <td class="px-3 py-2 text-sm text-gray-600">
+                                AMOUNT
+                            </td>
+                            <td class="px-4 py-2 text-sm text-gray-600">
+                                NOTE
+                            </td>
+                            <td class="px-8 py-2 text-sm text-gray-600">
+                                ACTIONS
+                            </td>
+                        </tr>
+
 
                         @forelse ($dailyTransactions as $transaction)
                             @php
@@ -88,6 +113,24 @@
                                         {{ $transaction->type }}
                                     </span>
                                 </td>
+                                @if ($category->type === 'expenses')
+                                    <td class="w-1/6 px-4 py-3 capitalize font-semibold">
+                                        <span
+                                            style="background-color: {{ $transaction->sourceIncomeCategory?->color ?? ($transaction->sourceSavingsAccount?->color ?? '') }};"
+                                            class="px-3 py-1 rounded-full text-sm inline-block text-white">
+                                            {{ $transaction->sourceIncomeCategory?->name ?? ($transaction->sourceSavingsAccount?->name ?? '') }}
+                                        </span>
+                                    </td>
+                                    <td class="w-1/6 px-4 py-3 capitalize font-semibold">
+                                        <span
+                                            class="{{ $transaction->sourceIncomeCategory
+                                                ? 'text-blue-600 bg-blue-100 dark:bg-blue-700'
+                                                : 'text-emerald-600 bg-emerald-100 dark:bg-emerald-700' }} px-3 py-1 rounded-full text-sm inline-block">
+                                            {{ $transaction->sourceIncomeCategory ? 'Income' : 'Savings' }}
+                                        </span>
+                                    </td>
+                                @endif
+
                                 <td class="w-1/6 px-4 py-3 whitespace-nowrap text-sm">
                                     {{ Auth::user()->currency_symbol }}
                                     {{ number_format($transaction->amount, 2) }}
@@ -114,7 +157,7 @@
                                             <x-heroicon-s-pencil-square class="w-4 h-4" />
                                         </button>
 
-                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" />
+                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :categories="$categories" />
                                     </div>
 
                                     <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
@@ -182,6 +225,20 @@
                             <div class="text-sm text-gray-600 dark:text-gray-300 break-words line-clamp-2">
                                 {{ $transaction->notes }}
                             </div>
+                            @if ($category->type === 'expenses')
+                                <div class="flex gap-4">
+                                    <div style="background-color: {{ $transaction->sourceIncomeCategory?->color ?? ($transaction->sourceSavingsAccount?->color ?? '') }};"
+                                        class="text-xs text-white px-4 py-1 rounded-full font-medium dark:text-gray-300 break-words line-clamp-2">
+                                        {{ $transaction->sourceIncomeCategory?->name ?? ($transaction->sourceSavingsAccount?->name ?? '') }}
+                                    </div>
+                                    <div
+                                        class="{{ $transaction->sourceIncomeCategory
+                                            ? 'text-blue-600 bg-blue-100 dark:bg-blue-700'
+                                            : 'text-emerald-600 bg-emerald-100 dark:bg-emerald-700' }} px-4 py-1 rounded-full font-bold text-xs break-words line-clamp-2">
+                                        {{ $transaction->sourceIncomeCategory ? 'Income' : 'Savings' }}
+                                    </div>
+                                </div>
+                            @endif
                             <div class="mt-3 flex gap-3 text-sm flex gap-2">
                                 <div x-data="{
                                     open: {{ session('error_transaction_id') == $transaction->id ? 'true' : 'false' }},

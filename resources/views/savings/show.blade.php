@@ -50,6 +50,24 @@
                             </td>
                         </tr>
 
+                        <tr class="bg-gray-100 border-b border-gray-400 font-medium">
+                            <td class="px-10 py-2 text-sm text-gray-600">
+                                TIME
+                            </td>
+                            <td class="px-5 py-2 text-sm text-gray-600">
+                                TYPE
+                            </td>
+                            <td class="px-3 py-2 text-sm text-gray-600">
+                                AMOUNT
+                            </td>
+                            <td class="px-4 py-2 text-sm text-gray-600">
+                                NOTE
+                            </td>
+                            <td class="px-20 py-2 text-sm text-gray-600">
+                                ACTIONS
+                            </td>
+                        </tr>
+
                         @forelse ($dailyTransactions as $transaction)
                             @php
                                 $typeClass = match ($transaction->type) {

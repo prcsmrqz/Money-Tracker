@@ -70,6 +70,7 @@ class TransactionRequest extends FormRequest
                                 ->sum('amount');
 
                             $totalSavings = $user->transactions()
+                                ->where('category_id', $sourceType)
                                 ->where('type', 'savings')
                                 ->sum('amount');
 
@@ -92,10 +93,12 @@ class TransactionRequest extends FormRequest
                                 ->sum('amount');
 
                             $totalExpenses = $user->transactions()
+                                ->where('source_income', $this->input('category_id'))
                                 ->where('type', 'expenses')
                                 ->sum('amount');
                             
                             $totalSavings = $user->transactions()
+                                ->where('category_id', $this->input('category_id'))
                                 ->where('type', 'savings')
                                 ->sum('amount');
 

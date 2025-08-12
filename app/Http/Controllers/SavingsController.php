@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ActiveTab;
 use Illuminate\Http\Request;
 use App\Models\SavingsAccount;
 use Illuminate\Support\Facades\Storage;
@@ -15,21 +16,21 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 class SavingsController extends Controller
 {
+    use ActiveTab; //traits for active tab
     public function index() 
     {
-        $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name', 'ASC')->paginate(15);
-        foreach( $savingsAccounts as $savingsAccount) {
-            $savings = auth()->user()->transactions()
-                            ->where('savings_account_id', $savingsAccount->id)
-                            ->where('type', 'savings')
-                            ->sum('amount');
-                
-            $expenses = auth()->user()->transactions()
-                            ->where('source_savings', $savingsAccount->id)
-                            ->where('type', 'expenses')
-                            ->sum('amount');
+        $savingsAccounts = auth()->user()->savingsAccounts()
+            ->withSum(['transactions as savings_total' => function ($query) {
+                $query->where('type', 'savings');
+            }], 'amount')
+            ->withSum(['expenseTransactionsFromSavings as expenses_total' => function ($query) {
+                $query->where('type', 'expenses');
+            }], 'amount')
+            ->orderBy('name', 'ASC')
+            ->paginate(15);
 
-            $savingsAccount->totalSavings =  $savings - $expenses;
+        foreach ($savingsAccounts as $account) {
+            $account->totalSavings = ($account->savings_total ?? 0) - ($account->expenses_total ?? 0);
         }
 
         $totalIncome = auth()->user()->transactions()->where('type', 'savings')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
@@ -42,23 +43,12 @@ class SavingsController extends Controller
 
         //chart
         $oldestDate = auth()->user()->transactions()
-            ->where('type', 'income')
+            ->where('type', 'savings')
             ->orderBy('date', 'asc')
             ->value('date');
         $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
 
-        $activeTab = '';
-        $dateFilter = request('date_filter');
-
-        $monthFilter = request('month_filter');
-        $yearFilter = request('year_filter');
-
-        $startFilter = request('start');
-        $endFilter = request('end');
-
-        if ($dateFilter || ($monthFilter && $yearFilter) || ($startFilter && $endFilter)) {
-                $activeTab = 'chart';
-        }
+        $activeTab = $this->getActiveTab();
 
         return view('savings.index', compact('savingsAccounts', 'totalIncome', 'activeTab', 'oldestYear', 'totalSavings', 'top3Savings'));
     }

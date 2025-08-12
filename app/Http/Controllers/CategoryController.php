@@ -18,24 +18,17 @@ class CategoryController extends Controller
     
     public function show(Category $category)
     {
-       // Get base query
-    
-    
-    if ($category->type === 'income') {
-        $baseQuery = auth()->user()->transactions()
-            ->where(function ($query) use ($category) {
-                $query->where('category_id', $category->id)
-                    ->orWhere('source_income', $category->id);
-            });
-
-            
-
-
-
-    } else {
-        $baseQuery = auth()->user()->transactions()
-            ->where('category_id', $category->id);
-    }
+       // Get base query if income then get the source income
+        if ($category->type === 'income') {
+            $baseQuery = auth()->user()->transactions()
+                ->where(function ($query) use ($category) {
+                    $query->where('category_id', $category->id)
+                        ->orWhere('source_income', $category->id);
+                });
+        } else {
+            $baseQuery = auth()->user()->transactions()
+                ->where('category_id', $category->id);
+        }
 
     // Get oldest date's year
     $oldestDate = (clone $baseQuery)->orderBy('date', 'asc')->value('date');
@@ -43,7 +36,7 @@ class CategoryController extends Controller
 
     // Build the main query (filtered with Spatie QueryBuilder)
     $query = QueryBuilder::for($baseQuery)
-        ->with('category')
+        ->with(['category', 'savingsAccounts', 'sourceIncomeCategory', 'sourceSavingsAccount'])
         ->allowedFilters([
             AllowedFilter::callback('search', function ($query, $value) {
                 $query->where(function ($q) use ($value) {
@@ -102,16 +95,17 @@ class CategoryController extends Controller
             ];
         }
         
-
         $paginated->setCollection($groupedTransactions);
 
 
         $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name', 'ASC')->get();
+        $categoriesType = auth()->user()->categories()->get();
 
         return view('category.show', [
             'transactions' => $paginated,
             'sumByTypePerDate' => $sumByTypePerDate,
             'category' => $category,
+            'categories' => $categoriesType,
             'oldestYear' => $oldestYear,
             'savingsAccounts' => $savingsAccounts,
         ]);

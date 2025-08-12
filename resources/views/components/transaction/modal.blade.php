@@ -40,41 +40,40 @@
                         class="w-full ps-14 p-2.5 border border-gray-400 text-black rounded-lg dark:bg-gray-700 dark:text-white" />
                 </div>
                 @error('amount', 'update')
-                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                    <div class="block mt-1 text-red-500 text-sm break-words whitespace-normal">
+                        {{ $message }}
+                    </div>
                 @enderror
             </div>
 
-            @if ($transaction->type == 'expenses' && $savingsAccounts)
+            @if ($transaction->type == 'expenses' && ($savingsAccounts || $categories))
                 <div class="flex flex-col space-y-1 mb-7">
                     <p class="font-bold text-gray-600 dark:text-gray-400">
                         SOURCE:
                     </p>
 
                     @php
-                        $defaultSourceTypeId = old('source_type', $transaction->source_type ?? null);
-                        $defaultSelected = null;
-
-                        if ($defaultSourceTypeId == 0) {
-                            $defaultSelected = ['id' => 0, 'name' => 'REMAINING INCOME', 'icon' => null];
+                        if ($transaction->source_income) {
+                            $selectedSource = $categories->firstWhere('id', $transaction->source_income);
+                            $sourceType = 'income';
                         } else {
-                            $selectedSavings = $savingsAccounts->firstWhere('id', $defaultSourceTypeId);
-                            if ($selectedSavings) {
-                                $defaultSelected = [
-                                    'id' => $selectedSavings->id,
-                                    'name' => $selectedSavings->name,
-                                    'icon' => $selectedSavings->icon
-                                        ? asset('storage/' . $selectedSavings->icon)
-                                        : null,
-                                ];
-                            }
+                            $selectedSource = $savingsAccounts->firstWhere('id', $transaction->source_savings);
+                            $sourceType = 'savings';
                         }
+
+                        $defaultSource = [
+                            'id' => $selectedSource->id ?? null,
+                            'type' => $selectedSource->type ?? null,
+                            'name' => $selectedSource->name ?? null,
+                            'icon' => isset($selectedSource->icon) ? asset('storage/' . $selectedSource->icon) : null,
+                        ];
                     @endphp
 
-                    <div x-data="{ open: false, selected: @js($defaultSelected) }" class="relative">
-                        <button type="button" @click="open = !open" :disabled="!edit"
-                            class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center dark:bg-gray-800 dark:text-white">
-                            <div class="flex items-center gap-2">
-                                <template x-if="selected">
+                    <div x-data="{ open: false, selected: @js($defaultSource) }" class="relative">
+                        <button type="button" :disabled="true"
+                            class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center dark:bg-gray-800 dark:text-white cursor-not-allowed">
+                            <div class="flex items-center gap-2 text-black">
+                                <template x-if="selected && selected.name">
                                     <div class="flex items-center gap-2">
                                         <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
                                             <template x-if="selected.icon">
@@ -86,56 +85,18 @@
                                             </template>
                                         </div>
                                         <span x-text="selected.name"></span>
+                                        -
+                                        <span x-text="selected.type" class="capitalize"></span>
                                     </div>
                                 </template>
-                                <template x-if="!selected">
-                                    <span>Select a source type</span>
-                                </template>
                             </div>
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
                         </button>
 
-                        <div x-show="open" @click.away="open = false" @click.stop
-                            class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
-                            <div @click.prevent.stop="selected = { id: 0, name: 'REMAINING INCOME', icon: null }; open = false"
-                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                                <div
-                                    class="w-6 h-6 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-                                    <x-heroicon-o-photo class="w-6 h-6 text-black" />
-                                </div>
-                                <span>REMAINING INCOME</span>
-                            </div>
-
-                            @foreach ($savingsAccounts as $savings)
-                                <div @click.prevent.stop="selected = {
-                            id: {{ $savings->id }},
-                            name: '{{ addslashes($savings->name) }}',
-                            icon: {{ $savings->icon ? '\'' . asset('storage/' . $savings->icon) . '\'' : 'null' }}
-                        }; open = false"
-                                    class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                                    <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
-                                        @if ($savings->icon)
-                                            <img src="{{ asset('storage/' . $savings->icon) }}" alt="icon"
-                                                class="w-full h-full object-cover">
-                                        @else
-                                            <x-heroicon-o-photo class="w-6 h-6 text-black" />
-                                        @endif
-                                    </div>
-                                    <span>{{ $savings->name }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <input type="hidden" name="source_type" :value="selected?.id ?? ''">
-                        @error('source_type', 'expensesForm')
-                            <div class="text-red-500 text-sm">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                        <input type="hidden" name="{{ $sourceType === 'income' ? 'source_income' : 'source_savings' }}"
+                            value="{{ $defaultSource['id'] }}">
+                        <input type="hidden" name="source_type" value="{{ $sourceType }}">
                     </div>
+
                 </div>
             @endif
 

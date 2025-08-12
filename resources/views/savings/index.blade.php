@@ -67,11 +67,11 @@
 
                 <div class="rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-6">
                     <p class="text-base sm:text-3xl text-start font-bold mb-3 text-gray-700 dark:text-gray-300">
-                        Most Funded Savings:
+                        Most Funded Net Savings:
                     </p>
 
                     <ol class="px-1 sm:px-14 font-bold text-sm sm:text-3xl space-y-2">
-                        @forelse ($top3Savings as $savings)
+                        @forelse ($top3Savings->filter(fn($s) => $s->totalSavings != 0) as $savings)
                             <li class="grid grid-cols-2 items-center gap-2">
                                 <span class="flex items-center gap-1 overflow-hidden">
                                     <span>{{ $loop->iteration }}.</span>

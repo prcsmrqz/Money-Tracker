@@ -2,48 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ActiveTab;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class ExpensesController extends Controller
 {
+    use ActiveTab;
     public function index()
     {
         $user = auth()->user();
         //icons
-        $categories = $user->categories()->where('type', 'expenses')->orderBy('name', 'ASC')->paginate(15);
+        $categoriesQuery = $user->categories()
+            ->where('type', 'expenses')
+            ->withSum(['transactions as total' => function ($query) {
+                $query->where('type', 'expenses');
+            }], 'amount')
+            ->orderBy('name', 'ASC');
 
-        foreach ($categories as $category) {
-            $category->totalIncome = $user->transactions()
-                ->where('type', 'expenses')
-                ->where('category_id', $category->id)
-                ->sum('amount');
-        }
-        $totalIncome = $user->transactions()->where('type', 'expenses')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        $top3Expenses = (clone $categoriesQuery)->get()->sortByDesc('total')->take(3);
 
-        //chart
+        $categories = $categoriesQuery->paginate(15);
+
+        $totalSpent = $user->transactions()->where('type', 'expenses')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+
         $oldestDate = $user->transactions()
             ->where('type', 'expenses')
             ->orderBy('date', 'asc')
             ->value('date');
         $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
 
-        $activeTab = '';
-        $dateFilter = request('date_filter');
-
-        $monthFilter = request('month_filter');
-        $yearFilter = request('year_filter');
-
-        $startFilter = request('start');
-        $endFilter = request('end');
-
-        if ($dateFilter || ($monthFilter && $yearFilter) || ($startFilter && $endFilter)) {
-                $activeTab = 'chart';
-        }
-
+        $activeTab = $this->getActiveTab();
         
-
-        return view('expenses.index', compact('categories', 'totalIncome', 'activeTab', 'oldestYear'));
+        return view('expenses.index', compact('categories', 'totalSpent', 'activeTab', 'oldestYear', 'top3Expenses'));
     }
 
     public function expensesChart(Request $request)

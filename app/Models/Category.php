@@ -24,5 +24,11 @@ class Category extends Model
     public function transactions() {
         return $this->hasMany(Transaction::class);
     }
+
+    public function expenseTransactionsFromIncome()
+    {
+        return $this->hasMany(Transaction::class, 'source_income');
+    }
+
     
 }

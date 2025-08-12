@@ -42,7 +42,41 @@
             </div>
 
             {{-- Monthly summary --}}
+            <div x-show="activeTab === 'icon'" class="grid grid-cols-2 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
+                <div
+                    class="rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-8 flex flex-col items-center justify-center text-center">
+                    <p class="text-lg sm:text-2xl font-bold mb-3 text-gray-700">For this month you spent:</p>
+                    <p class="text-3xl sm:text-6xl font-bold text-black dark:text-gray-300">
+                        {{ Auth::user()->currency_symbol }}
+                        {{ floor($totalSpent ?? 0) != ($totalSpent ?? 0) ? number_format($totalSpent ?? 0, 2) : number_format($totalSpent ?? 0) }}
+                    </p>
+                </div>
 
+                <div class="rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-6">
+                    <p class="text-base sm:text-3xl text-start font-bold mb-3 text-gray-700 dark:text-gray-300">
+                        Most Funded Net Savings:
+                    </p>
+
+                    <ol class="px-1 sm:px-14 font-bold text-sm sm:text-3xl space-y-2">
+                        @forelse ($top3Expenses->filter(fn($s) => $s->total != 0) as $expenses)
+                            <li class="grid grid-cols-2 items-center gap-2">
+                                <span class="flex items-center gap-1 overflow-hidden">
+                                    <span>{{ $loop->iteration }}.</span>
+                                    <strong
+                                        class="truncate block max-w-[130px] sm:max-w-full overflow-hidden text-ellipsis">
+                                        {{ $expenses->name }}
+                                    </strong>
+                                </span>
+                                <span class="text-right whitespace-nowrap">
+                                    ₱{{ number_format($expenses->total, 2) }}
+                                </span>
+                            </li>
+                        @empty
+                            <p class="text-xs sm:text-base">No data found.</p>
+                        @endforelse
+                    </ol>
+                </div>
+            </div>
         </div>
     </div>
 

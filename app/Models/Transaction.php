@@ -38,6 +38,17 @@ class Transaction extends Model
         return $this->belongsTo(SavingsAccount::class);
     }
 
+    public function sourceIncomeCategory()
+    {
+        return $this->belongsTo(Category::class, 'source_income');
+    }
+
+    public function sourceSavingsAccount()
+    {
+        return $this->belongsTo(SavingsAccount::class, 'source_savings');
+    }
+
+
     public function sourceAccount()
     {
         return $this->belongsTo(SavingsAccount::class, 'source_type');
