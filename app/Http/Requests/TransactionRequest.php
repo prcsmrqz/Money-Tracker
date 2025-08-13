@@ -29,6 +29,7 @@ class TransactionRequest extends FormRequest
             'amount' => [
                 'required',
                 'numeric',
+                'min: 1',
                 Rule::when( $this->input('type') === 'expenses' && $this->input('source_type') === 'savings',
                     function () {
                         return function ($attribute, $value, $fail) {

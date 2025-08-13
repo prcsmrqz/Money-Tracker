@@ -33,7 +33,7 @@ class Transaction extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function savingsAccounts()
+    public function savingsAccount()
     {
         return $this->belongsTo(SavingsAccount::class);
     }

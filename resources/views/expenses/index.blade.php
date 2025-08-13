@@ -42,40 +42,98 @@
             </div>
 
             {{-- Monthly summary --}}
-            <div x-show="activeTab === 'icon'" class="grid grid-cols-2 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
+            <div x-show="activeTab === 'icon'"
+                class="grid grid-cols-2 md:grid-cols-3 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
                 <div
-                    class="rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-8 flex flex-col items-center justify-center text-center">
-                    <p class="text-lg sm:text-2xl font-bold mb-3 text-gray-700">For this month you spent:</p>
-                    <p class="text-3xl sm:text-6xl font-bold text-black dark:text-gray-300">
+                    class=" rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6 flex flex-col justify-center">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-green-600 dark:text-gray-300">
+                        Monthly spent
+                    </p>
+                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
+                        {{ Auth::user()->currency_symbol }}
+                        {{ floor($monthlySpent ?? 0) != ($monthlySpent ?? 0) ? number_format($monthlySpent ?? 0, 2) : number_format($monthlySpent ?? 0) }}
+                    </p>
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-red-600 dark:text-gray-300">
+                        Overall spent
+                    </p>
+                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
                         {{ Auth::user()->currency_symbol }}
                         {{ floor($totalSpent ?? 0) != ($totalSpent ?? 0) ? number_format($totalSpent ?? 0, 2) : number_format($totalSpent ?? 0) }}
                     </p>
                 </div>
+                <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black dark:text-gray-300">
+                        Recent Transactions
+                    </p>
+                    <table class="table w-full text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
+                        @forelse ($recentTransactions as $transaction)
+                            <tr onClick="window.location.href='{{ route('category.show', $transaction->category->id) }}'"
+                                class="border-b border-gray-200 text-center text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                <td class="hidden lg:table-cell w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    {{ $transaction->date->format('F d, Y') }}
+                                </td>
+                                <td class="w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    {{ Auth::user()->currency_symbol }}
+                                    {{ number_format($transaction->amount, 2) }}
+                                </td>
+                                <td class="w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    <span class="px-3 py-1 rounded-full font-medium"
+                                        style="background-color: {{ $transaction->category->color }}2A; color: {{ $transaction->category->color }}">
+                                        {{ $transaction->category->name }} </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <div class="flex justify-center items-center h-32">
+                                <p class="text-sm md:text-base italic text-gray-400">No transactions found.</p>
+                            </div>
+                        @endforelse
+                    </table>
+                </div>
 
-                <div class="rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-6">
-                    <p class="text-base sm:text-3xl text-start font-bold mb-3 text-gray-700 dark:text-gray-300">
-                        Most Funded Net Savings:
+                <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black dark:text-gray-300">
+                        Top Spending Categories
                     </p>
 
-                    <ol class="px-1 sm:px-14 font-bold text-sm sm:text-3xl space-y-2">
-                        @forelse ($top3Expenses->filter(fn($s) => $s->total != 0) as $expenses)
-                            <li class="grid grid-cols-2 items-center gap-2">
-                                <span class="flex items-center gap-1 overflow-hidden">
-                                    <span>{{ $loop->iteration }}.</span>
+                    @php
+                        $max = $top5Expenses->sum('total');
+                    @endphp
+
+                    <ul>
+                        @forelse ($top5Expenses as $expenses)
+                            @php
+                                $value = $expenses->total;
+                                $percentage = $max > 0 ? ($value / $max) * 100 : 0;
+                            @endphp
+                            <li class="mb-5">
+                                <span class="flex justify-between ">
                                     <strong
-                                        class="truncate block max-w-[130px] sm:max-w-full overflow-hidden text-ellipsis">
-                                        {{ $expenses->name }}
+                                        class="font-bold capitalize truncate max-w-[50%] sm:max-w-[60%] md:max-w-none text-gray-800">
+                                        {{ ucfirst(strtolower($expenses->name)) }}
                                     </strong>
+
+                                    <span class="font-medium whitespace-nowrap text-gray-500 text-xs sm:text-sm">
+                                        ₱{{ number_format($expenses->total, 2) }}
+                                        <span class="hidden sm:inline"> spent of
+                                            {{ floor($max) != $max ? number_format($max, 2) : number_format($max, 0) }}</span>
+                                    </span>
                                 </span>
-                                <span class="text-right whitespace-nowrap">
-                                    ₱{{ number_format($expenses->total, 2) }}
-                                </span>
+
+                                <div class="w-full rounded-full h-2"
+                                    style="background-color: {{ $expenses->color }}4A;">
+                                    <div class="h-2 rounded-full"
+                                        style="background-color: {{ $expenses->color }}; width: {{ $percentage }}%">
+                                    </div>
+                                </div>
                             </li>
                         @empty
-                            <p class="text-xs sm:text-base">No data found.</p>
+                            <div class="flex justify-center items-center h-32">
+                                <p class="text-sm md:text-base italic text-gray-400">No data found.</p>
+                            </div>
                         @endforelse
-                    </ol>
+                    </ul>
                 </div>
+
             </div>
         </div>
     </div>

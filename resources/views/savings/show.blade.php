@@ -113,7 +113,7 @@
                                             <x-heroicon-s-pencil-square class="w-4 h-4" />
                                         </button>
 
-                                        <x-transaction.modal :transaction="$transaction" />
+                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :categories="$categories" />
                                     </div>
 
                                     <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
@@ -166,6 +166,8 @@
                             };
                         @endphp
 
+
+
                         <div class="border rounded-lg p-4 bg-gray-50 dark:bg-gray-700 shadow">
                             <div class="flex justify-between mb-2">
                                 <span
@@ -194,7 +196,7 @@
                                         <x-heroicon-s-pencil-square class="w-4 h-4" />
                                     </button>
 
-                                    <x-transaction.modal :transaction="$transaction" />
+                                    <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :categories="$categories" />
                                 </div>
 
                                 <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"

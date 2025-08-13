@@ -22,7 +22,7 @@ class UpdateTransactionRequest extends FormRequest
             'amount' => [
                 'required',
                 'numeric',
-
+                'min: 1',
                 // Expenses from savings
                 Rule::when(
                     $request->input('type') === 'expenses' && $request->input('source_type') === 'savings',
@@ -31,8 +31,6 @@ class UpdateTransactionRequest extends FormRequest
                             $sourceType = $request->input('source_savings');
                             $id = $request->route('transaction') ?? $request->route('id') ?? $request->input('id');
                             $user = auth()->user();
-                            logger()->info('Transaction ID for validation: ' . $id);
-
 
                             $totalSavings = $user->transactions()
                                 ->where('savings_account_id', $sourceType)
@@ -47,7 +45,6 @@ class UpdateTransactionRequest extends FormRequest
                                 
 
                             $remainingSavings = $totalSavings - $totalExpenses;
-                            
 
                             if ($value > $remainingSavings) {
                                 $fail(

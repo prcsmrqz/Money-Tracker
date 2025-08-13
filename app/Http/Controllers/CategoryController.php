@@ -36,7 +36,7 @@ class CategoryController extends Controller
 
     // Build the main query (filtered with Spatie QueryBuilder)
     $query = QueryBuilder::for($baseQuery)
-        ->with(['category', 'savingsAccounts', 'sourceIncomeCategory', 'sourceSavingsAccount'])
+        ->with(['category', 'savingsAccount', 'sourceIncomeCategory', 'sourceSavingsAccount'])
         ->allowedFilters([
             AllowedFilter::callback('search', function ($query, $value) {
                 $query->where(function ($q) use ($value) {
@@ -98,7 +98,7 @@ class CategoryController extends Controller
         $paginated->setCollection($groupedTransactions);
 
 
-        $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name', 'ASC')->get();
+        $savingsAccounts = auth()->user()->savingsAccount()->orderBy('name', 'ASC')->get();
         $categoriesType = auth()->user()->categories()->get();
 
         return view('category.show', [

@@ -15,7 +15,7 @@ class IncomeController extends Controller
     {
         $user = auth()->user();
 
-        $categories = $user->categories()
+        $categoriesQuery = $user->categories()
             ->where('type', 'income')
             ->withSum(['transactions as income_total' => function ($query) {
                 $query->where('type', 'income');
@@ -27,15 +27,23 @@ class IncomeController extends Controller
             ->withSum(['transactions as savings_total' => function ($query) {
                 $query->where('type', 'savings');
                 $query->whereColumn('category_id', 'categories.id'); 
-            }], 'amount')
-            ->orderBy('name', 'ASC')
-            ->paginate(15);
+            }], 'amount');
+
+        $top5Income = (clone $categoriesQuery)
+                        ->having('income_total', '!=', 0) 
+                        ->orderByDesc('income_total') 
+                        ->limit(5)             
+                        ->get();
+        
+        $categories =  $categoriesQuery->orderBy('name', 'ASC')->paginate(15);
 
         foreach ($categories as $category) {
             $category->total = ($category->income_total ?? 0) - ($category->expenses_total ?? 0) - ($category->savings_total ?? 0);
         }
 
-        $totalIncome = $user->transactions()->where('type', 'income')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        $recentTransactions = $user->transactions()->where('type', 'income')->orderBy('date', 'desc')->take(5)->with('category')->get();
+        $monthlyIncome = $user->transactions()->where('type', 'income')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        $totalIncome = $user->transactions()->where('type', 'income')->sum('amount');
 
         $oldestDate = $user->transactions()
             ->where('type', 'income')
@@ -45,7 +53,7 @@ class IncomeController extends Controller
 
         $activeTab = $this->getActiveTab();
 
-        return view('income.index', compact('categories', 'totalIncome', 'activeTab', 'oldestYear'));
+        return view('income.index', compact('categories', 'totalIncome', 'activeTab', 'oldestYear', 'top5Income', 'recentTransactions', 'monthlyIncome'));
     }
 
     public function incomeChart(Request $request)

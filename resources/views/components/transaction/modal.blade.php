@@ -113,6 +113,9 @@
             <input type="hidden" name="category_id" value="{{ $transaction->category_id }}">
             <input type="hidden" name="savings_account_id" value="{{ $transaction->savings_account_id }}">
             <input type="hidden" name="type" value="{{ $transaction->type }}">
+            <input type="hidden" name="url" value="{{ url()->current() }}">
+
+
 
             <template x-if="edit">
                 <div class="flex flex-col items-center mt-6">

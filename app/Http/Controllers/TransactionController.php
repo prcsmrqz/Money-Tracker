@@ -16,7 +16,7 @@ class TransactionController extends Controller
     {
         $categories = auth()->user()->categories()->where('type', 'income')->orderBy('name', 'ASC')->get();
         $expensesCategories = auth()->user()->categories()->where('type', 'expenses')->orderBy('name', 'ASC')->get();
-        $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name','ASC')->get();
+        $savingsAccounts = auth()->user()->savingsAccount()->orderBy('name','ASC')->get();
         $activeTab = session('activeTab', 'income'); 
         
         return view("transaction.index", compact('categories', 'savingsAccounts', 'activeTab', 'expensesCategories'));
@@ -38,22 +38,19 @@ class TransactionController extends Controller
         $transaction = auth()->user()->transactions()->findOrFail($id);
 
         try {
+            $currentUrl = $request->input('url');
+
             $validated = app(UpdateTransactionRequest::class)->setContainer(app())->merge($request->all())->validateResolved();
             
             $data = validator($request->all(), (new UpdateTransactionRequest())->rules())->validate();
             
             $transaction->update($data);
 
-            if ($transaction->category_id) {
-                return redirect()->route('category.show', $transaction->category_id)
-                    ->with('success', 'Transaction updated successfully.');
-            } elseif ($transaction->savings_account_id) {
-                return redirect()->route('savings.show', $transaction->savings_account_id)
-                    ->with('success', 'Transaction updated successfully.');
-            }
+            return redirect($currentUrl)->with('success', 'Transaction updated successfully.');
+            
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()
-                ->route('category.show', $transaction->category_id)
+            $currentUrl = $request->input('url') ?? route('category.show', $transaction->category_id);
+            return redirect($currentUrl)
                 ->withErrors($e->validator, 'update')
                 ->withInput()
                 ->with('error_transaction_id', $id);

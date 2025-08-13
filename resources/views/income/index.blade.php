@@ -42,15 +42,95 @@
             </div>
 
             {{-- Monthly summary --}}
-            <div x-show="activeTab === 'icon'" class="px-4 sm:px-6 lg:px-10 mt-8 mb-5">
-                <div class="mt-5 rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-10 text-center">
-                    <p class="text-xl sm:text-5xl font-bold text-gray-700 dark:text-gray-300">
-                        <span>You earned</span>
+            <div x-show="activeTab === 'icon'"
+                class="grid grid-cols-2 md:grid-cols-3 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
+                <div
+                    class=" rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6 flex flex-col justify-center">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-green-600 dark:text-gray-300">
+                        Monthly income
+                    </p>
+                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
+                        {{ Auth::user()->currency_symbol }}
+                        {{ floor($monthlyIncome ?? 0) != ($monthlyIncome ?? 0) ? number_format($monthlyIncome ?? 0, 2) : number_format($monthlyIncome ?? 0) }}
+                    </p>
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-red-600 dark:text-gray-300">
+                        Overall income
+                    </p>
+                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
                         {{ Auth::user()->currency_symbol }}
                         {{ floor($totalIncome ?? 0) != ($totalIncome ?? 0) ? number_format($totalIncome ?? 0, 2) : number_format($totalIncome ?? 0) }}
-                        <span>this month!</span>
                     </p>
                 </div>
+                <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black dark:text-gray-300">
+                        Recent Transactions
+                    </p>
+                    <table class="table w-full text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
+                        @forelse ($recentTransactions as $transaction)
+                            <tr onClick="window.location.href='{{ route('category.show', $transaction->category->id) }}'"
+                                class="border-b border-gray-200 text-center text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                <td class="hidden lg:table-cell w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    {{ $transaction->date->format('F d, Y') }}
+                                </td>
+                                <td class="w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    {{ Auth::user()->currency_symbol }}
+                                    {{ number_format($transaction->amount, 2) }}
+                                </td>
+                                <td class="w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    <span class="px-3 py-1 rounded-full font-medium"
+                                        style="background-color: {{ $transaction->category->color }}2A; color: {{ $transaction->category->color }}">
+                                        {{ $transaction->category->name }} </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <p> No transactions found. </p>
+                        @endforelse
+                    </table>
+                </div>
+
+                <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black dark:text-gray-300">
+                        Top Earning Categories
+                    </p>
+
+                    @php
+                        $max = $top5Income->sum('income_total');
+                    @endphp
+
+                    <ul>
+                        @forelse ($top5Income as $income)
+                            @php
+                                $value = $income->income_total;
+                                $percentage = $max > 0 ? ($value / $max) * 100 : 0;
+                            @endphp
+                            <li class="mb-3">
+                                <span class="flex justify-between ">
+                                    <strong
+                                        class="font-bold capitalize truncate max-w-[50%] sm:max-w-[60%] md:max-w-none text-gray-800">
+                                        {{ ucfirst(strtolower($income->name)) }}
+                                    </strong>
+
+                                    <span class="font-medium whitespace-nowrap text-gray-500 text-xs sm:text-sm">
+                                        ₱{{ number_format($income->income_total, 2) }}
+                                        <span class="hidden sm:inline"> spent of
+                                            {{ floor($max) != $max ? number_format($max, 2) : number_format($max, 0) }}</span>
+                                    </span>
+                                </span>
+
+                                <div class="w-full rounded-full h-2" style="background-color: {{ $income->color }}4A;">
+                                    <div class="h-2 rounded-full"
+                                        style="background-color: {{ $income->color }}; width: {{ $percentage }}%">
+                                    </div>
+                                </div>
+                            </li>
+                        @empty
+                            <div class="flex justify-center items-center h-32">
+                                <p class="text-sm md:text-base italic text-gray-400">No data found.</p>
+                            </div>
+                        @endforelse
+                    </ul>
+                </div>
+
             </div>
         </div>
     </div>
