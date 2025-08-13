@@ -28,9 +28,9 @@
                         <label
                             class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
                             {{ Auth::user()->currency_symbol }}
-                            {{ floor($category->totalIncome ?? 0) != ($category->totalIncome ?? 0)
-                                ? number_format($category->totalIncome ?? 0, 2)
-                                : number_format($category->totalIncome ?? 0) }}
+                            {{ floor($category->total ?? 0) != ($category->total ?? 0)
+                                ? number_format($category->total ?? 0, 2)
+                                : number_format($category->total ?? 0) }}
                         </label>
                     </div>
                 </div>

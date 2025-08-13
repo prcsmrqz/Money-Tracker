@@ -3,67 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Traits\ActiveTab;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Requests\CategoryRequest;
+use Carbon\Carbon;
 
-class IncomeController extends Controller
+class ExpensesController extends Controller
 {
     use ActiveTab;
-
     public function index()
     {
         $user = auth()->user();
-
+        //icons
         $categoriesQuery = $user->categories()
-            ->where('type', 'income')
-            ->withSum(['transactions as income_total' => function ($query) {
-                $query->where('type', 'income');
-            }], 'amount')
-            ->withSum(['expenseTransactionsFromIncome as expenses_total' => function ($query) {
+            ->where('type', 'expenses')
+            ->withSum(['transactions as total' => function ($query) {
                 $query->where('type', 'expenses');
-                $query->whereColumn('source_income', 'categories.id'); 
-            }], 'amount')
-            ->withSum(['transactions as savings_total' => function ($query) {
-                $query->where('type', 'savings');
-                $query->whereColumn('category_id', 'categories.id'); 
             }], 'amount');
 
-        $top5Income = (clone $categoriesQuery)
-                        ->having('income_total', '!=', 0) 
-                        ->orderByDesc('income_total') 
+        $top5Expenses = (clone $categoriesQuery)
+                        ->having('total', '!=', 0) 
+                        ->orderByDesc('total') 
                         ->limit(5)             
                         ->get();
-        
-        $categories =  $categoriesQuery->orderBy('name', 'ASC')->paginate(15);
 
-        foreach ($categories as $category) {
-            $category->total = ($category->income_total ?? 0) - ($category->expenses_total ?? 0) - ($category->savings_total ?? 0);
-        }
+        $categories = $categoriesQuery->orderBy('name', 'ASC')->paginate(15);
 
-        $recentTransactions = $user->transactions()->where('type', 'income')->orderBy('date', 'desc')->take(5)->with('category')->get();
-        $monthlyIncome = $user->transactions()->where('type', 'income')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
-        $totalIncome = $user->transactions()->where('type', 'income')->sum('amount');
+        $recentTransactions = $user->transactions()->where('type', 'expenses')->orderBy('date', 'desc')->take(5)->with('category')->get();
+        $monthlySpent = $user->transactions()->where('type', 'expenses')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        $totalSpent = $user->transactions()->where('type', 'expenses')->sum('amount');
 
         $oldestDate = $user->transactions()
-            ->where('type', 'income')
+            ->where('type', 'expenses')
             ->orderBy('date', 'asc')
             ->value('date');
         $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
 
         $activeTab = $this->getActiveTab();
-
-        return view('income.index', compact('categories', 'totalIncome', 'activeTab', 'oldestYear', 'top5Income', 'recentTransactions', 'monthlyIncome'));
+        
+        return view('expenses.index', compact('categories', 'monthlySpent', 'totalSpent', 'activeTab', 'oldestYear', 'top5Expenses', 'recentTransactions'));
     }
 
-    public function incomeChart(Request $request)
+    public function expensesChart(Request $request)
     {
         $user = auth()->user();
-        $categories = $user->categories()->where('type', 'income')->orderBy('name')->get();
+        $categories = $user->categories()->where('type', 'expenses')->orderBy('name')->get();
 
         foreach ($categories as $category) {
             $transactions = $user->transactions()
-                ->where('type', 'income')
+                ->where('type', 'expenses')
                 ->where('category_id', $category->id);
 
             if ($request->date_filter === 'today') {
@@ -92,11 +78,9 @@ class IncomeController extends Controller
                 ]);
             }
 
-            $category->totalIncome = $transactions->sum('amount');
+            $category->totalExpenses = $transactions->sum('amount');
         }
 
         return response()->json($categories);
     }
-
-
 }

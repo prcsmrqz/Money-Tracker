@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ActiveTab;
 use Illuminate\Http\Request;
 use App\Models\SavingsAccount;
 use Illuminate\Support\Facades\Storage;
@@ -15,50 +16,56 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 class SavingsController extends Controller
 {
+    use ActiveTab; //traits for active tab
     public function index() 
     {
-        $savingsAccounts = auth()->user()->savingsAccounts()->orderBy('name', 'ASC')->paginate(15);
-        foreach( $savingsAccounts as $savingsAccount) {
-            $savingsAccount->totalSavings = auth()->user()->transactions()
-                ->where('savings_account_id', $savingsAccount->id)
-                ->where('type', 'savings')
-                ->sum('amount');
+        $savingsAccountsQuery = auth()->user()->savingsAccount()
+            ->withSum(['transactions as savings_total' => function ($query) {
+                $query->where('type', 'savings');
+            }], 'amount')
+            ->withSum(['expenseTransactionsFromSavings as expenses_total' => function ($query) {
+                $query->where('type', 'expenses');
+            }], 'amount');
+
+        $top5Savings = (clone $savingsAccountsQuery)
+                        ->having('savings_total', '!=', 0)
+                        ->orderByDesc('savings_total')
+                        ->limit(5)
+                        ->get();
+
+        $savingsAccounts = $savingsAccountsQuery->orderBy('name', 'ASC')->paginate(15);
+
+        foreach ($savingsAccounts as $account) {
+            $account->totalSavings = ($account->savings_total ?? 0) - ($account->expenses_total ?? 0);
         }
 
-        $totalIncome = auth()->user()->transactions()->where('type', 'savings')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
-
         $savings = auth()->user()->transactions()->where('type', 'savings')->sum('amount');
-        $expenses = auth()->user()->transactions()->where('type', 'expenses')->whereNotNull('savings_account_id')->sum('amount');
-        $totalSavings = $savings - $expenses;
+        $expenses = auth()->user()->transactions()->where('type', 'expenses')->whereNotNull('source_savings')->sum('amount');
+        $totalNetSavings = $savings - $expenses;
 
-        $top3Savings = $savingsAccounts->sortByDesc('totalSavings')->take(3);
-
+        $recentTransactions = auth()->user()->transactions()->where('type', 'savings')->orderBy('date', 'desc')->take(5)->with('savingsAccount')->get();
+        $monthlySavings = auth()->user()->transactions()->where('type', 'savings')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
+        $totalSavings = auth()->user()->transactions()->where('type', 'savings')->sum('amount');
+        
         //chart
         $oldestDate = auth()->user()->transactions()
-            ->where('type', 'income')
+            ->where('type', 'savings')
             ->orderBy('date', 'asc')
             ->value('date');
         $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
 
-        $activeTab = '';
-        $dateFilter = request('date_filter');
+        $activeTab = $this->getActiveTab();
 
-        $monthFilter = request('month_filter');
-        $yearFilter = request('year_filter');
-
-        $startFilter = request('start');
-        $endFilter = request('end');
-
-        if ($dateFilter || ($monthFilter && $yearFilter) || ($startFilter && $endFilter)) {
-                $activeTab = 'chart';
-        }
-
-        return view('savings.index', compact('savingsAccounts', 'totalIncome', 'activeTab', 'oldestYear', 'totalSavings', 'top3Savings'));
+        return view('savings.index', compact('savingsAccounts', 'totalNetSavings', 'activeTab', 'oldestYear', 'totalSavings', 'top5Savings', 'recentTransactions', 'monthlySavings'));
     }
 
     public function show (SavingsAccount $saving)
     {
-        $baseQuery = auth()->user()->transactions()->where('savings_account_id', $saving->id);
+        $baseQuery = auth()->user()->transactions()
+                        ->where(function ($query) use ($saving) {
+                            $query->where('savings_account_id', $saving->id)
+                                ->orWhere('source_savings', $saving->id);
+                        });
 
         // Get oldest date's year
         $oldestDate = (clone $baseQuery)->orderBy('date', 'asc')->value('date');
@@ -66,7 +73,7 @@ class SavingsController extends Controller
 
         // Build the main query (filtered with Spatie QueryBuilder)
         $query = QueryBuilder::for($baseQuery)
-            ->with('savingsAccounts')
+            ->with(['savingsAccount', 'sourceSavingsAccount'])
             ->allowedFilters([
                 AllowedFilter::callback('search', function ($query, $value) {
                     $query->where(function ($q) use ($value) {
@@ -125,13 +132,16 @@ class SavingsController extends Controller
             }
 
             $paginated->setCollection($groupedTransactions);
-
+            $allSavingsAccounts = auth()->user()->savingsAccount()->get();
+            $categories = auth()->user()->categories()->get();
 
             return view('savings.show', [
                 'transactions' => $paginated,
                 'sumByTypePerDate' => $sumByTypePerDate,
                 'savingsAccount' => $saving,
                 'oldestYear' => $oldestYear,
+                'savingsAccounts' => $allSavingsAccounts,
+                'categories' => $categories
             ]);
     }
 
@@ -150,7 +160,7 @@ class SavingsController extends Controller
         $savingsData['icon'] = $request->file('icon') ? $request->file('icon')->store('icons', 'public') : null;
         $savingsData['user_id'] = $data['user_id'];
 
-        $savings = auth()->user()->savingsAccounts()->create($savingsData);
+        $savings = auth()->user()->savingsAccount()->create($savingsData);
 
         $transactionData = [];
         $transactionData['date'] = $data['date'];
@@ -172,7 +182,7 @@ class SavingsController extends Controller
 
     public function update(UpdateSavingsRequest $request, $id)
     {
-        $savings = auth()->user()->savingsAccounts()->findOrFail($id);
+        $savings = auth()->user()->savingsAccount()->findOrFail($id);
 
         try {
             $data = $request->validated();
@@ -196,7 +206,7 @@ class SavingsController extends Controller
 
     public function destroy ($id)
     {
-        $savings = auth()->user()->savingsAccounts()->findOrFail($id);
+        $savings = auth()->user()->savingsAccount()->findOrFail($id);
         if ($savings) {
             if ($savings->icon && Storage::disk('public')->exists($savings->icon)) {
                 Storage::disk('public')->delete($savings->icon);
@@ -211,7 +221,7 @@ class SavingsController extends Controller
     public function savingsChart(Request $request)
     {
         $user = auth()->user();
-        $savings = $user->savingsAccounts()->orderBy('name')->get();
+        $savings = $user->savingsAccount()->orderBy('name')->get();
 
         foreach ($savings as $saving) {
             $transactions = $user->transactions()

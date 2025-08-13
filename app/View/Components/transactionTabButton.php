@@ -9,9 +9,13 @@ use Illuminate\View\Component;
 class transactionTabButton extends Component
 {
     public $categories;
-    public function __construct($categories)
+    public $savingsAccounts;
+    public $expensesCategories;
+    public function __construct($categories, $savingsAccounts, $expensesCategories)
     {
         $this->categories = $categories;
+        $this->savingsAccounts = $savingsAccounts;
+        $this->expensesCategories = $expensesCategories;
     }
 
     public function render(): View|Closure|string

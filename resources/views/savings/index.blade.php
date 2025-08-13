@@ -6,7 +6,7 @@
     <div class="px-4 sm:px-6 lg:px-10">
 
         <div x-data="{ open: {{ session()->get('errors') && session()->get('errors')->hasBag('create') ? 'true' : 'false' }} }">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 mb-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 mb-5 sm:mb-0">
                 <button @click="open = true"
                     class="w-full sm:w-auto flex items-center justify-center bg-emerald-500 text-white text-base 
                             sm:text-lg font-bold py-2 px-4 rounded-md hover:bg-emerald-600 transition duration-200">
@@ -44,51 +44,96 @@
             </div>
 
 
-            <div x-show="activeTab === 'icon'" class="px-4 sm:px-6 lg:px-10 mt-5">
-                <div class="mt-8 rounded-md shadow-md bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-10 text-center">
-                    <p class="text-xl sm:text-5xl font-bold text-gray-700 dark:text-gray-300">
-                        <span>Total Saved</span>
-                        {{ Auth::user()->currency_symbol }}
-                        {{ floor($totalIncome ?? 0) != ($totalIncome ?? 0) ? number_format($totalIncome ?? 0, 2) : number_format($totalIncome ?? 0) }}
-                        <span>this month!</span>
-                    </p>
-                </div>
-            </div>
-
-            <div x-show="activeTab === 'icon'" class="grid grid-cols-2 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-10">
+            <div x-show="activeTab === 'icon'"
+                class="grid grid-cols-2 md:grid-cols-3 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
                 <div
-                    class="rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-8 flex flex-col items-center justify-center text-center">
-                    <p class="text-lg sm:text-2xl font-bold mb-3 text-gray-700">Net Savings</p>
-                    <p class="text-3xl sm:text-6xl font-bold text-black dark:text-gray-300">
+                    class=" rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6 flex flex-col justify-center">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-green-600 dark:text-gray-300">
+                        Monthly savings
+                    </p>
+                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
+                        {{ Auth::user()->currency_symbol }}
+                        {{ floor($monthlySavings ?? 0) != ($monthlySavings ?? 0) ? number_format($monthlySavings ?? 0, 2) : number_format($monthlySavings ?? 0) }}
+                    </p>
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-red-600 dark:text-gray-300">
+                        Overall savings
+                    </p>
+                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
                         {{ Auth::user()->currency_symbol }}
                         {{ floor($totalSavings ?? 0) != ($totalSavings ?? 0) ? number_format($totalSavings ?? 0, 2) : number_format($totalSavings ?? 0) }}
                     </p>
                 </div>
+                <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black dark:text-gray-300">
+                        Recent Transactions
+                    </p>
+                    <table class="table w-full text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
+                        @forelse ($recentTransactions as $transaction)
+                            <tr onClick="window.location.href='{{ route('category.show', $transaction->savingsAccount->id) }}'"
+                                class="border-b border-gray-200 text-center text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                <td class="hidden lg:table-cell w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    {{ $transaction->date->format('F d, Y') }}
+                                </td>
+                                <td class="w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    {{ Auth::user()->currency_symbol }}
+                                    {{ number_format($transaction->amount, 2) }}
+                                </td>
+                                <td class="w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
+                                    <span class="px-3 py-1 rounded-full font-medium"
+                                        style="background-color: {{ $transaction->savingsAccount->color }}2A; color: {{ $transaction->savingsAccount->color }}">
+                                        {{ $transaction->savingsAccount->name }} </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <p> No transactions found. </p>
+                        @endforelse
+                    </table>
+                </div>
 
-                <div class="rounded-md shadow-lg bg-white dark:bg-gray-800 p-4 py-6 lg:p-6 lg:py-6">
-                    <p class="text-base sm:text-3xl text-start font-bold mb-3 text-gray-700 dark:text-gray-300">
-                        Most Funded Savings:
+                <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black dark:text-gray-300">
+                        Top Savings Categories
                     </p>
 
-                    <ol class="px-1 sm:px-14 font-bold text-sm sm:text-3xl space-y-2">
-                        @forelse ($top3Savings as $savings)
-                            <li class="grid grid-cols-2 items-center gap-2">
-                                <span class="flex items-center gap-1 overflow-hidden">
-                                    <span>{{ $loop->iteration }}.</span>
+                    @php
+                        $max = $top5Savings->sum('savings_total');
+                    @endphp
+
+                    <ul>
+                        @forelse ($top5Savings as $savings)
+                            @php
+                                $value = $savings->savings_total;
+                                $percentage = $max > 0 ? ($value / $max) * 100 : 0;
+                            @endphp
+                            <li class="mb-3">
+                                <span class="flex justify-between ">
                                     <strong
-                                        class="truncate block max-w-[130px] sm:max-w-full overflow-hidden text-ellipsis">
-                                        {{ $savings->name }}
+                                        class="font-bold capitalize truncate max-w-[50%] sm:max-w-[60%] md:max-w-none text-gray-800">
+                                        {{ ucfirst(strtolower($savings->name)) }}
                                     </strong>
+
+                                    <span class="font-medium whitespace-nowrap text-gray-500 text-xs sm:text-sm">
+                                        ₱{{ number_format($savings->savings_total, 2) }}
+                                        <span class="hidden sm:inline"> spent of
+                                            {{ floor($max) != $max ? number_format($max, 2) : number_format($max, 0) }}</span>
+                                    </span>
                                 </span>
-                                <span class="text-right whitespace-nowrap">
-                                    ₱{{ number_format($savings->totalSavings, 2) }}
-                                </span>
+
+                                <div class="w-full rounded-full h-2"
+                                    style="background-color: {{ $savings->color }}4A;">
+                                    <div class="h-2 rounded-full"
+                                        style="background-color: {{ $savings->color }}; width: {{ $percentage }}%">
+                                    </div>
+                                </div>
                             </li>
                         @empty
-                            <p class="text-xs sm:text-base">No data found.</p>
+                            <div class="flex justify-center items-center h-32">
+                                <p class="text-sm md:text-base italic text-gray-400">No data found.</p>
+                            </div>
                         @endforelse
-                    </ol>
+                    </ul>
                 </div>
+
             </div>
         </div>
     </div>

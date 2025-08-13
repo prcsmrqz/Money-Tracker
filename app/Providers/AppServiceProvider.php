@@ -30,8 +30,8 @@ class AppServiceProvider extends ServiceProvider
                 $user = auth()->user();
 
                 $expenses = $user->transactions()
-                    ->where('source_type', 0)
                     ->where('type', 'expenses')
+                    ->whereNotNull('source_income')
                     ->sum('amount');
 
                 $savings = $user->transactions()

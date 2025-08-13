@@ -23,7 +23,12 @@ class SavingsAccount extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function transactions() {
-        return $this->hasMany(Transaction::class);
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'savings_account_id');
+    }
+    public function expenseTransactionsFromSavings()
+    {
+        return $this->hasMany(Transaction::class, 'source_savings');
     }
 }

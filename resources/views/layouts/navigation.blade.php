@@ -46,7 +46,7 @@
                 Income
             </a>
 
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('expenses.index') }}"
                 class="flex items-center justify-start font-black p-2 text-2xl rounded-sm hover:bg-gray-600 hover:rounded-md transition duration-200 {{ request()->segment(1) == 'expenses' ? 'bg-white text-gray-900 hover:text-white' : 'text-white' }}">
                 <x-heroicon-s-credit-card class="w-10 h-10 mr-4 text-red-500" />
                 Expenses

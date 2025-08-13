@@ -12,7 +12,8 @@ class Transaction extends Model
         'category_id',
         'savings_account_id',
         'amount',
-        'source_type',
+        'source_savings',
+        'source_income',
         'notes',
         'type',
         'date',
@@ -32,10 +33,21 @@ class Transaction extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function savingsAccounts()
+    public function savingsAccount()
     {
         return $this->belongsTo(SavingsAccount::class);
     }
+
+    public function sourceIncomeCategory()
+    {
+        return $this->belongsTo(Category::class, 'source_income');
+    }
+
+    public function sourceSavingsAccount()
+    {
+        return $this->belongsTo(SavingsAccount::class, 'source_savings');
+    }
+
 
     public function sourceAccount()
     {

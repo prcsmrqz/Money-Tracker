@@ -12,11 +12,14 @@
 
             <div :class="calculator ? 'lg:w-3/4' : 'w-full'" class="px-6 transition-all duration-300">
                 <div x-show="activeTab === 'income'" x-cloak>
-                    <x-transaction.transaction-income :categories="$categories" type="income" />
+                    <x-transaction.transaction-income-savings :categories="$categories" type="income" />
                 </div>
-                <div x-show="activeTab === 'expenses'" x-cloak></div>
+                <div x-show="activeTab === 'expenses'" x-cloak>
+                    <x-transaction.transaction-expenses :incomeCategories="$categories" :expensesCategories="$expensesCategories" :savingsAccounts="$savingsAccounts"
+                        type="expenses" />
+                </div>
                 <div x-show="activeTab === 'savings'" x-cloak>
-                    <x-transaction.transaction-income :savingsAccounts="$savingsAccounts" type="savings" />
+                    <x-transaction.transaction-income-savings :savingsAccounts="$savingsAccounts" :categories="$categories" type="savings" />
                 </div>
             </div>
 
