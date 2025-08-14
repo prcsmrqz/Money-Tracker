@@ -19,7 +19,6 @@ class CategoryController extends Controller
     
     public function show(Category $category, FilterService $filterService)
     {
-        // Build base query
         if ($category->type === 'income') {
             $baseQuery = auth()->user()->transactions()
                 ->where(function ($query) use ($category) {
@@ -53,8 +52,6 @@ class CategoryController extends Controller
             'savingsAccounts' => $savingsAccounts,
         ]);
     }
-
-
 
      public function store(StoreCategoryRequest $request)
     {

@@ -5,11 +5,51 @@ namespace App\Services;
 use Carbon\Carbon;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class FilterService
 {
     public function filter($baseQuery, array $with = [])
     {
+
+        $searchValue  = trim(request('filter.search', request('search', '')));
+        $dateFilter   = trim(request('date_filter', ''));
+        $monthFilter  = request('month_filter');
+        $yearFilter   = request('year_filter');
+        $startDate    = request('start');
+        $endDate      = request('end');
+
+        if (Str::length($searchValue) > 100) {
+            throw ValidationException::withMessages([
+                'search' => ['The search query must not be longer than 100 characters.']
+            ]);
+        }
+
+        if ($monthFilter && (!is_numeric($monthFilter) || $monthFilter < 1 || $monthFilter > 12)) {
+            throw ValidationException::withMessages([
+                'month_filter' => ['The selected month is invalid.']
+            ]);
+        }
+
+        if ($yearFilter && (!is_numeric($yearFilter) || $yearFilter < 1950 || $yearFilter > date('Y') + 1)) {
+            throw ValidationException::withMessages([
+                'year_filter' => ['The selected year is invalid.']
+            ]);
+        }
+
+        if ($startDate && !strtotime($startDate)) {
+            throw ValidationException::withMessages([
+                'start' => ['The start date is invalid or in an incorrect format.']
+            ]);
+        }
+
+        if ($endDate && !strtotime($endDate)) {
+            throw ValidationException::withMessages([
+                'end' => ['The end date is invalid or in an incorrect format.']
+            ]);
+        }
+
         $query = QueryBuilder::for($baseQuery)
             ->when(!empty($with), fn($q) => $q->with($with))
             ->allowedFilters([
@@ -23,46 +63,40 @@ class FilterService
             ])
             ->orderBy('date', 'desc');
 
-        // Date filter
-        if (request('date_filter')) {
-            $dateFilter = request('date_filter');
-            if ($dateFilter === 'today') {
-                $query->whereDate('date', Carbon::today());
-            } elseif ($dateFilter === 'last_7_days') {
-                $query->whereBetween('date', [
-                    Carbon::now()->subDays(6)->startOfDay(),
-                    Carbon::now()->endOfDay(),
-                ]);
-            } elseif ($dateFilter === 'last_30_days') {
-                $query->whereBetween('date', [
-                    Carbon::now()->subDays(30)->startOfDay(),
-                    Carbon::now()->endOfDay(),
-                ]);
+        if ($dateFilter) {
+            $ranges = [
+                'today'        => [Carbon::today(), Carbon::today()],
+                'last_7_days'  => [Carbon::now()->subDays(6)->startOfDay(), Carbon::now()->endOfDay()],
+                'last_30_days' => [Carbon::now()->subDays(30)->startOfDay(), Carbon::now()->endOfDay()],
+            ];
+
+            if (isset($ranges[$dateFilter])) {
+                [$start, $end] = $ranges[$dateFilter];
+                if ($start->equalTo($end)) {
+                    $query->whereDate('date', $start);
+                } else {
+                    $query->whereBetween('date', [$start, $end]);
+                }
             }
         }
 
-        // Month + Year filter
-        if (request('month_filter') && request('year_filter')) {
-            $query->whereMonth('date', request('month_filter'))
-                  ->whereYear('date', request('year_filter'));
+        if ($monthFilter && $yearFilter) {
+            $query->whereMonth('date', $monthFilter)
+                  ->whereYear('date', $yearFilter);
         }
 
-        // Start/End date filter
-        if (request('start') && request('end')) {
+        if ($startDate && $endDate) {
             $query->whereBetween('date', [
-                Carbon::parse(request('start'))->startOfDay(),
-                Carbon::parse(request('end'))->endOfDay()
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->endOfDay()
             ]);
         }
 
-        // Pagination
         $paginated = $query->paginate(5)->withQueryString();
 
-        // Group by date
         $groupedTransactions = $paginated->getCollection()
             ->groupBy(fn($transaction) => $transaction->date->format('Y-m-d'));
 
-        // Sum by type
         $sumByTypePerDate = [];
         foreach ($groupedTransactions as $date => $transactions) {
             $sumByTypePerDate[$date] = [
