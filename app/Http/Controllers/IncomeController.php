@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\ActiveTab;
 use Carbon\Carbon;
+use App\Traits\ActiveTab;
 use Illuminate\Http\Request;
+use App\Services\FilterService;
 use App\Http\Requests\CategoryRequest;
 
 class IncomeController extends Controller
 {
     use ActiveTab;
 
-    public function index()
+    public function index(FilterService $filterService)
     {
         $user = auth()->user();
 
@@ -36,14 +37,44 @@ class IncomeController extends Controller
                         ->get();
         
         $categories =  $categoriesQuery->orderBy('name', 'ASC')->paginate(15);
-
+        
         foreach ($categories as $category) {
             $category->total = ($category->income_total ?? 0) - ($category->expenses_total ?? 0) - ($category->savings_total ?? 0);
         }
 
+        $allCategories = $user->categories()->get();
+
         $recentTransactions = $user->transactions()->where('type', 'income')->orderBy('date', 'desc')->take(5)->with('category')->get();
-        $monthlyIncome = $user->transactions()->where('type', 'income')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
         $totalIncome = $user->transactions()->where('type', 'income')->sum('amount');
+        
+        $baseQuery= $user->transactions()
+            ->where(function ($query) {
+                $query->where('type', 'income')
+                    ->orWhere(function ($query) {
+                        $query->where('type', 'expenses')
+                                ->whereNotNull('source_income');
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('type', 'savings')
+                                ->whereNotNull('category_id');
+                    });
+            })
+            ->with('category', 'savingsAccount');
+
+        [$transactionsTable] = $filterService->filter(
+            $baseQuery,
+            ['category', 'savingsAccount'],
+            'notGroup'
+        );
+
+        
+
+        $income = $user->transactions()->where('type', 'income')->sum('amount');
+        $expenses = $user->transactions()->where('type', 'expenses')->whereNotNull('source_income')->sum('amount');
+        $savings = $user->transactions()->where('type', 'savings')->whereNotNull('category_id')->sum('amount');
+        $netIncome = $income - $expenses - $savings;
+
+        $savingsAccounts = auth()->user()->savingsAccount()->orderBy('name', 'ASC')->get();
 
         $oldestDate = $user->transactions()
             ->where('type', 'income')
@@ -53,7 +84,7 @@ class IncomeController extends Controller
 
         $activeTab = $this->getActiveTab();
 
-        return view('income.index', compact('categories', 'totalIncome', 'activeTab', 'oldestYear', 'top5Income', 'recentTransactions', 'monthlyIncome'));
+        return view('income.index', compact('categories', 'allCategories', 'totalIncome', 'activeTab', 'oldestYear', 'top5Income', 'recentTransactions', 'netIncome', 'savingsAccounts', 'transactionsTable'));
     }
 
     public function incomeChart(Request $request)

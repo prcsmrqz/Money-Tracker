@@ -44,7 +44,7 @@ class SavingsController extends Controller
         $expenses = auth()->user()->transactions()->where('type', 'expenses')->whereNotNull('source_savings')->sum('amount');
         $totalNetSavings = $savings - $expenses;
 
-        $recentTransactions = auth()->user()->transactions()->where('type', 'savings')->orderBy('date', 'desc')->take(5)->with('savingsAccount')->get();
+        $recentTransactions = auth()->user()->transactions()->where('type', 'savings')->orderBy('date', 'desc')->with('savingsAccount')->get();
         $monthlySavings = auth()->user()->transactions()->where('type', 'savings')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
         $totalSavings = auth()->user()->transactions()->where('type', 'savings')->sum('amount');
         
@@ -78,7 +78,7 @@ class SavingsController extends Controller
         );
 
             $allSavingsAccounts = auth()->user()->savingsAccount()->get();
-            $categories = auth()->user()->categories()->get();
+            $allCategories = auth()->user()->categories()->get();
 
             return view('savings.show', [
                 'transactions' => $paginated,
@@ -86,7 +86,7 @@ class SavingsController extends Controller
                 'savingsAccount' => $saving,
                 'oldestYear' => $oldestYear,
                 'savingsAccounts' => $allSavingsAccounts,
-                'categories' => $categories
+                'allCategories' => $allCategories
             ]);
     }
 

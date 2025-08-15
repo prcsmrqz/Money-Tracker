@@ -27,7 +27,7 @@ class ExpensesController extends Controller
 
         $categories = $categoriesQuery->orderBy('name', 'ASC')->paginate(15);
 
-        $recentTransactions = $user->transactions()->where('type', 'expenses')->orderBy('date', 'desc')->take(5)->with('category')->get();
+        $recentTransactions = $user->transactions()->where('type', 'expenses')->orderBy('date', 'desc')->with('category')->get();
         $monthlySpent = $user->transactions()->where('type', 'expenses')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
         $totalSpent = $user->transactions()->where('type', 'expenses')->sum('amount');
 

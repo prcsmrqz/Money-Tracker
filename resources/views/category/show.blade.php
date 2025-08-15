@@ -16,7 +16,7 @@
                 </h1>
             </div>
 
-            <x-category.search-filter :category="$category" :oldestYear="$oldestYear" :search="true" />
+            <x-category.search-filter :oldestYear="$oldestYear" :search="true" :mode="'icon'" />
 
 
             <table
@@ -157,7 +157,7 @@
                                             <x-heroicon-s-pencil-square class="w-4 h-4" />
                                         </button>
 
-                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :categories="$categories" />
+                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :allCategories="$allCategories" />
                                     </div>
 
                                     <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
@@ -253,7 +253,7 @@
                                         <x-heroicon-s-pencil-square class="w-4 h-4" />
                                     </button>
 
-                                    <x-transaction.modal :transaction="$transaction" />
+                                    <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :allCategories="$allCategories" />
                                 </div>
 
                                 <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"

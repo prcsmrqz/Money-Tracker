@@ -1,6 +1,9 @@
-@props(['search' => false])
+@props(['search' => false, 'mode' => 'paginate'])
 
 <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap items-start gap-4 mb-5 px-5">
+
+    <input type="hidden" name="mode" value="{{ $mode }}">
+
     {{-- Date Filter Dropdown --}}
     <select name="date_filter" id="date_filter_select" onchange="handleDateFilterChange(this)"
         class="h-[42px] w-full sm:w-40 border border-gray-300 shadow-sm rounded px-5 pr-9 text-sm text-gray-900 bg-white focus:ring-blue-500 focus:border-blue-500">
@@ -44,6 +47,9 @@
             class="h-[42px] w-full sm:w-40 border border-gray-300 shadow-sm rounded px-3 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500" />
     </div>
 
+    @php
+        $currentMode = request('mode') ?? 'icon';
+    @endphp
     {{-- Search Input --}}
     @if ($search)
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end flex-grow gap-2 sm:gap-3">
@@ -60,7 +66,7 @@
             <button type="submit"
                 class="bg-blue-600 font-medium px-5 rounded-md h-[38px] text-white hover:bg-blue-700">Apply</button>
 
-            <a href="{{ url()->current() }}"
+            <a href="{{ url()->current() }}?mode={{ $currentMode }}"
                 class="bg-gray-300 font-medium text-gray-800 px-4 rounded-md h-[38px] flex items-center justify-center hover:bg-gray-400">Clear</a>
 
         </div>
@@ -69,7 +75,7 @@
             <button type="submit"
                 class="bg-blue-600 font-medium rounded-md h-[38px] px-5 text-white w-full  hover:bg-blue-700">Apply</button>
 
-            <a href="{{ url()->current() }}"
+            <a href="{{ url()->current() }}?mode={{ $currentMode }}"
                 class="bg-gray-300 font-medium text-gray-800 rounded-md h-[38px] px-5 flex items-center justify-center w-full hover:bg-gray-400">Clear</a>
         </div>
     @endif
@@ -77,13 +83,14 @@
 
 <script>
     function handleDateFilterChange(select) {
-        const monthFilter = document.getElementById('month_year_filter');
-        const customFilter = document.getElementById('custom_date_filter');
+        const container = select.closest('form'); // scope to the form containing this filter
+        const monthFilter = container.querySelector('#month_year_filter');
+        const customFilter = container.querySelector('#custom_date_filter');
 
-        const monthSelect = document.getElementById('month_filter_select');
-        const yearSelect = document.getElementById('year_filter_select');
-        const startInput = document.querySelector('input[name="start"]');
-        const endInput = document.querySelector('input[name="end"]');
+        const monthSelect = container.querySelector('#month_filter_select');
+        const yearSelect = container.querySelector('#year_filter_select');
+        const startInput = container.querySelector('input[name="start"]');
+        const endInput = container.querySelector('input[name="end"]');
 
         // Hide and disable both filter blocks to prevent append
         monthFilter.style.display = 'none';
@@ -115,7 +122,8 @@
 
     // Run on page load
     window.addEventListener('DOMContentLoaded', () => {
-        const select = document.getElementById('date_filter_select');
-        if (select) handleDateFilterChange(select);
+        document.querySelectorAll('#date_filter_select').forEach(select => {
+            handleDateFilterChange(select);
+        });
     });
 </script>

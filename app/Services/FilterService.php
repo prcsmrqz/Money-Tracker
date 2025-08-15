@@ -10,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 
 class FilterService
 {
-    public function filter($baseQuery, array $with = [])
+    public function filter($baseQuery, array $with = [], $page = null)
     {
 
         $searchValue  = trim(request('filter.search', request('search', '')));
@@ -92,22 +92,28 @@ class FilterService
             ]);
         }
 
-        $paginated = $query->paginate(5)->withQueryString();
+        if ($page === 'group'){
+            $paginated = $query->paginate(5)->withQueryString();
 
-        $groupedTransactions = $paginated->getCollection()
-            ->groupBy(fn($transaction) => $transaction->date->format('Y-m-d'));
+            $groupedTransactions = $paginated->getCollection()
+                ->groupBy(fn($transaction) => $transaction->date->format('Y-m-d'));
 
-        $sumByTypePerDate = [];
-        foreach ($groupedTransactions as $date => $transactions) {
-            $sumByTypePerDate[$date] = [
-                'income'   => $transactions->where('type', 'income')->sum('amount'),
-                'expenses' => $transactions->where('type', 'expenses')->sum('amount'),
-                'savings'  => $transactions->where('type', 'savings')->sum('amount'),
-            ];
+            $sumByTypePerDate = [];
+            foreach ($groupedTransactions as $date => $transactions) {
+                $sumByTypePerDate[$date] = [
+                    'income'   => $transactions->where('type', 'income')->sum('amount'),
+                    'expenses' => $transactions->where('type', 'expenses')->sum('amount'),
+                    'savings'  => $transactions->where('type', 'savings')->sum('amount'),
+                ];
+            }
+
+            $paginated->setCollection($groupedTransactions);
+
+            return [$paginated, $sumByTypePerDate];
+        } else {
+            $paginated = $query->paginate(10)->withQueryString();
+            return [$paginated];
         }
-
-        $paginated->setCollection($groupedTransactions);
-
-        return [$paginated, $sumByTypePerDate];
+        
     }
 }

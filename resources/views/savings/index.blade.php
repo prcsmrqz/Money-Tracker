@@ -30,7 +30,7 @@
 
                 <div x-show="activeTab === 'chart'" x-cloak>
 
-                    <x-category.search-filter :oldestYear="$oldestYear" :search="false" />
+                    <x-category.search-filter :oldestYear="$oldestYear" :search="false" :mode="'chart'" />
                     <div x-data="chartComponent()" x-init="fetchAndRenderChart()" class="w-full" style="height: 500px;">
                         <div class="flex justify-center items-center h-full">
                             <canvas x-show="chart" x-ref="savingsChartCanvas"
@@ -68,7 +68,7 @@
                         Recent Transactions
                     </p>
                     <table class="table w-full text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
-                        @forelse ($recentTransactions as $transaction)
+                        @forelse ($recentTransactions->take(5) as $transaction)
                             <tr onClick="window.location.href='{{ route('category.show', $transaction->savingsAccount->id) }}'"
                                 class="border-b border-gray-200 text-center text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
                                 <td class="hidden lg:table-cell w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">

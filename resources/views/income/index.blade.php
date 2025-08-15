@@ -18,7 +18,7 @@
                 :categories="$categories" :type="'income'" :open="true" />
         </div>
 
-        <div x-data="{ activeTab: '{{ $activeTab ?: 'icon' }}', chart: null }" class="w-full">
+        <div x-data="{ activeTab: '{{ $activeTab ?: 'icon' }}', chart: null }" class="w-full mb-5">
 
             <x-category.tab-buttons />
 
@@ -29,7 +29,7 @@
 
                 <div x-show="activeTab === 'chart'" x-cloak>
 
-                    <x-category.search-filter :oldestYear="$oldestYear" :search="false" />
+                    <x-category.search-filter :oldestYear="$oldestYear" :search="false" :mode="'chart'" />
                     <div x-data="chartComponent()" x-init="fetchAndRenderChart()" class="w-full" style="height: 500px;">
                         <div class="flex justify-center items-center h-full">
                             <canvas x-show="chart" x-ref="incomeChartCanvas" class="!w-full !h-full max-w-5xl"></canvas>
@@ -39,6 +39,12 @@
                         </div>
                     </div>
                 </div>
+
+                <div x-show="activeTab === 'table'" x-cloak>
+                    <x-income.table :transactionsTable="$transactionsTable" :categories="$categories" :savingsAccounts="$savingsAccounts" :allCategories="$allCategories"
+                        :oldestYear="$oldestYear" />
+                </div>
+
             </div>
 
             {{-- Monthly summary --}}
@@ -47,14 +53,14 @@
                 <div
                     class=" rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6 flex flex-col justify-center">
                     <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-green-600 dark:text-gray-300">
-                        Monthly income
+                        Net Income
                     </p>
                     <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
                         {{ Auth::user()->currency_symbol }}
-                        {{ floor($monthlyIncome ?? 0) != ($monthlyIncome ?? 0) ? number_format($monthlyIncome ?? 0, 2) : number_format($monthlyIncome ?? 0) }}
+                        {{ floor($netIncome ?? 0) != ($netIncome ?? 0) ? number_format($netIncome ?? 0, 2) : number_format($netIncome ?? 0) }}
                     </p>
                     <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-red-600 dark:text-gray-300">
-                        Overall income
+                        Overall Income
                     </p>
                     <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
                         {{ Auth::user()->currency_symbol }}

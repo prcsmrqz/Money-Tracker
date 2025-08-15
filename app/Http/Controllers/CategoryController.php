@@ -37,17 +37,18 @@ class CategoryController extends Controller
         // Pass the query and with() list
         [$paginated, $sumByTypePerDate] = $filterService->filter(
             $baseQuery,
-            ['category', 'savingsAccount', 'sourceIncomeCategory', 'sourceSavingsAccount']
+            ['category', 'savingsAccount', 'sourceIncomeCategory', 'sourceSavingsAccount'],
+            'group'
         );
 
         $savingsAccounts = auth()->user()->savingsAccount()->orderBy('name', 'ASC')->get();
-        $categoriesType = auth()->user()->categories()->get();
+        $allCategories = auth()->user()->categories()->get();
 
         return view('category.show', [
             'transactions' => $paginated,
             'sumByTypePerDate' => $sumByTypePerDate,
             'category' => $category,
-            'categories' => $categoriesType,
+            'allCategories' => $allCategories,
             'oldestYear' => $oldestYear,
             'savingsAccounts' => $savingsAccounts,
         ]);

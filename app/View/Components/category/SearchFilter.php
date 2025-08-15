@@ -10,10 +10,12 @@ class SearchFilter extends Component
 {
     public $oldestYear;
     public $search;
-    public function __construct($oldestYear, $search)
+    public $mode;
+    public function __construct($oldestYear, $search, $mode)
     {
         $this->oldestYear = $oldestYear;
         $this->search = $search;
+        $this->mode = $mode;
     }
 
     /**

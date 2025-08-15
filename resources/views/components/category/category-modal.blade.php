@@ -1,5 +1,5 @@
 {{-- resources/views/components/category-modal.blade.php --}}
-<div x-show="open" x-transition @click.self="open = false; $dispatch('close-modal')"
+<div x-show="open" x-cloak x-transition @click.self="open = false; $dispatch('close-modal')"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div @click.stop
         class="relative bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-4xl p-6">
