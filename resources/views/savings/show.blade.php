@@ -2,7 +2,7 @@
     <x-title-header>
         <a href="{{ route('savings.index') }}" class="capitalize">
             <span class="hover:underline">Savings</span>
-            > {{ $savingsAccount->name }}
+            > <span> {{ strtolower($savingsAccount->name) }} </span>
         </a>
     </x-title-header>
     <div class="px-4 sm:px-6 lg:px-10">
@@ -12,11 +12,11 @@
                         radial-gradient(circle at right center, {{ $savingsAccount->color }} 10%, transparent 90%);"
                 class="mb-5 p-3 rounded-md shadow text-white text-center">
                 <h1 class="text-xl sm:text-2xl font-bold capitalize">
-                    {{ $savingsAccount->name }} Transaction List
+                    {{ strtolower($savingsAccount->name) }} Transaction List
                 </h1>
             </div>
 
-            <x-category.search-filter :savingsAccount="$savingsAccount" :oldestYear="$oldestYear" :search="true" />
+            <x-category.search-filter :oldestYear="$oldestYear" :search="true" :mode="'icon'" />
 
 
             <table
@@ -113,7 +113,7 @@
                                             <x-heroicon-s-pencil-square class="w-4 h-4" />
                                         </button>
 
-                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :categories="$categories" />
+                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :allCategories="$allCategories" />
                                     </div>
 
                                     <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
@@ -196,7 +196,7 @@
                                         <x-heroicon-s-pencil-square class="w-4 h-4" />
                                     </button>
 
-                                    <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :categories="$categories" />
+                                    <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :allCategories="$allCategories" />
                                 </div>
 
                                 <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"

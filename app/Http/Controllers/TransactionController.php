@@ -36,10 +36,10 @@ class TransactionController extends Controller
     public function update(Request $request, $id)
     {
         $transaction = auth()->user()->transactions()->findOrFail($id);
+        
+            $currentUrl = $request->input('url') . '?mode=' . $request->input('mode');
 
         try {
-            $currentUrl = $request->input('url');
-
             $validated = app(UpdateTransactionRequest::class)->setContainer(app())->merge($request->all())->validateResolved();
             
             $data = validator($request->all(), (new UpdateTransactionRequest())->rules())->validate();
@@ -49,9 +49,9 @@ class TransactionController extends Controller
             return redirect($currentUrl)->with('success', 'Transaction updated successfully.');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
-            $currentUrl = $request->input('url') ?? route('category.show', $transaction->category_id);
+            $currentUrl = $currentUrl ?? route('category.show', $transaction->category_id);
             return redirect($currentUrl)
-                ->withErrors($e->validator, 'update')
+                ->withErrors($e->validator, 'update_' . $id)
                 ->withInput()
                 ->with('error_transaction_id', $id);
         }

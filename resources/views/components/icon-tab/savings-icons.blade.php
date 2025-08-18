@@ -25,8 +25,8 @@
                         <div class="max-w-[6rem] sm:max-w-[8rem] min-w-0 overflow-hidden cursor-pointer">
 
                             <label
-                                class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
-                                {{ $savingsAccount->name }}
+                                class="block truncate whitespace-nowrap capitalize overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
+                                {{ strtolower($savingsAccount->name) }}
                             </label>
 
                             <span class="text-xs -mt-1 mb-1 block leading-tight cursor-pointer">

@@ -12,10 +12,13 @@
                     showConfirmButton: false
                 });
             @elseif (session('errors'))
+                @php
+                    $firstError = session('errors')->first() ?: 'Please check your form input.';
+                @endphp
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Please check your form inputs',
+                    text: @json($firstError),
                     timer: 1000,
                     showConfirmButton: false
                 });

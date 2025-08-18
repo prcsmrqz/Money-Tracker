@@ -2,7 +2,7 @@
     <x-title-header>
         <a href="{{ route($category->type . '.index') }}" class="capitalize">
             <span class="hover:underline">{{ $category->type }}</span>
-            > {{ $category->name }}
+            > {{ strtolower($category->name) }}
         </a>
     </x-title-header>
     <div class="px-4 sm:px-6 lg:px-10">
@@ -12,11 +12,11 @@
                         radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
                 class="mb-5 p-3 rounded-md shadow text-white text-center">
                 <h1 class="text-xl sm:text-2xl font-bold capitalize">
-                    {{ $category->name }} Transaction List
+                    {{ strtolower($category->name) }} Transaction List
                 </h1>
             </div>
 
-            <x-category.search-filter :category="$category" :oldestYear="$oldestYear" :search="true" />
+            <x-category.search-filter :oldestYear="$oldestYear" :search="true" :mode="'icon'" />
 
 
             <table
@@ -118,7 +118,8 @@
                                         <span
                                             style="background-color: {{ $transaction->sourceIncomeCategory?->color ?? ($transaction->sourceSavingsAccount?->color ?? '') }};"
                                             class="px-3 py-1 rounded-full text-sm inline-block text-white">
-                                            {{ $transaction->sourceIncomeCategory?->name ?? ($transaction->sourceSavingsAccount?->name ?? '') }}
+                                            {{ strtoupper($transaction->sourceIncomeCategory?->name ?? ($transaction->sourceSavingsAccount?->name ?? '')) }}
+
                                         </span>
                                     </td>
                                     <td class="w-1/6 px-4 py-3 capitalize font-semibold">
@@ -157,7 +158,7 @@
                                             <x-heroicon-s-pencil-square class="w-4 h-4" />
                                         </button>
 
-                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :categories="$categories" />
+                                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :allCategories="$allCategories" />
                                     </div>
 
                                     <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"
@@ -253,7 +254,7 @@
                                         <x-heroicon-s-pencil-square class="w-4 h-4" />
                                     </button>
 
-                                    <x-transaction.modal :transaction="$transaction" />
+                                    <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :allCategories="$allCategories" />
                                 </div>
 
                                 <form x-data action="{{ route('transaction.destroy', $transaction->id) }}"

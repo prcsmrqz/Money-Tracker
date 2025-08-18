@@ -19,7 +19,7 @@
         </div>
 
 
-        <div x-data="{ activeTab: '{{ $activeTab ?: 'icon' }}', chart: null }" class="w-full">
+        <div x-data="{ activeTab: '{{ $activeTab ?: 'icon' }}', chart: null }" class="w-full mb-5">
 
             <x-category.tab-buttons />
 
@@ -30,7 +30,7 @@
 
                 <div x-show="activeTab === 'chart'" x-cloak>
 
-                    <x-category.search-filter :oldestYear="$oldestYear" :search="false" />
+                    <x-category.search-filter :oldestYear="$oldestYear" :search="false" :mode="'chart'" />
                     <div x-data="chartComponent()" x-init="fetchAndRenderChart()" class="w-full" style="height: 500px;">
                         <div class="flex justify-center items-center h-full">
                             <canvas x-show="chart" x-ref="savingsChartCanvas"
@@ -41,10 +41,16 @@
                         </div>
                     </div>
                 </div>
+
+                <div x-show="activeTab === 'table'" x-cloak>
+
+                    <x-income.table :transactionsTable="$transactionsTable" :categories="$categories" :allSavingsAccounts="$allSavingsAccounts" :allCategories="$allCategories"
+                        :oldestYear="$oldestYear" />
+                </div>
             </div>
 
 
-            <div x-show="activeTab === 'icon'"
+            <div x-show="activeTab === 'icon'" x-cloak
                 class="grid grid-cols-2 md:grid-cols-3 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
                 <div
                     class=" rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6 flex flex-col justify-center">
@@ -68,7 +74,7 @@
                         Recent Transactions
                     </p>
                     <table class="table w-full text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
-                        @forelse ($recentTransactions as $transaction)
+                        @forelse ($recentTransactions->take(5) as $transaction)
                             <tr onClick="window.location.href='{{ route('category.show', $transaction->savingsAccount->id) }}'"
                                 class="border-b border-gray-200 text-center text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
                                 <td class="hidden lg:table-cell w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
@@ -108,7 +114,7 @@
                             <li class="mb-3">
                                 <span class="flex justify-between ">
                                     <strong
-                                        class="font-bold capitalize truncate max-w-[50%] sm:max-w-[60%] md:max-w-none text-gray-800">
+                                        class="font-bold truncate max-w-[50%] sm:max-w-[60%] md:max-w-none text-gray-800">
                                         {{ ucfirst(strtolower($savings->name)) }}
                                     </strong>
 

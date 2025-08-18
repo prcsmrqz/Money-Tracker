@@ -11,11 +11,13 @@ class Modal extends Component
     public $transaction;
     public $savingsAccounts;
     public $categories;
-    public function __construct($transaction = null, $savingsAccounts = null, $categories = null)
+    public $allCategories;
+    public function __construct($transaction = null, $savingsAccounts = null, $categories = null, $allCategories = null)
 {
     $this->transaction = $transaction;
     $this->savingsAccounts = $savingsAccounts;
     $this->categories = $categories;
+    $this->allCategories = $allCategories;
 }
 
 
