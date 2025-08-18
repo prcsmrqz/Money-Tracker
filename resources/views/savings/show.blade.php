@@ -2,7 +2,7 @@
     <x-title-header>
         <a href="{{ route('savings.index') }}" class="capitalize">
             <span class="hover:underline">Savings</span>
-            > {{ $savingsAccount->name }}
+            > <span> {{ strtolower($savingsAccount->name) }} </span>
         </a>
     </x-title-header>
     <div class="px-4 sm:px-6 lg:px-10">
@@ -12,7 +12,7 @@
                         radial-gradient(circle at right center, {{ $savingsAccount->color }} 10%, transparent 90%);"
                 class="mb-5 p-3 rounded-md shadow text-white text-center">
                 <h1 class="text-xl sm:text-2xl font-bold capitalize">
-                    {{ $savingsAccount->name }} Transaction List
+                    {{ strtolower($savingsAccount->name) }} Transaction List
                 </h1>
             </div>
 

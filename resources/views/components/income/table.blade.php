@@ -2,29 +2,84 @@
 
 <table class="table w-full text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
     <thead class="text-center rounded-lg bg-gray-100 border-b border-gray-400 font-medium">
+        {{-- TIME --}}
         <td class="hidden md:table-cell text-sm py-3 text-gray-600">
-            TIME
-        </td>
-        <td class="text-xs lg:text-sm py-3 text-gray-600">
-            AMOUNT
-        </td>
-        <td class="text-xs lg:text-sm py-3 text-gray-600">
-            CATEGORY
-        </td>
-        <td class="text-xs lg:text-sm py-3 text-gray-600">
-            TYPE
+            <a href="{{ request()->fullUrlWithQuery([
+                'sort' => 'date',
+                'order' => request('order') === 'asc' && request('sort') === 'date' ? 'desc' : 'asc',
+            ]) }}"
+                class="flex items-center justify-center gap-1">
+                TIME
+                @if (request('sort') === 'date')
+                    {!! request('order') === 'asc' ? '▲' : '▼' !!}
+                @endif
+            </a>
         </td>
 
-        <td class="hidden md:table-cell text-sm py-3 text-gray-600">
-            NOTE
+        {{-- AMOUNT --}}
+        <td class="text-xs lg:text-sm py-3 text-gray-600">
+            <a href="{{ request()->fullUrlWithQuery([
+                'sort' => 'amount',
+                'order' => request('order') === 'asc' && request('sort') === 'amount' ? 'desc' : 'asc',
+            ]) }}"
+                class="flex items-center justify-center gap-1">
+                AMOUNT
+                @if (request('sort') === 'amount')
+                    {!! request('order') === 'asc' ? '▲' : '▼' !!}
+                @endif
+            </a>
         </td>
+
+        {{-- CATEGORY (by category_name) --}}
+        <td class="text-xs lg:text-sm py-3 text-gray-600">
+            <a href="{{ request()->fullUrlWithQuery([
+                'sort' => 'name',
+                'order' => request('order') === 'asc' && request('sort') === 'name' ? 'desc' : 'asc',
+            ]) }}"
+                class="flex items-center justify-center gap-1">
+                CATEGORY
+                @if (request('sort') === 'name')
+                    {!! request('order') === 'asc' ? '▲' : '▼' !!}
+                @endif
+            </a>
+        </td>
+
+        {{-- TYPE --}}
+        <td class="text-xs lg:text-sm py-3 text-gray-600">
+            <a href="{{ request()->fullUrlWithQuery([
+                'sort' => 'type',
+                'order' => request('order') === 'asc' && request('sort') === 'type' ? 'desc' : 'asc',
+            ]) }}"
+                class="flex items-center justify-center gap-1">
+                TYPE
+                @if (request('sort') === 'type')
+                    {!! request('order') === 'asc' ? '▲' : '▼' !!}
+                @endif
+            </a>
+        </td>
+
+        {{-- NOTE --}}
+        <td class="hidden md:table-cell text-sm py-3 text-gray-600">
+            <a href="{{ request()->fullUrlWithQuery([
+                'sort' => 'notes',
+                'order' => request('order') === 'asc' && request('sort') === 'notes' ? 'desc' : 'asc',
+            ]) }}"
+                class="flex items-center justify-center gap-1">
+                NOTE
+                @if (request('sort') === 'notes')
+                    {!! request('order') === 'asc' ? '▲' : '▼' !!}
+                @endif
+            </a>
+        </td>
+
+        {{-- ACTIONS (no sorting) --}}
         <td class="text-xs lg:text-sm py-3 text-gray-600">
             ACTIONS
         </td>
     </thead>
 
-    <tbody
-        class=" text-center border-b border-gray-200 text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+
+    <tbody class=" text-center border-b border-gray-200 text-gray-500 dark:border-gray-600 ">
 
         @forelse ($transactionsTable as $transaction)
             @php
@@ -35,7 +90,7 @@
                     default => '',
                 };
             @endphp
-            <tr>
+            <tr class="hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
 
                 <td class="hidden md:table-cell w-1/6 py-2 whitespace-nowrap text-xs lg:text-sm ">
                     {{ $transaction->date->format('F d, Y - h:i A') }}
@@ -45,9 +100,9 @@
                     {{ number_format($transaction->amount, 2) }}
                 </td>
                 <td class="w-1/6 py-2 whitespace-nowrap text-xs lg:text-sm">
-                    <span class="px-3 py-1 rounded-full font-medium"
+                    <span class="px-2 md:px-3 py-1 rounded-full font-medium"
                         style="background-color: {{ $transaction->category->color }}2A; color: {{ $transaction->category->color }}">
-                        {{ $transaction->category->name }} </span>
+                        {{ ucfirst(strtolower($transaction->category->name)) }} </span>
                 </td>
                 <td class="w-1/6 px-3 py-3 capitalize font-semibold">
                     <span
@@ -76,7 +131,7 @@
                             <x-heroicon-s-pencil-square class="w-4 h-4" />
                         </button>
 
-                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$savingsAccounts" :categories="$categories" :allCategories="$allCategories" />
+                        <x-transaction.modal :transaction="$transaction" :savingsAccounts="$allSavingsAccounts" :categories="$categories" :allCategories="$allCategories" />
                     </div>
 
                     <form x-data action="{{ route('transaction.destroy', $transaction->id) }}" method="POST"

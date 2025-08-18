@@ -18,7 +18,7 @@ use App\Http\Requests\UpdateSavingsRequest;
 class SavingsController extends Controller
 {
     use ActiveTab; //traits for active tab
-    public function index() 
+    public function index(FilterService $filterService) 
     {
         $savingsAccountsQuery = auth()->user()->savingsAccount()
             ->withSum(['transactions as savings_total' => function ($query) {
@@ -48,6 +48,23 @@ class SavingsController extends Controller
         $monthlySavings = auth()->user()->transactions()->where('type', 'savings')->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('amount');
         $totalSavings = auth()->user()->transactions()->where('type', 'savings')->sum('amount');
         
+        $baseQuery= auth()->user()->transactions()
+            ->where(function ($query) {
+                $query->where('transactions.type', 'savings')
+                    ->orWhere(function ($query) {
+                        $query->where('transactions.type', 'expenses')
+                                ->whereNotNull('source_savings');
+                    });
+            });
+
+        [$transactionsTable] = $filterService->filter(
+            $baseQuery,
+            ['category', 'savingsAccount'],
+            'notGroup'
+        );
+
+        $categories = [];
+
         //chart
         $oldestDate = auth()->user()->transactions()
             ->where('type', 'savings')
@@ -57,7 +74,22 @@ class SavingsController extends Controller
 
         $activeTab = $this->getActiveTab();
 
-        return view('savings.index', compact('savingsAccounts', 'totalNetSavings', 'activeTab', 'oldestYear', 'totalSavings', 'top5Savings', 'recentTransactions', 'monthlySavings'));
+        return view('savings.index', array_merge(
+                compact(
+                    'savingsAccounts',
+                    'totalNetSavings',
+                    'activeTab',
+                    'oldestYear',
+                    'totalSavings',
+                    'top5Savings',
+                    'recentTransactions',
+                    'monthlySavings',
+                    'transactionsTable',
+                    'categories'
+                ),
+                $this->globalData()
+            ));
+
     }
 
     public function show (SavingsAccount $saving , FilterService $filterService)
@@ -74,7 +106,8 @@ class SavingsController extends Controller
 
         [$paginated, $sumByTypePerDate] = $filterService->filter(
             $baseQuery,
-            ['savingsAccount', 'sourceSavingsAccount']
+            ['savingsAccount', 'sourceSavingsAccount'],
+            'group'
         );
 
             $allSavingsAccounts = auth()->user()->savingsAccount()->get();

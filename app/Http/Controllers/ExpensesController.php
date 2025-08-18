@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Traits\ActiveTab;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use App\Services\FilterService;
 
 class ExpensesController extends Controller
 {
     use ActiveTab;
-    public function index()
+    public function index(FilterService $filterService)
     {
         $user = auth()->user();
         //icons
@@ -38,8 +39,29 @@ class ExpensesController extends Controller
         $oldestYear = $oldestDate ? Carbon::parse($oldestDate)->year : now()->year;
 
         $activeTab = $this->getActiveTab();
+
+        $baseQuery= $user->transactions()->where('transactions.type', 'expenses');
+
+        [$transactionsTable] = $filterService->filter(
+            $baseQuery,
+            ['category', 'savingsAccount'],
+            'notGroup'
+        );
         
-        return view('expenses.index', compact('categories', 'monthlySpent', 'totalSpent', 'activeTab', 'oldestYear', 'top5Expenses', 'recentTransactions'));
+        return view('expenses.index', array_merge(
+                compact(
+                    'categories',
+                    'monthlySpent',
+                    'totalSpent',
+                    'activeTab',
+                    'oldestYear',
+                    'top5Expenses',
+                    'recentTransactions',
+                    'transactionsTable'
+                ),
+                $this->globalData()
+            ));
+
     }
 
     public function expensesChart(Request $request)

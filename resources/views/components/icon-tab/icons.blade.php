@@ -22,8 +22,8 @@
 
                     <div class="max-w-[6rem] sm:max-w-[8rem] min-w-0 overflow-hidden cursor-pointer">
                         <label
-                            class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
-                            {{ $category->name }}
+                            class="block truncate whitespace-nowrap capitalize overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">
+                            {{ strtolower($category->name) }}
                         </label>
                         <label
                             class="block truncate whitespace-nowrap overflow-hidden text-sm sm:text-xl font-medium leading-tight cursor-pointer">

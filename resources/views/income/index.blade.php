@@ -41,14 +41,14 @@
                 </div>
 
                 <div x-show="activeTab === 'table'" x-cloak>
-                    <x-income.table :transactionsTable="$transactionsTable" :categories="$categories" :savingsAccounts="$savingsAccounts" :allCategories="$allCategories"
+                    <x-income.table :transactionsTable="$transactionsTable" :categories="$categories" :allSavingsAccounts="$allSavingsAccounts" :allCategories="$allCategories"
                         :oldestYear="$oldestYear" />
                 </div>
 
             </div>
 
             {{-- Monthly summary --}}
-            <div x-show="activeTab === 'icon'"
+            <div x-show="activeTab === 'icon'" x-cloak
                 class="grid grid-cols-2 md:grid-cols-3 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
                 <div
                     class=" rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6 flex flex-col justify-center">
@@ -112,7 +112,7 @@
                             <li class="mb-3">
                                 <span class="flex justify-between ">
                                     <strong
-                                        class="font-bold capitalize truncate max-w-[50%] sm:max-w-[60%] md:max-w-none text-gray-800">
+                                        class="font-bold truncate max-w-[50%] sm:max-w-[60%] md:max-w-none text-gray-800">
                                         {{ ucfirst(strtolower($income->name)) }}
                                     </strong>
 

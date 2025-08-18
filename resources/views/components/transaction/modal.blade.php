@@ -24,7 +24,7 @@
                     value="{{ $transaction->date->format('Y-m-d\TH:i') }}"
                     class="w-full border border-gray-400 text-black rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white" />
                 @error('date', 'update_' . $transaction->id)
-                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                    <div class="text-red-500 text-sm" x-show="edit">{{ $message }}</div>
                 @enderror
             </div>
 
@@ -36,15 +36,20 @@
                         <span class="text-gray-500 dark:text-gray-400">{{ Auth::user()->currency_symbol }}</span>
                     </div>
                     <input type="text" name="amount" :disabled="!edit"
-                        value="{{ old('amount', $transaction->amount) }}"
+                        :value="!edit
+                            ?
+                            '{{ $transaction->amount }}' :
+                            '{{ old('amount', $transaction->amount) }}'"
                         class="w-full ps-14 p-2.5 border border-gray-400 text-black rounded-lg dark:bg-gray-700 dark:text-white" />
+
                 </div>
                 @error('amount', 'update_' . $transaction->id)
-                    <div class="block mt-1 text-red-500 text-sm break-words whitespace-normal">
+                    <div class="block mt-1 text-red-500 text-sm break-words whitespace-normal " x-show="edit">
                         {{ $message }}
                     </div>
                 @enderror
             </div>
+
 
             @if ($savingsAccounts || $categories)
                 <div class="flex flex-col space-y-1 mb-7">
@@ -53,7 +58,6 @@
                     </p>
 
                     @php
-
                         if ($transaction->source_income && $transaction->type === 'expenses') {
                             $selectedSource = $allCategories->firstWhere('id', $transaction->source_income);
                             $selectedCategory = optional($allCategories)->firstWhere('id', $transaction->category_id);

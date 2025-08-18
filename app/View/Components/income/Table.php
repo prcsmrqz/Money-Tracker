@@ -10,15 +10,15 @@ class Table extends Component
 {
     public $transactionsTable;
     public $categories;
-    public $savingsAccounts;
+    public $allSavingsAccounts;
     public $allCategories;
     public $oldestYear;
 
-    public function __construct($transactionsTable = null, $categories = null, $savingsAccounts = null, $allCategories = null, $oldestYear = null)
+    public function __construct($transactionsTable = null, $categories = null, $allSavingsAccounts = null, $allCategories = null, $oldestYear = null)
     {
         $this->transactionsTable = $transactionsTable;
         $this->categories = $categories;
-        $this->savingsAccounts = $savingsAccounts;
+        $this->allSavingsAccounts = $allSavingsAccounts;
         $this->allCategories = $allCategories;
         $this->oldestYear = $oldestYear;
     }

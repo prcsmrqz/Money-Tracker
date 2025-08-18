@@ -42,24 +42,21 @@ class IncomeController extends Controller
             $category->total = ($category->income_total ?? 0) - ($category->expenses_total ?? 0) - ($category->savings_total ?? 0);
         }
 
-        $allCategories = $user->categories()->get();
-
         $recentTransactions = $user->transactions()->where('type', 'income')->orderBy('date', 'desc')->take(5)->with('category')->get();
         $totalIncome = $user->transactions()->where('type', 'income')->sum('amount');
         
         $baseQuery= $user->transactions()
             ->where(function ($query) {
-                $query->where('type', 'income')
+                $query->where('transactions.type', 'income')
                     ->orWhere(function ($query) {
-                        $query->where('type', 'expenses')
+                        $query->where('transactions.type', 'expenses')
                                 ->whereNotNull('source_income');
                     })
                     ->orWhere(function ($query) {
-                        $query->where('type', 'savings')
+                        $query->where('transactions.type', 'savings')
                                 ->whereNotNull('category_id');
                     });
-            })
-            ->with('category', 'savingsAccount');
+            });
 
         [$transactionsTable] = $filterService->filter(
             $baseQuery,
@@ -67,14 +64,10 @@ class IncomeController extends Controller
             'notGroup'
         );
 
-        
-
         $income = $user->transactions()->where('type', 'income')->sum('amount');
         $expenses = $user->transactions()->where('type', 'expenses')->whereNotNull('source_income')->sum('amount');
         $savings = $user->transactions()->where('type', 'savings')->whereNotNull('category_id')->sum('amount');
         $netIncome = $income - $expenses - $savings;
-
-        $savingsAccounts = auth()->user()->savingsAccount()->orderBy('name', 'ASC')->get();
 
         $oldestDate = $user->transactions()
             ->where('type', 'income')
@@ -84,7 +77,20 @@ class IncomeController extends Controller
 
         $activeTab = $this->getActiveTab();
 
-        return view('income.index', compact('categories', 'allCategories', 'totalIncome', 'activeTab', 'oldestYear', 'top5Income', 'recentTransactions', 'netIncome', 'savingsAccounts', 'transactionsTable'));
+       return view('income.index', array_merge(
+                compact(
+                    'categories',
+                    'totalIncome',
+                    'activeTab',
+                    'oldestYear',
+                    'top5Income',
+                    'recentTransactions',
+                    'netIncome',
+                    'transactionsTable'
+                ),
+                $this->globalData()
+            ));
+
     }
 
     public function incomeChart(Request $request)

@@ -2,7 +2,7 @@
     <x-title-header>
         <a href="{{ route($category->type . '.index') }}" class="capitalize">
             <span class="hover:underline">{{ $category->type }}</span>
-            > {{ $category->name }}
+            > {{ strtolower($category->name) }}
         </a>
     </x-title-header>
     <div class="px-4 sm:px-6 lg:px-10">
@@ -12,7 +12,7 @@
                         radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
                 class="mb-5 p-3 rounded-md shadow text-white text-center">
                 <h1 class="text-xl sm:text-2xl font-bold capitalize">
-                    {{ $category->name }} Transaction List
+                    {{ strtolower($category->name) }} Transaction List
                 </h1>
             </div>
 
@@ -118,7 +118,8 @@
                                         <span
                                             style="background-color: {{ $transaction->sourceIncomeCategory?->color ?? ($transaction->sourceSavingsAccount?->color ?? '') }};"
                                             class="px-3 py-1 rounded-full text-sm inline-block text-white">
-                                            {{ $transaction->sourceIncomeCategory?->name ?? ($transaction->sourceSavingsAccount?->name ?? '') }}
+                                            {{ strtoupper($transaction->sourceIncomeCategory?->name ?? ($transaction->sourceSavingsAccount?->name ?? '')) }}
+
                                         </span>
                                     </td>
                                     <td class="w-1/6 px-4 py-3 capitalize font-semibold">
