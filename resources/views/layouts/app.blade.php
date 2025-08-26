@@ -35,8 +35,8 @@
         @include('components.sweet-alert')
 
         <!-- Left Navigation -->
-        <aside x-data="{ open: false }" @toggle-sidebar.window="open = !open" :class="{ 'w-14': !open, 'w-80': open }"
-            class="bg-gray-800 text-white flex flex-col transition-all duration-300 ease-in-out lg:w-80 ">
+        <aside x-data="{ open: false }" @toggle-sidebar.window="open = !open" :class="{ 'w-14': !open, 'w-72': open }"
+            class="bg-white text-black flex flex-col transition-all duration-300 ease-in-out lg:w-72 ">
             @include('layouts.navigation')
         </aside>
 
