@@ -13,11 +13,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->middleware(['auth', 'verified'])
+        ->name('dashboard');
 
     //currency update
     Route::patch('/currency', [DashboardController::class, 'updateCurrency'])->name('currency.update');
@@ -33,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/income-chart', [IncomeController::class, 'incomeChart']);
     Route::get('/savings-chart', [SavingsController::class, 'savingsChart']);
     Route::get('/expenses-chart', [ExpensesController::class, 'expensesChart']);
+
+    Route::get('/line-chart', [DashboardController::class, 'getLineChartData']);
+    Route::get('/allTransactions', [DashboardController::class, 'allTransactions'])->name('allTransactions');
 
 
 });

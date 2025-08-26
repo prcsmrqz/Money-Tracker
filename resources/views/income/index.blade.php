@@ -41,7 +41,7 @@
                 </div>
 
                 <div x-show="activeTab === 'table'" x-cloak>
-                    <x-income.table :transactionsTable="$transactionsTable" :categories="$categories" :allSavingsAccounts="$allSavingsAccounts" :allCategories="$allCategories"
+                    <x-tables.table :transactionsTable="$transactionsTable" :categories="$categories" :allSavingsAccounts="$allSavingsAccounts" :allCategories="$allCategories"
                         :oldestYear="$oldestYear" />
                 </div>
 

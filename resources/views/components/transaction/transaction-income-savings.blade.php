@@ -87,7 +87,7 @@
                     @foreach ($type == 'income' ? $categories : $savingsAccounts as $category)
                         <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
                         icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
-                            class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                            class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
                             <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
                                 @if ($category->icon)
                                     <img src="{{ asset('storage/' . $category->icon) }}" alt="icon"
@@ -96,7 +96,7 @@
                                     <x-heroicon-o-photo class="w-6 h-6 text-black" />
                                 @endif
                             </div>
-                            <span>{{ $category->name }}</span>
+                            <span>{{ strtolower($category->name) }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -160,7 +160,7 @@
                         @foreach ($categories as $category)
                             <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
                             icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
-                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
                                 <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
                                     @if ($category->icon)
                                         <img src="{{ asset('storage/' . $category->icon) }}" alt="icon"
@@ -169,7 +169,7 @@
                                         <x-heroicon-o-photo class="w-6 h-6 text-black" />
                                     @endif
                                 </div>
-                                <span>{{ $category->name }}</span>
+                                <span>{{ strtolower($category->name) }}</span>
                             </div>
                         @endforeach
                     </div>
