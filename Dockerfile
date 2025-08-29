@@ -1,10 +1,10 @@
-# Base PHP image with FPM
+# Base PHP image
 FROM php:8.2-fpm
 
 # Install system dependencies + PHP extensions
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
-    nginx \
+    git unzip zip libpng-dev libonig-dev libxml2-dev libzip-dev \
+    curl \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
@@ -13,23 +13,18 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project files
+# Copy Laravel project files
 COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Remove default Nginx config (safe even if it doesn't exist)
-RUN rm -f /etc/nginx/conf.d/default.conf
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-
-
-# Set correct permissions for Laravel
+# Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Expose HTTP port
-EXPOSE 80
+# Expose port (Render uses $PORT)
+EXPOSE 10000
 
-# Run migrations and start PHP-FPM + Nginx
-CMD php artisan migrate --force && php-fpm & nginx -g 'daemon off;'
+# Start PHP built-in server
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
