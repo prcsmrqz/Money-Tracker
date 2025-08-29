@@ -11,7 +11,8 @@ use App\Http\Controllers\TransactionController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])

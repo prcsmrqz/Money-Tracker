@@ -1521,23 +1521,9 @@
 
 <body class="antialiased bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white">
 
-    <div class="min-h-screen flex flex-col items-center justify-center">
-        @if (Route::has('login'))
-            <div class="space-x-4">
-                @auth
-                    <a href="{{ url('/dashboard') }}"
-                        class="font-semibold text-indigo-600 hover:text-indigo-800">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-800">Log in</a>
+    @include('landingPage')
 
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                            class="font-semibold text-indigo-600 hover:text-indigo-800">Register</a>
-                    @endif
-                @endauth
-            </div>
-        @endif
-    </div>
+
 </body>
 
 </html>

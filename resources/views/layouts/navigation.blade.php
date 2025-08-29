@@ -1,4 +1,4 @@
-<nav class="flex flex-col flex-1 relative p-4 ">
+<nav class="flex flex-col flex-1 relative p-4 border-r border-gray-300 min-h-0">
     <!-- Hamburger button (only on small screens) -->
     <div class="lg:hidden flex items-center justify-between bg-white text-black mb-4">
         <button @click="$dispatch('toggle-sidebar')" class=" focus:outline-none">
@@ -35,31 +35,31 @@
             </a>
 
             <a href="{{ route('dashboard') }}"
-                class="flex items-center justify-start font-medium p-2 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'dashboard' ? 'bg-gray-700 text-white hover:text-black' : '' }} ">
+                class="flex items-center justify-start font-medium p-2 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'dashboard' ? 'bg-green-700 text-white hover:text-black' : '' }} ">
                 <x-heroicon-s-home class="w-8 h-8 mr-4 shrink-0" />
                 Dashboard
             </a>
 
             <a href="{{ route('income.index') }}"
-                class="flex items-center justify-start font-medium p-2 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'income' ? 'bg-gray-700 text-white hover:text-black' : '' }}">
+                class="flex items-center justify-start font-medium p-2 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'income' ? 'bg-green-700 text-white hover:text-black' : '' }}">
                 <x-heroicon-s-banknotes class="w-8 h-8 mr-4 text-blue-400 " />
                 Income
             </a>
 
             <a href="{{ route('expenses.index') }}"
-                class="flex items-center justify-start font-medium p-2 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'expenses' ? 'bg-gray-700 text-white hover:text-black' : '' }}">
+                class="flex items-center justify-start font-medium p-2 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'expenses' ? 'bg-green-700 text-white hover:text-black' : '' }}">
                 <x-heroicon-s-credit-card class="w-8 h-8 mr-4 text-red-400" />
                 Expenses
             </a>
 
             <a href="{{ route('savings.index') }}"
-                class="flex items-center justify-start font-medium p-2 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'savings' ? 'bg-gray-700 text-white hover:text-black' : '' }}">
+                class="flex items-center justify-start font-medium p-2 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'savings' ? 'bg-green-700 text-white hover:text-black' : '' }}">
                 <x-lucide-piggy-bank class="w-8 h-8 mr-4 text-green-400" />
                 Savings
             </a>
 
             <a href="{{ route('dashboard') }}"
-                class="flex items-center justify-start font-medium p-2 mb-5 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'settings' ? 'bg-gray-700 text-white hover:text-black' : '' }}">
+                class="flex items-center justify-start font-medium p-2 mb-5 text-xl rounded-md hover:bg-gray-300 transition duration-200 {{ request()->segment(1) == 'settings' ? 'bg-green-700 text-white hover:text-black' : '' }}">
                 <x-heroicon-s-cog-8-tooth class="w-8 h-8 mr-4 text-gray-400" />
                 Settings
             </a>
