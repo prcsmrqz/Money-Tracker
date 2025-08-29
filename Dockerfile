@@ -1,7 +1,7 @@
-# Base PHP image
+# Base PHP image with FPM
 FROM php:8.2-fpm
 
-# Install system dependencies + nginx
+# Install system dependencies + Nginx
 RUN apt-get update && apt-get install -y \
     nginx \
     git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
@@ -16,17 +16,18 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install PHP dependencies and clear caches
+# Install PHP dependencies and optimize Laravel
 RUN composer install --no-dev --optimize-autoloader && \
     php artisan config:clear && \
     php artisan route:clear && \
     php artisan view:clear
 
-# Copy Nginx config
+# Remove default Nginx config and copy ours
+RUN rm /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose HTTP port
+# Expose port 80
 EXPOSE 80
 
-# Start migrations, PHP-FPM, and Nginx
+# Run migrations, then start PHP-FPM and Nginx
 CMD php artisan migrate --force && php-fpm -D && nginx -g 'daemon off;'

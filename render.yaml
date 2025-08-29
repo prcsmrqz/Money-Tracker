@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: laravel-app
+    env: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        sync: false # set in Render dashboard (php artisan key:generate --show)
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://laravel-app.onrender.com
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false # set this in Render/your Railway DB settings
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        sync: false # from your Railway DB
+      - key: DB_USERNAME
+        sync: false # from your Railway DB
+      - key: DB_PASSWORD
+        sync: false # from your Railway DB
