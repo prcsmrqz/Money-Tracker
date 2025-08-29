@@ -14,8 +14,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project files
+# Copy Laravel project files
 COPY . .
+
+# If .env does not exist, copy example
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -23,10 +26,8 @@ RUN composer install --no-dev --optimize-autoloader
 # Install Node dependencies and build frontend assets
 RUN npm install && npm run build
 
-# Clear caches
-RUN php artisan config:clear \
-    && php artisan cache:clear \
-    && php artisan view:clear
+# Generate APP_KEY (required for Artisan commands)
+RUN php artisan key:generate
 
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
