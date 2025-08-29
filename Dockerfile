@@ -1,11 +1,12 @@
-# Base PHP image
+# Base PHP image with FPM
 FROM php:8.2-fpm
 
 # Install system dependencies + PHP extensions + Node.js
 RUN apt-get update && apt-get install -y \
     git unzip zip libpng-dev libonig-dev libxml2-dev libzip-dev curl \
     nodejs npm \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -13,21 +14,26 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy Laravel project files
+# Copy project files
 COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node dependencies and build frontend (Vite)
+# Install Node dependencies and build frontend assets
 RUN npm install && npm run build
+
+# Clear caches
+RUN php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan view:clear
 
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Expose port (Render will provide $PORT)
+# Expose port (Render provides $PORT)
 EXPOSE 10000
 
-# Start Laravel built-in server
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+# Run migrations and start Laravel server
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT
