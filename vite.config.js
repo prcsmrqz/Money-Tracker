@@ -8,4 +8,10 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    base: process.env.VITE_URL, // ensures assets point to your deployed URL
+    server: {
+        hmr: {
+            host: 'localhost',
+        },
+    },
 });

@@ -17,23 +17,22 @@ WORKDIR /var/www/html
 # Copy Laravel project files
 COPY . .
 
-# If .env does not exist, copy example
-RUN if [ ! -f .env ]; then cp .env.example .env; fi
-
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node dependencies and build frontend assets
+# Install Node dependencies and build frontend (Vite)
 RUN npm install && npm run build
 
-# Generate APP_KEY (required for Artisan commands)
-RUN php artisan key:generate
+# Clear caches
+RUN php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan view:clear
 
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Expose port (Render provides $PORT)
+# Expose port (Render / Railway provides $PORT)
 EXPOSE 10000
 
 # Run migrations and start Laravel server
