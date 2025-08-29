@@ -22,8 +22,8 @@ RUN composer install --no-dev --optimize-autoloader
 # Clear Laravel caches
 RUN php artisan config:clear && php artisan route:clear && php artisan view:clear
 
-# Expose the dynamic port (Render will provide it)
+# Expose Render's dynamic port
 EXPOSE ${PORT}
 
-# Start Laravel using the Render-provided port
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT}
+# Start PHP built-in server directly pointing to Laravel's public folder
+CMD php artisan migrate --force && php -S 0.0.0.0:${PORT} -t public
