@@ -23,20 +23,18 @@ RUN composer install --no-dev --optimize-autoloader
 # Install Node dependencies and build frontend (Vite)
 RUN npm install && npm run build
 
-# Clear caches
-CMD php artisan config:clear \
-    && php artisan cache:clear \
-    && php artisan view:clear \
-    && php artisan migrate --force \
-    && php artisan serve --host=0.0.0.0 --port=$PORT
-
-
-# Set permissions
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+# Set permissions for storage, cache, and public directories
+# 'public' is added to ensure the web server can serve the compiled assets
+RUN chown -R www-data:www-data storage bootstrap/cache public \
+    && chmod -R 775 storage bootstrap/cache public
 
 # Expose port (Render / Railway provides $PORT)
 EXPOSE 10000
 
 # Run migrations and start Laravel server
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT
+# This single CMD command combines all necessary runtime steps
+CMD php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan view:clear \
+    && php artisan migrate --force \
+    && php artisan serve --host=0.0.0.0 --port=$PORT
