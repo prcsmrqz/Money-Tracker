@@ -15,26 +15,29 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy Laravel project files
+# Copy package.json and package-lock.json first (for caching)
+COPY package*.json ./
+
+# Install Node dependencies
+RUN npm install
+
+# Copy the rest of the Laravel project files
 COPY . .
+
+# Build frontend with Vite
+RUN npm run build
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
-
-# Set Node environment to production for optimized build
-ENV NODE_ENV=production
-
-# Install Node dependencies and build frontend (Vite)
-RUN npm install && npm run build
 
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache public \
     && chmod -R 775 storage bootstrap/cache public
 
-# Expose the port that Render provides dynamically
+# Expose the port
 EXPOSE $PORT
 
-# Clear Laravel caches and migrate, then start the server
+# Clear caches and run Laravel
 CMD php artisan config:clear \
     && php artisan cache:clear \
     && php artisan view:clear \
