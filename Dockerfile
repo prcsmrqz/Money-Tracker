@@ -1,17 +1,17 @@
-# Base PHP image (CLI)
-FROM php:8.2-cli
+# Base PHP image with FPM
+FROM php:8.2-fpm
 
-# Install system dependencies and PHP extensions
+# Install system dependencies + PHP extensions
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
-    && rm -rf /var/lib/apt/lists/*
+    nginx \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /app
+WORKDIR /var/www/html
 
 # Copy project files
 COPY . .
@@ -19,11 +19,16 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Clear Laravel caches
-RUN php artisan config:clear && php artisan route:clear && php artisan view:clear
+# Remove default Nginx config and copy custom config
+RUN rm /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose Render's dynamic port
-EXPOSE ${PORT}
+# Set correct permissions for Laravel
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-# Start PHP built-in server directly pointing to Laravel's public folder
-CMD php artisan migrate --force && php -S 0.0.0.0:${PORT} -t public
+# Expose HTTP port
+EXPOSE 80
+
+# Run migrations and start PHP-FPM + Nginx
+CMD php artisan migrate --force && php-fpm & nginx -g 'daemon off;'
