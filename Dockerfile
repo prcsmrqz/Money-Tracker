@@ -1,4 +1,4 @@
-# Base PHP image (CLI for artisan serve)
+# Base PHP image (CLI)
 FROM php:8.2-cli
 
 # Install system dependencies and PHP extensions
@@ -11,19 +11,19 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /app
 
 # Copy project files
 COPY . .
 
-# Install PHP dependencies and clear caches
-RUN composer install --no-dev --optimize-autoloader && \
-    php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-# Expose port Render expects
+# Clear Laravel caches
+RUN php artisan config:clear && php artisan route:clear && php artisan view:clear
+
+# Expose Render port
 EXPOSE 8080
 
-# Run migrations, then start Laravel server
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080
+# Start Laravel using the Render-provided port
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
