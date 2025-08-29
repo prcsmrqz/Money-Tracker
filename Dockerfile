@@ -1,9 +1,6 @@
 # Base PHP image with FPM
 FROM php:8.2-fpm
 
-# Set working directory
-WORKDIR /var/www/html
-
 # Install system dependencies + PHP extensions + Node.js
 RUN apt-get update && apt-get install -y \
     git unzip zip libpng-dev libonig-dev libxml2-dev libzip-dev curl \
@@ -15,30 +12,29 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy project files
-COPY . .
+# Set working directory
+WORKDIR /var/www/html
 
-# Copy .env for frontend build
-COPY .env .env
+# Copy Laravel project files
+COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set Node environment to production
+# Set Node environment to production for optimized build
 ENV NODE_ENV=production
 
 # Install Node dependencies and build frontend (Vite)
-RUN npm install --legacy-peer-deps \
-    && npm run build
+RUN npm install && npm run build
 
-# Set permissions for Laravel
+# Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache public \
     && chmod -R 775 storage bootstrap/cache public
 
-# Expose the dynamic port provided by Render
+# Expose the port that Render provides dynamically
 EXPOSE $PORT
 
-# Clear caches, migrate, and start Laravel server
+# Clear Laravel caches and migrate, then start the server
 CMD php artisan config:clear \
     && php artisan cache:clear \
     && php artisan view:clear \
