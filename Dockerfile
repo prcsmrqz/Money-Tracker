@@ -19,8 +19,8 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Remove default Nginx config and copy custom config
-RUN rm /etc/nginx/conf.d/default.conf
+# Remove default Nginx config (safe even if it doesn't exist)
+RUN rm -f /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 # Set correct permissions for Laravel
