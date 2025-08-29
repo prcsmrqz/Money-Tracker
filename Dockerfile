@@ -20,17 +20,18 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+# Set permissions before building assets
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
 # Install Node dependencies and build frontend (Vite)
-RUN npm install && npm run build
+RUN npm install
+RUN npm run build
 
 # Clear caches
 RUN php artisan config:clear \
     && php artisan cache:clear \
     && php artisan view:clear
-
-# Set permissions
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
 
 # Expose port (Render / Railway provides $PORT)
 EXPOSE 10000
