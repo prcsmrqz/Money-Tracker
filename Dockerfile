@@ -23,6 +23,7 @@ RUN composer install --no-dev --optimize-autoloader
 RUN rm -f /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
+
 # Set correct permissions for Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
