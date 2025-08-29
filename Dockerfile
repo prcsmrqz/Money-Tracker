@@ -1,8 +1,9 @@
-# Stage 1: Build PHP with dependencies
-FROM php:8.2-fpm AS build
+# Base PHP image
+FROM php:8.2-fpm
 
-# Install system dependencies
+# Install system dependencies + nginx
 RUN apt-get update && apt-get install -y \
+    nginx \
     git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
@@ -15,30 +16,17 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install PHP dependencies
+# Install PHP dependencies and clear caches
 RUN composer install --no-dev --optimize-autoloader && \
     php artisan config:clear && \
     php artisan route:clear && \
     php artisan view:clear
 
-# Stage 2: Nginx + PHP-FPM
-FROM nginx:alpine
-
-# Copy PHP binaries & app from build
-COPY --from=build /usr/local/etc/php /usr/local/etc/php
-COPY --from=build /usr/local/bin/php /usr/local/bin/php
-COPY --from=build /usr/local/sbin/php-fpm /usr/local/sbin/php-fpm
-COPY --from=build /usr/bin/composer /usr/bin/composer
-COPY --from=build /var/www/html /var/www/html
-
-# Copy Nginx configuration
+# Copy Nginx config
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# Set working directory
-WORKDIR /var/www/html
-
-# Expose port 80 for Render
+# Expose HTTP port
 EXPOSE 80
 
-# Run migrations before starting the server
+# Start migrations, PHP-FPM, and Nginx
 CMD php artisan migrate --force && php-fpm -D && nginx -g 'daemon off;'
