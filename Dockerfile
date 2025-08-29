@@ -24,9 +24,12 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install && npm run build
 
 # Clear caches
-RUN php artisan config:clear \
+CMD php artisan config:clear \
     && php artisan cache:clear \
-    && php artisan view:clear
+    && php artisan view:clear \
+    && php artisan migrate --force \
+    && php artisan serve --host=0.0.0.0 --port=$PORT
+
 
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
