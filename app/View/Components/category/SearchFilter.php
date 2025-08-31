@@ -17,7 +17,6 @@ class SearchFilter extends Component
         $this->oldestYear = $oldestYear;
         $this->search = $search;
         $this->mode = $mode;
-        Log::info('SearchFilter oldestYear: ' . json_encode($oldestYear));
     }
 
     /**
@@ -25,6 +24,7 @@ class SearchFilter extends Component
      */
     public function render(): View|Closure|string
     {
+        error_log("SearchFilter oldestYear: " . $this->oldestYear);
         return view('components.category.search-filter');
     }
 }
