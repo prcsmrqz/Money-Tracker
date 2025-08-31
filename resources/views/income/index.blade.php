@@ -28,8 +28,7 @@
                 </div>
 
                 <div x-show="activeTab === 'chart'" x-cloak>
-                    <p>Oldest Year: {{ $oldestYear ?? 'NOT SET' }}</p>
-                    {{-- <x-category.search-filter :oldestYear="$oldestYear" :search="false" :mode="'chart'" /> --}}
+                    <x-category.search-filter :oldestYear="$oldestYear" :search="false" :mode="'chart'" />
                     <div x-data="chartComponent()" x-init="fetchAndRenderChart()" class="w-full" style="height: 500px;">
                         <div class="flex justify-center items-center h-full">
                             <canvas x-show="chart" x-ref="incomeChartCanvas" class="!w-full !h-full max-w-5xl"></canvas>
