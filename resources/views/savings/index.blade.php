@@ -35,7 +35,7 @@
                         <div class="flex justify-center items-center h-full">
                             <canvas x-show="chart" x-ref="savingsChartCanvas"
                                 class="!w-full !h-full max-w-5xl"></canvas>
-                            <div x-show="!chart" class="text-center text-gray-400 mt-4">
+                            <div x-show="!chart" class="text-center text-gray-400 mt-4 italic">
                                 No data found.
                             </div>
                         </div>
@@ -91,7 +91,9 @@
                                 </td>
                             </tr>
                         @empty
-                            <p> No transactions found. </p>
+                            <div class="flex justify-center items-center h-32">
+                                <p class="text-gray-500 text-sm text-center italic"> No transactions found. </p>
+                            </div>
                         @endforelse
                     </table>
                 </div>
@@ -134,7 +136,7 @@
                             </li>
                         @empty
                             <div class="flex justify-center items-center h-32">
-                                <p class="text-sm md:text-base italic text-gray-400">No data found.</p>
+                                <p class="text-gray-500 text-sm text-center italic"> No transactions found. </p>
                             </div>
                         @endforelse
                     </ul>

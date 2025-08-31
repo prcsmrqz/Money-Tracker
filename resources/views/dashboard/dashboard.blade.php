@@ -76,12 +76,14 @@
                 </form>
             </div>
 
-            <div x-data="LineChart()" x-init="fetchAndRenderChart()" class="w-full" style="height: 500px;">
-                <canvas x-ref="lineChartCanvas"></canvas>
-                <div x-show="!chart" class="flex items-center justify-center text-gray-400 h-full">
+            <div x-data="LineChart()" x-init="fetchAndRenderChart()" class="w-full relative" style="height: 500px;">
+                <canvas x-ref="lineChartCanvas" class="w-full h-full"></canvas>
+                <div x-show="!chart"
+                    class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm italic">
                     No data found.
                 </div>
             </div>
+
         </div>
 
         <!-- Categories -->
@@ -115,7 +117,9 @@
                             </p>
                         </div>
                     @empty
-                        <p class="text-gray-500 text-sm">No Top Income Categories Found.</p>
+                        <div class="flex justify-center items-center h-32">
+                            <p class="text-gray-500 text-sm text-center italic"> No top earning categories found. </p>
+                        </div>
                     @endforelse
                 </div>
             </div>
@@ -148,7 +152,9 @@
                             </p>
                         </div>
                     @empty
-                        <p class="text-gray-500 text-sm">No Top Spending Categories Found.</p>
+                        <div class="flex justify-center items-center h-32">
+                            <p class="text-gray-500 text-sm text-center italic"> No top spending categories found. </p>
+                        </div>
                     @endforelse
                 </div>
             </div>
@@ -181,7 +187,9 @@
                             </p>
                         </div>
                     @empty
-                        <p class="text-gray-500 text-sm">No Top Savings Categories Found.</p>
+                        <div class="flex justify-center items-center h-32">
+                            <p class="text-gray-500 text-sm text-center italic"> No top savings categories found. </p>
+                        </div>
                     @endforelse
                 </div>
             </div>
@@ -237,7 +245,9 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-gray-500 text-sm">No recent transactions found.</p>
+                    <div class="flex justify-center items-center h-32">
+                        <p class="text-gray-500 text-sm text-center italic"> No recent transactions found. </p>
+                    </div>
                 @endforelse
             </div>
         </div>

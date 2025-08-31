@@ -37,7 +37,11 @@
 
             </a>
         @empty
-            <p>No categories available.</p>
+            <div class="col-span-full flex justify-center items-center mt-5">
+                <p class="text-gray-500 text-sm italic">
+                    No categories found.
+                </p>
+            </div>
         @endforelse
     </div>
 </div>

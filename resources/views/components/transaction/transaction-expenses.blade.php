@@ -79,7 +79,7 @@
 
             <div x-show="open" @click.away="open = false" @click.stop
                 class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
-                @foreach ($expensesCategories as $category)
+                @forelse ($expensesCategories as $category)
                     <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
                         icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
                         class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
@@ -93,7 +93,12 @@
                         </div>
                         <span>{{ strtolower($category->name) }}</span>
                     </div>
-                @endforeach
+                @empty
+                    <div
+                        class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer italic text-red-500">
+                        <span>No categories found. Please create categories first</span>
+                    </div>
+                @endforelse
             </div>
 
             <input type="hidden" name="category_id" :value="selected?.id">
@@ -172,7 +177,7 @@
                     <!-- Dropdown -->
                     <div x-show="open" @click.away="open = false" @click.stop
                         class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
-                        @foreach ($incomeCategories as $category)
+                        @forelse ($incomeCategories as $category)
                             <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
                             icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
                                 class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
@@ -186,7 +191,12 @@
                                 </div>
                                 <span>{{ strtolower($category->name) }}</span>
                             </div>
-                        @endforeach
+                        @empty
+                            <div
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer italic text-red-500">
+                                <span>No categories found. Please create categories first</span>
+                            </div>
+                        @endforelse
                     </div>
 
                     <input type="hidden" name="source_income" :value="selected?.id">
@@ -247,7 +257,7 @@
                     <!-- Dropdown -->
                     <div x-show="open" @click.away="open = false" @click.stop
                         class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
-                        @foreach ($savingsAccounts as $savings)
+                        @forelse ($savingsAccounts as $savings)
                             <div @click.prevent.stop="selected = { id: '{{ $savings->id }}', name: '{{ $savings->name }}',
                             icon: {{ $savings->icon ? '\'' . asset('storage/' . $savings->icon) . '\'' : 'null' }} }; open = false"
                                 class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
@@ -261,7 +271,12 @@
                                 </div>
                                 <span>{{ strtolower($savings->name) }}</span>
                             </div>
-                        @endforeach
+                        @empty
+                            <div
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer italic text-red-500">
+                                <span>No categories found. Please create categories first</span>
+                            </div>
+                        @endforelse
                     </div>
 
                     <input type="hidden" name="source_savings" :value="selected?.id">

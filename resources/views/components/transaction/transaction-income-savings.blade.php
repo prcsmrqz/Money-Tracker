@@ -84,7 +84,7 @@
 
                 <div x-show="open" @click.away="open = false" @click.stop
                     class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
-                    @foreach ($type == 'income' ? $categories : $savingsAccounts as $category)
+                    @forelse ($type == 'income' ? $categories : $savingsAccounts as $category)
                         <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
                         icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
                             class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
@@ -98,7 +98,12 @@
                             </div>
                             <span>{{ strtolower($category->name) }}</span>
                         </div>
-                    @endforeach
+                    @empty
+                        <div
+                            class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer italic text-red-500">
+                            <span>No categories found. Please create categories first</span>
+                        </div>
+                    @endforelse
                 </div>
 
                 <input type="hidden" name="{{ $type == 'income' ? 'category_id' : 'savings_account_id' }}"
@@ -157,7 +162,7 @@
 
                     <div x-show="open" @click.away="open = false" @click.stop
                         class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
-                        @foreach ($categories as $category)
+                        @forelse ($categories as $category)
                             <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
                             icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
                                 class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
@@ -171,7 +176,12 @@
                                 </div>
                                 <span>{{ strtolower($category->name) }}</span>
                             </div>
-                        @endforeach
+                        @empty
+                            <div
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer italic text-red-500">
+                                <span>No categories found. Please create categories first</span>
+                            </div>
+                        @endforelse
                     </div>
 
                     <input type="hidden" name="category_id" :value="selected?.id">

@@ -33,7 +33,7 @@
                     <div x-data="chartComponent()" x-init="fetchAndRenderChart()" class="w-full" style="height: 500px;">
                         <div class="flex justify-center items-center h-full">
                             <canvas x-show="chart" x-ref="incomeChartCanvas" class="!w-full !h-full max-w-5xl"></canvas>
-                            <div x-show="!chart" class="text-center text-gray-400 mt-4">
+                            <div x-show="!chart" class="text-center text-gray-400 mt-4 italic">
                                 No data found.
                             </div>
                         </div>
@@ -89,8 +89,8 @@
                             </tr>
                         @empty
                             <div class="flex justify-center items-center h-32">
-                                <p class="text-sm md:text-base italic text-gray-400">No transactions found.</p>
-                            </div>)
+                                <p class="text-sm italic text-gray-500">No transactions found.</p>
+                            </div>
                         @endforelse
                     </table>
                 </div>
@@ -133,7 +133,7 @@
                             </li>
                         @empty
                             <div class="flex justify-center items-center h-32">
-                                <p class="text-sm md:text-base italic text-gray-400">No data found.</p>
+                                <p class="text-sm italic text-gray-500">No data found.</p>
                             </div>
                         @endforelse
                     </ul>
