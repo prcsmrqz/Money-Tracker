@@ -13,7 +13,7 @@
                     Manage Categories
                 </button>
             </div>
-
+            <p>{{ $oldestYear }}</p>
             <x-category.category-modal title="Income Category List" :storeAction="route('category.store')" updateAction="/category"
                 :categories="$categories" :type="'income'" :open="true" />
         </div>

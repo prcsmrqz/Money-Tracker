@@ -3,19 +3,21 @@
 namespace App\View\Components\category;
 
 use Closure;
-use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 
 class SearchFilter extends Component
 {
     public $oldestYear;
     public $search;
     public $mode;
-    public function __construct($oldestYear = 2025, $search, $mode)
+    public function __construct( $search, $mode, $oldestYear = 2025)
     {
         $this->oldestYear = $oldestYear;
         $this->search = $search;
         $this->mode = $mode;
+        Log::info('SearchFilter oldestYear: ' . json_encode($oldestYear));
     }
 
     /**
