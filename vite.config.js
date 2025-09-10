@@ -8,11 +8,4 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    build: {
-        outDir: "public/assets", // 👈 change build output folder
-        manifest: true, // keep manifest.json
-        rollupOptions: {
-            input: "resources/js/app.js",
-        },
-    },
 });
