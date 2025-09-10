@@ -89,6 +89,15 @@
                     'savings' => 'text-emerald-600 bg-emerald-100 dark:bg-emerald-700',
                     default => '',
                 };
+
+                if ($transaction->type === 'savings') {
+                    $color = $transaction->savingsAccount->color;
+                    $name = $transaction->savingsAccount->name;
+                } else {
+                    $color = $transaction->category->color;
+                    $name = $transaction->category->name;
+                }
+
             @endphp
             <tr class="hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
 
@@ -101,8 +110,8 @@
                 </td>
                 <td class="w-1/6 py-2 whitespace-nowrap text-xs lg:text-sm">
                     <span class="px-2 md:px-3 py-1 rounded-full font-medium"
-                        style="background-color: {{ $transaction->category->color }}2A; color: {{ $transaction->category->color }}">
-                        {{ ucfirst(strtolower($transaction->category->name)) }} </span>
+                        style="background-color: {{ $color }}2A; color: {{ $color }}">
+                        {{ ucfirst(strtolower($name)) }} </span>
                 </td>
                 <td class="w-1/6 px-3 py-3 capitalize font-semibold">
                     <span

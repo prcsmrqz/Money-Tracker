@@ -16,7 +16,6 @@
         <option value="custom" {{ request('date_filter') == 'custom' ? 'selected' : '' }}>Custom</option>
     </select>
 
-    <p>Oldest Year: {{ $oldestYear ?? 'NOT SET' }}</p>
     {{-- Month & Year Filter --}}
     <div class="flex gap-2" id="month_year_filter" style="display: none;">
         <select name="month_filter" id="month_filter_select"
@@ -27,19 +26,17 @@
                     {{ $value }}</option>
             @endforeach
         </select>
+        @if ($oldestYear)
+            <select name="year_filter" id="year_filter_select"
+                class="h-[42px] w-full sm:w-40 border border-gray-300 shadow-sm rounded px-5 pr-9 text-sm text-gray-900 bg-white focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Select Year</option>
 
-
-        {{--
-        <select name="year_filter" id="year_filter_select"
-            class="h-[42px] w-full sm:w-40 border border-gray-300 shadow-sm rounded px-5 pr-9 text-sm text-gray-900 bg-white focus:ring-blue-500 focus:border-blue-500">
-            <option value="">Select Year</option>
-
-            @for ($year = date('Y'); $year >= $oldestYear; $year--)
-                <option value="{{ $year }}" {{ request('year_filter') == $year ? 'selected' : '' }}>
-                    {{ $year }}</option>
-            @endfor
-        </select>
-        --}}
+                @for ($year = date('Y'); $year >= $oldestYear; $year--)
+                    <option value="{{ $year }}" {{ request('year_filter') == $year ? 'selected' : '' }}>
+                        {{ $year }}</option>
+                @endfor
+            </select>
+        @endif
     </div>
 
     {{-- Custom Date Range Filter --}}
