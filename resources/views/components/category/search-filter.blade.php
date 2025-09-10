@@ -1,4 +1,4 @@
-@props(['search' => false, 'mode' => 'paginate'])
+@props(['search' => false, 'mode' => 'paginate', 'oldestYear' => 2025])
 
 <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap items-start gap-4 mb-5 px-5">
 
@@ -26,17 +26,15 @@
                     {{ $value }}</option>
             @endforeach
         </select>
-        @if ($oldestYear)
-            <select name="year_filter" id="year_filter_select"
-                class="h-[42px] w-full sm:w-40 border border-gray-300 shadow-sm rounded px-5 pr-9 text-sm text-gray-900 bg-white focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Select Year</option>
+        <select name="year_filter" id="year_filter_select"
+            class="h-[42px] w-full sm:w-40 border border-gray-300 shadow-sm rounded px-5 pr-9 text-sm text-gray-900 bg-white focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Select Year</option>
 
-                @for ($year = date('Y'); $year >= $oldestYear; $year--)
-                    <option value="{{ $year }}" {{ request('year_filter') == $year ? 'selected' : '' }}>
-                        {{ $year }}</option>
-                @endfor
-            </select>
-        @endif
+            @for ($year = date('Y'); $year >= $oldestYear; $year--)
+                <option value="{{ $year }}" {{ request('year_filter') == $year ? 'selected' : '' }}>
+                    {{ $year }}</option>
+            @endfor
+        </select>
     </div>
 
     {{-- Custom Date Range Filter --}}
