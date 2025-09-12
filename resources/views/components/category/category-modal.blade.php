@@ -2,13 +2,13 @@
 <div x-show="open" x-cloak x-transition @click.self="open = false; $dispatch('close-modal')"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div @click.stop
-        class="relative bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-4xl p-6">
+        class="relative bg-white rounded-lg shadow-lg w-11/12 sm:w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-4xl mx-auto p-6">
+
 
         <!-- Modal header -->
-        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-600 pb-3">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $title }}</h3>
-            <button @click="open = false; $dispatch('close-modal')"
-                class="text-gray-400 hover:text-gray-900 dark:hover:text-white">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3">
+            <h3 class="text-lg font-semibold text-gray-900 ">{{ $title }}</h3>
+            <button @click="open = false; $dispatch('close-modal')" class="text-gray-400 hover:text-gray-900 ">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7l-6 6" />
@@ -29,7 +29,7 @@
                             <img :src="previewUrl" alt="Preview" class="object-cover w-full h-full">
                         </template>
                         <template x-if="!previewUrl">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
@@ -72,8 +72,8 @@
                     </div>
 
                     <button type="submit"
-                        class="bg-emerald-500 flex items-center text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition duration-200">
-                        <x-heroicon-s-plus class="w-4 h-4 mr-2" />
+                        class="bg-emerald-500 flex text-sm sm:text-base items-center text-white px-2 sm:px-4 py-2 rounded-md hover:bg-emerald-600 transition duration-200">
+                        <x-heroicon-s-plus class="w-4 h-4 mr-1 sm:mr-2" />
                         Add
                     </button>
                 </div>

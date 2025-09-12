@@ -1,5 +1,5 @@
 <div class="flex flex-col items-center w-full">
-    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5  gap-5 w-full">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5  gap-5 w-full">
         @forelse ($categories as $category)
             <a href="{{ route('category.show', $category->id) }}"
                 style="background-image: 

@@ -60,8 +60,8 @@
 
         <!-- Chart -->
         <div class="flex flex-col w-full p-6 lg:col-span-2 bg-white shadow-md rounded-2xl">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-900">Income, Expenses & Savings Overview</h2>
+            <div class="flex flex-col sm:flex-row justify-between mb-4">
+                <h2 class="text-lg font-bold text-gray-900 mb-2 sm:mb-0">Income, Expenses & Savings Overview</h2>
                 <form method="GET" action="">
                     <select name="year_filter" id="year_filter_select"
                         class="h-10 w-40 border border-gray-300 shadow-sm rounded-lg px-4 text-sm text-gray-900 bg-white focus:ring-blue-500 focus:border-blue-500"
@@ -334,11 +334,13 @@
                                         weight: '600'
                                     },
                                     color: '#4B5563',
-                                    boxWidth: 50,
-                                    padding: 40
-                                }
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    boxWidth: 12,
+                                    boxHeight: 12,
 
-                            }
+                                }
+                            },
                         },
                         scales: {
                             x: {

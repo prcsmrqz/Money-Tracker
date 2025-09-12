@@ -1,5 +1,5 @@
 <div class="flex flex-col items-center w-full">
-    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5  gap-5 w-full">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5  gap-5 w-full">
 
         @forelse ($savingsAccounts as $savingsAccount)
             <div class="relative w-full group transition-all duration-200 ease-in-out">
@@ -46,14 +46,14 @@
                 <div x-data="{
                     openDropdown: false,
                     open: {{ session('errors') && session('errors')->hasBag('update_' . $savingsAccount->id) ? 'true' : 'false' }}
-                }" class="absolute top-2 right-2 z-20 ">
+                }" class="absolute top-2 right-2 ">
                     <button @click="openDropdown = !openDropdown" @click.away="openDropdown = false"
                         class="p-1 transition-transform duration-200 ease-in-out group-hover:-translate-y-1 group-hover:scale-105">
                         <x-heroicon-s-ellipsis-vertical class="w-5 h-5 text-white hover:text-gray-900" />
                     </button>
 
                     <div x-show="openDropdown" x-transition
-                        class="absolute -right-5 w-28 bg-white text-black rounded-md shadow text-sm z-50">
+                        class="absolute -right-5 w-28 bg-white text-black rounded-md shadow text-sm">
                         <button @click="open = true; openDropdown = false"
                             class="flex gap-2 w-full px-4 py-2 hover:bg-gray-200">
                             <x-heroicon-s-pencil-square class="w-4 text-orange-500" />
@@ -71,8 +71,12 @@
                         </form>
                     </div>
 
-                    <x-savings.update-modal :savingsAccount='$savingsAccount' title="Edit Savings Account" :action="route('savings.update', $savingsAccount->id)"
-                        type="savings" :open="true" />
+                    <template x-if="open">
+                        <div class="z-50">
+                            <x-savings.update-modal :savingsAccount="$savingsAccount" title="Edit Savings Account" :action="route('savings.update', $savingsAccount->id)"
+                                type="savings" />
+                        </div>
+                    </template>
 
                 </div>
             </div>

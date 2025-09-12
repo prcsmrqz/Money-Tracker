@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>Money Tracker</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -1519,7 +1519,7 @@
     @endif
 </head>
 
-<body class="antialiased bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white">
+<body class="antialiased overflow-x-hidden ">
 
     @include('landingPage')
 

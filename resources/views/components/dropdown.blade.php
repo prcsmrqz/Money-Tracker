@@ -1,4 +1,4 @@
-@props(['align' => 'right', 'width' => 'full', 'contentClasses' => 'py-1 bg-white dark:bg-gray-700'])
+@props(['align' => 'right', 'width' => 'full', 'contentClasses' => 'py-1 bg-white '])
 
 @php
     // 'start-0' for left align, 'end-0' for right align

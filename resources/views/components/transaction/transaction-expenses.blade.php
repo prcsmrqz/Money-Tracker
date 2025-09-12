@@ -3,9 +3,9 @@
 
     <!-- Time & Date -->
     <div class="flex flex-col space-y-1 mb-7">
-        <p class="font-bold text-gray-600 dark:text-gray-400">TIME & DATE:</p>
+        <p class="font-bold text-gray-600">TIME & DATE:</p>
         <input type="datetime-local" name="date" value="{{ old('date') }}"
-            class="border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white">
+            class="border border-gray-400 rounded-md px-2 py-2 text-xs sm:text-base w-full">
         @error('date', 'expensesForm')
             <div class="text-red-500 text-sm">
                 {{ $message }}
@@ -15,14 +15,13 @@
 
     <!-- Amount -->
     <div class="flex flex-col space-y-1 mb-7">
-        <p class="font-bold text-gray-600 dark:text-gray-400">AMOUNT:</p>
+        <p class="font-bold text-gray-600">AMOUNT:</p>
         <div class="relative">
-            <div
-                class="absolute inset-y-0 start-0 flex items-center ps-3.5 pe-3 border-e border-gray-300 dark:border-gray-600">
-                <span class="text-gray-500 dark:text-gray-400">{{ Auth::user()->currency_symbol }}</span>
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pe-3 border-e border-gray-300">
+                <span class="text-gray-500">{{ Auth::user()->currency_symbol }}</span>
             </div>
             <input type="number" name="amount" value="{{ old('amount') }}"
-                class="border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-14 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                class="text-xs sm:text-base border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-14 p-2.5">
 
         </div>
         @error('amount', 'expensesForm')
@@ -33,7 +32,7 @@
     </div>
 
     <div class="flex flex-col space-y-1 mb-7">
-        <p class="font-bold text-gray-600 dark:text-gray-400">
+        <p class="font-bold text-gray-600 ">
             CATEGORY:
         </p>
         @php
@@ -53,23 +52,23 @@
             ) }}
         }" class="relative">
             <button type="button" @click="open = !open"
-                class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center dark:bg-gray-800 dark:text-white">
+                class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center">
                 <div class="flex items-center gap-2">
                     <template x-if="selected">
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
+                            <div class="w-4 h-4 sm:w-6 sm:h-6 rounded-full overflow-hidden bg-gray-200">
                                 <template x-if="selected.icon">
                                     <img :src="selected.icon" alt="selected icon" class="w-full h-full object-cover">
                                 </template>
                                 <template x-if="!selected.icon">
-                                    <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                    <x-heroicon-o-photo class="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                                 </template>
                             </div>
-                            <span x-text="selected.name"></span>
+                            <span x-text="selected.name" class="text-xs sm:text-base"></span>
                         </div>
                     </template>
                     <template x-if="!selected">
-                        <span>Select a category</span>
+                        <span class="text-xs sm:text-base">Select a category</span>
                     </template>
                 </div>
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,24 +77,23 @@
             </button>
 
             <div x-show="open" @click.away="open = false" @click.stop
-                class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
+                class="absolute z-10 mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg">
                 @forelse ($expensesCategories as $category)
                     <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
                         icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
-                        class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
-                        <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
+                        class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer capitalize">
+                        <div class="w-4 h-4 sm:w-6 sm:h-6 rounded-full overflow-hidden bg-gray-200">
                             @if ($category->icon)
                                 <img src="{{ asset('storage/' . $category->icon) }}" alt="icon"
                                     class="w-full h-full object-cover">
                             @else
-                                <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                <x-heroicon-o-photo class="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                             @endif
                         </div>
-                        <span>{{ strtolower($category->name) }}</span>
+                        <span class="text-xs sm:text-base">{{ strtolower($category->name) }}</span>
                     </div>
                 @empty
-                    <div
-                        class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer italic text-red-500">
+                    <div class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer italic text-red-500">
                         <span>No categories found. Please create categories first</span>
                     </div>
                 @endforelse
@@ -117,8 +115,9 @@
             <!-- SELECT SOURCE TYPE -->
             <div class="w-full md:flex-1">
 
-                <p class="font-bold text-gray-600 dark:text-gray-400 mb-1">SOURCE:</p>
-                <select class="w-full rounded-md border border-gray-400" name="source_type" x-model="sourceType">
+                <p class="font-bold text-gray-600 mb-1">SOURCE:</p>
+                <select class="text-xs sm:text-base w-full rounded-md border border-gray-400" name="source_type"
+                    x-model="sourceType">
                     <option value="income">Income</option>
                     <option value="savings">Savings</option>
                 </select>
@@ -131,7 +130,7 @@
 
             <!-- SOURCE INCOME -->
             <div class="w-full md:flex-1" x-show="sourceType === 'income'">
-                <p class="font-bold text-gray-600 dark:text-gray-400 mb-1">SOURCE INCOME:</p>
+                <p class="font-bold text-gray-600 mb-1">SOURCE INCOME:</p>
                 @php
                     $selectedSourceIncome = $incomeCategories->firstWhere('id', old('source_income'));
                 @endphp
@@ -149,24 +148,24 @@
                     ) }}
                 }" class="relative">
                     <button type="button" @click="open = !open"
-                        class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center dark:bg-gray-800 dark:text-white">
+                        class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <template x-if="selected">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
+                                    <div class="w-4 h-4 sm:w-6 sm:h-6 rounded-full overflow-hidden bg-gray-200">
                                         <template x-if="selected.icon">
                                             <img :src="selected.icon" alt="selected icon"
                                                 class="w-full h-full object-cover">
                                         </template>
                                         <template x-if="!selected.icon">
-                                            <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                            <x-heroicon-o-photo class="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                                         </template>
                                     </div>
-                                    <span x-text="selected.name"></span>
+                                    <span x-text="selected.name" class="text-xs sm:text-base"></span>
                                 </div>
                             </template>
                             <template x-if="!selected">
-                                <span>Select income category</span>
+                                <span class="text-xs sm:text-base">Select income category</span>
                             </template>
                         </div>
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,24 +175,24 @@
 
                     <!-- Dropdown -->
                     <div x-show="open" @click.away="open = false" @click.stop
-                        class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
+                        class="absolute z-10 mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg">
                         @forelse ($incomeCategories as $category)
                             <div @click.prevent.stop="selected = { id: '{{ $category->id }}', name: '{{ $category->name }}',
                             icon: {{ $category->icon ? '\'' . asset('storage/' . $category->icon) . '\'' : 'null' }} }; open = false"
-                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
-                                <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer capitalize">
+                                <div class="w-4 h-4 sm:w-6 sm:h-6 rounded-full overflow-hidden bg-gray-200">
                                     @if ($category->icon)
                                         <img src="{{ asset('storage/' . $category->icon) }}" alt="icon"
                                             class="w-full h-full object-cover">
                                     @else
-                                        <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                        <x-heroicon-o-photo class="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                                     @endif
                                 </div>
-                                <span>{{ strtolower($category->name) }}</span>
+                                <span class="text-xs sm:text-base">{{ strtolower($category->name) }}</span>
                             </div>
                         @empty
                             <div
-                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer italic text-red-500">
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer italic text-red-500">
                                 <span>No categories found. Please create categories first</span>
                             </div>
                         @endforelse
@@ -210,7 +209,7 @@
 
             <!-- SOURCE SAVINGS -->
             <div class="w-full md:flex-1" x-show="sourceType === 'savings'">
-                <p class="font-bold text-gray-600 dark:text-gray-400 mb-1">SOURCE SAVINGS:</p>
+                <p class="font-bold text-gray-600 mb-1">SOURCE SAVINGS:</p>
                 @php
                     $selectedSourceSavings = $savingsAccounts->firstWhere('id', old('source_savings'));
                 @endphp
@@ -228,24 +227,24 @@
                     ) }}
                 }" class="relative">
                     <button type="button" @click="open = !open"
-                        class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center dark:bg-gray-800 dark:text-white">
+                        class="w-full border border-gray-400 rounded-md px-2 py-2 flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <template x-if="selected">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
+                                    <div class="w-4 h-4 sm:w-6 sm:h-6 rounded-full overflow-hidden bg-gray-200">
                                         <template x-if="selected.icon">
                                             <img :src="selected.icon" alt="selected icon"
                                                 class="w-full h-full object-cover">
                                         </template>
                                         <template x-if="!selected.icon">
-                                            <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                            <x-heroicon-o-photo class="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                                         </template>
                                     </div>
-                                    <span x-text="selected.name"></span>
+                                    <span x-text="selected.name" class="text-xs sm:text-base"></span>
                                 </div>
                             </template>
                             <template x-if="!selected">
-                                <span>Select savings account</span>
+                                <span class="text-xs sm:text-base">Select savings account</span>
                             </template>
                         </div>
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,24 +255,24 @@
 
                     <!-- Dropdown -->
                     <div x-show="open" @click.away="open = false" @click.stop
-                        class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 rounded-md shadow-lg">
+                        class="absolute z-10 mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg">
                         @forelse ($savingsAccounts as $savings)
                             <div @click.prevent.stop="selected = { id: '{{ $savings->id }}', name: '{{ $savings->name }}',
                             icon: {{ $savings->icon ? '\'' . asset('storage/' . $savings->icon) . '\'' : 'null' }} }; open = false"
-                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer capitalize">
-                                <div class="w-6 h-6 rounded-full overflow-hidden bg-gray-200">
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer capitalize">
+                                <div class="w-4 h-4 sm:w-6 sm:h-6 rounded-full overflow-hidden bg-gray-200">
                                     @if ($savings->icon)
                                         <img src="{{ asset('storage/' . $savings->icon) }}" alt="icon"
                                             class="w-full h-full object-cover">
                                     @else
-                                        <x-heroicon-o-photo class="w-6 h-6 text-black" />
+                                        <x-heroicon-o-photo class="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                                     @endif
                                 </div>
-                                <span>{{ strtolower($savings->name) }}</span>
+                                <span class="text-xs sm:text-base">{{ strtolower($savings->name) }}</span>
                             </div>
                         @empty
                             <div
-                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer italic text-red-500">
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 cursor-pointer italic text-red-500">
                                 <span>No categories found. Please create categories first</span>
                             </div>
                         @endforelse
@@ -294,9 +293,9 @@
 
     <!-- Notes -->
     <div class="flex flex-col space-y-1 mb-10">
-        <p class="font-bold text-gray-600 dark:text-gray-400">NOTES:</p>
+        <p class="font-bold text-gray-600">NOTES: <span class="text-xs italic font-normal">(Optional)</span></p>
         <textarea name="notes" value="{{ old('notes') }}"
-            class="border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white resize-none"></textarea>
+            class="text-xs sm:text-base border border-gray-400 rounded-md px-2 py-2 resize-none"></textarea>
         @error('notes', 'expensesForm')
             <div class="text-red-500 text-sm">
                 {{ $message }}
@@ -307,11 +306,11 @@
     <input type="hidden" name="type" value="expenses">
     <!-- Submit -->
     <div class="flex flex-col space-y-1 w-full items-center justify-center pb-10">
-        <span class="italic text-gray-600 text-sm mb-6 text-center">
+        <span class="italic text-gray-600 text-sm mb-6 text-center text-xs sm:text-base">
             We’ll deduct this expenses based on your source.
         </span>
         <button type="submit"
-            class="flex items-center justify-center px-6 py-3 w-full sm:w-1/2 md:w-1/3 bg-emerald-500 text-xl text-white font-bold rounded-md">
+            class="flex items-center justify-center px-6 py-3 text-xs sm:text-base w-full sm:w-1/2 md:w-1/3 bg-emerald-500 text-xl text-white font-bold rounded-md">
             <x-heroicon-s-check class="w-4 h-4 mr-1" />
             SAVE
         </button>

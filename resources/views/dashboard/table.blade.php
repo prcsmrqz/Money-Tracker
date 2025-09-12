@@ -4,10 +4,10 @@
     </x-title-header>
 
     <div class="px-4 sm:px-6 lg:px-10">
-        <div class="py-8 px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 rounded-md shadow-md w-full">
+        <div class="py-8 px-4 sm:px-6 lg:px-12 bg-white  rounded-md shadow-md w-full">
             <x-category.search-filter :oldestYear="$oldestYear" :search="true" :mode="'table'" />
 
-            <table class="table w-full text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
+            <table class="table w-full text-sm sm:text-base text-left text-gray-800 ">
                 <thead class="text-center rounded-lg bg-gray-100 border-b border-gray-400 font-medium">
                     {{-- TIME --}}
                     <td class="hidden md:table-cell text-sm py-3 text-gray-600">
@@ -86,18 +86,18 @@
                 </thead>
 
 
-                <tbody class=" text-center border-b border-gray-200 text-gray-500 dark:border-gray-600 ">
+                <tbody class=" text-center border-b border-gray-200 text-gray-500  ">
 
                     @forelse ($allTransactions as $transaction)
                         @php
                             $typeClass = match ($transaction->type) {
-                                'income' => 'text-blue-600 bg-blue-100 dark:bg-blue-700',
-                                'expenses' => 'text-red-600 bg-red-100 dark:bg-red-700',
-                                'savings' => 'text-emerald-600 bg-emerald-100 dark:bg-emerald-700',
+                                'income' => 'text-blue-600 bg-blue-100 ',
+                                'expenses' => 'text-red-600 bg-red-100 ',
+                                'savings' => 'text-emerald-600 bg-emerald-100 ',
                                 default => '',
                             };
                         @endphp
-                        <tr class="hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
+                        <tr class="hover:bg-gray-200 :bg-gray-700 cursor-pointer">
 
                             <td class="hidden md:table-cell w-1/6 py-2 whitespace-nowrap text-xs lg:text-sm ">
                                 {{ $transaction->date->format('F d, Y - h:i A') }}

@@ -6,7 +6,7 @@
         </a>
     </x-title-header>
     <div class="px-4 sm:px-6 lg:px-10">
-        <div class="mb-10 py-5 px-4 bg-white sm:px-6 lg:px-10 dark:bg-gray-800 rounded-md shadow-lg w-full">
+        <div class="mb-10 py-5 px-4 bg-white sm:px-6 lg:px-10 rounded-md shadow-lg w-full">
             <div style="background-image: 
                         radial-gradient(circle at left center, {{ $category->color }} 10%, transparent 90%),
                         radial-gradient(circle at right center, {{ $category->color }} 10%, transparent 90%);"
@@ -19,8 +19,7 @@
             <x-category.search-filter :oldestYear="$oldestYear" :search="true" :mode="'icon'" />
 
 
-            <table
-                class="hidden sm:table w-full table-fixed text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
+            <table class="hidden sm:table w-full table-fixed text-sm sm:text-base text-left text-gray-800">
 
                 <tbody>
                     @forelse ($transactions as $date => $dailyTransactions)
@@ -28,7 +27,7 @@
                             <td colspan="{{ $category->type === 'income' ? '5' : '7' }}" class="px-4 py-3 ">
                                 <div
                                     class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 sm:gap-6 font-semibold text-sm sm:text-lg">
-                                    <div class="text-black px-6 dark:text-gray-200 min-w-[140px]">
+                                    <div class="text-black px-6 min-w-[140px]">
                                         {{ \Carbon\Carbon::parse($date)->format('F d, Y') }}
                                     </div>
                                     <div class="flex gap-4 sm:gap-20 flex-wrap sm:flex-nowrap text-sm sm:text-lg">
@@ -97,14 +96,13 @@
                         @forelse ($dailyTransactions as $transaction)
                             @php
                                 $typeClass = match ($transaction->type) {
-                                    'income' => 'text-blue-600 bg-blue-100 dark:bg-blue-700',
-                                    'expenses' => 'text-red-600 bg-red-100 dark:bg-red-700',
-                                    'savings' => 'text-emerald-600 bg-emerald-100 dark:bg-emerald-700',
+                                    'income' => 'text-blue-600 bg-blue-100 ',
+                                    'expenses' => 'text-red-600 bg-red-100 ',
+                                    'savings' => 'text-emerald-600 bg-emerald-100',
                                     default => '',
                                 };
                             @endphp
-                            <tr
-                                class="border-b border-gray-200 text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <tr class="border-b border-gray-200 text-gray-500  hover:bg-gray-50 ">
                                 <td class="w-1/6 px-10 py-3 whitespace-nowrap text-sm">
                                     {{ $transaction->date->format('h:i A') }}
                                 </td>
@@ -124,9 +122,7 @@
                                     </td>
                                     <td class="w-1/6 px-4 py-3 capitalize font-semibold">
                                         <span
-                                            class="{{ $transaction->sourceIncomeCategory
-                                                ? 'text-blue-600 bg-blue-100 dark:bg-blue-700'
-                                                : 'text-emerald-600 bg-emerald-100 dark:bg-emerald-700' }} px-3 py-1 rounded-full text-sm inline-block">
+                                            class="{{ $transaction->sourceIncomeCategory ? 'text-blue-600 bg-blue-100 ' : 'text-emerald-600 bg-emerald-100 ' }} px-3 py-1 rounded-full text-sm inline-block">
                                             {{ $transaction->sourceIncomeCategory ? 'Income' : 'Savings' }}
                                         </span>
                                     </td>
@@ -174,14 +170,14 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr class="border-b border-gray-200 text-gray-500 dark:border-gray-600">
+                            <tr class="border-b border-gray-200 text-gray-500 ">
                                 <td colspan="5" class="px-4 py-3 text-center text-sm italic text-gray-400">
                                     No transactions found.
                                 </td>
                             </tr>
                         @endforelse
                     @empty
-                        <tr class="border-b border-gray-200 text-gray-500 dark:border-gray-600">
+                        <tr class="border-b border-gray-200 text-gray-500">
                             <td colspan="5" class="px-4 py-3 text-center text-sm italic text-gray-400">
                                 No transactions found.
                             </td>
@@ -198,24 +194,23 @@
             {{-- Mobile Card View --}}
             <div class="block sm:hidden space-y-4">
                 @foreach ($transactions as $date => $dailyTransactions)
-                    <div class="text-gray-700 dark:text-gray-200 font-semibold">
+                    <div class="text-gray-700 font-semibold">
                         {{ \Carbon\Carbon::parse($date)->format('F d, Y') }}
                     </div>
 
                     @foreach ($dailyTransactions as $transaction)
                         @php
                             $typeClass = match ($transaction->type) {
-                                'income' => 'text-blue-600 bg-blue-100 dark:bg-blue-700',
-                                'expenses' => 'text-red-600 bg-red-100 dark:bg-red-700',
-                                'savings' => 'text-emerald-600 bg-emerald-100 dark:bg-emerald-700',
+                                'income' => 'text-blue-600 bg-blue-100 ',
+                                'expenses' => 'text-red-600 bg-red-100 ',
+                                'savings' => 'text-emerald-600 bg-emerald-100 ',
                                 default => '',
                             };
                         @endphp
 
-                        <div class="border rounded-lg p-4 bg-gray-50 dark:bg-gray-700 shadow">
+                        <div class="border rounded-lg p-4 bg-gray-50 shadow">
                             <div class="flex justify-between mb-2">
-                                <span
-                                    class="text-sm text-gray-500 dark:text-gray-300">{{ $transaction->date->format('h:i A') }}</span>
+                                <span class="text-sm text-gray-500">{{ $transaction->date->format('h:i A') }}</span>
                                 <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $typeClass }}">
                                     {{ ucfirst($transaction->type) }}
                                 </span>
@@ -223,19 +218,17 @@
                             <div class="mb-1 font-bold">
                                 {{ Auth::user()->currency_symbol }}{{ number_format($transaction->amount, 2) }}
                             </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300 break-words line-clamp-2">
+                            <div class="text-sm text-gray-600 break-words line-clamp-2">
                                 {{ $transaction->notes }}
                             </div>
                             @if ($category->type === 'expenses')
                                 <div class="flex gap-4">
                                     <div style="background-color: {{ $transaction->sourceIncomeCategory?->color ?? ($transaction->sourceSavingsAccount?->color ?? '') }};"
-                                        class="text-xs text-white px-4 py-1 rounded-full font-medium dark:text-gray-300 break-words line-clamp-2">
+                                        class="text-xs text-white px-4 py-1 rounded-full font-medium break-words line-clamp-2">
                                         {{ $transaction->sourceIncomeCategory?->name ?? ($transaction->sourceSavingsAccount?->name ?? '') }}
                                     </div>
                                     <div
-                                        class="{{ $transaction->sourceIncomeCategory
-                                            ? 'text-blue-600 bg-blue-100 dark:bg-blue-700'
-                                            : 'text-emerald-600 bg-emerald-100 dark:bg-emerald-700' }} px-4 py-1 rounded-full font-bold text-xs break-words line-clamp-2">
+                                        class="{{ $transaction->sourceIncomeCategory ? 'text-blue-600 bg-blue-100 ' : 'text-emerald-600 bg-emerald-100' }} px-4 py-1 rounded-full font-bold text-xs break-words line-clamp-2">
                                         {{ $transaction->sourceIncomeCategory ? 'Income' : 'Savings' }}
                                     </div>
                                 </div>

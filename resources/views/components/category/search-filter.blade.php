@@ -61,13 +61,13 @@
                         class="ml-2 text-sm bg-transparent h-[38px] ring-0 focus:outline-none focus:ring-0 border-none w-full" />
                 </div>
             </div>
+            <div class="grid grid-cols-2 sm:auto-cols-max sm:flex gap-2 w-full sm:w-auto">
+                <button type="submit"
+                    class="bg-blue-600 font-medium px-5 rounded-md h-[38px] text-white hover:bg-blue-700">Apply</button>
 
-            <button type="submit"
-                class="bg-blue-600 font-medium px-5 rounded-md h-[38px] text-white hover:bg-blue-700">Apply</button>
-
-            <a href="{{ url()->current() }}?mode={{ $currentMode }}"
-                class="bg-gray-300 font-medium text-gray-800 px-4 rounded-md h-[38px] flex items-center justify-center hover:bg-gray-400">Clear</a>
-
+                <a href="{{ url()->current() }}?mode={{ $currentMode }}"
+                    class="bg-gray-300 font-medium text-gray-800 px-4 rounded-md h-[38px] flex items-center justify-center hover:bg-gray-400">Clear</a>
+            </div>
         </div>
     @else
         <div class="grid grid-cols-2 sm:auto-cols-max sm:flex gap-2 w-full sm:w-auto">

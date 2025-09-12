@@ -20,9 +20,9 @@
             <div
                 class="flex flex-row items-center justify-between pb-4 border-b border-gray-300 mb-8 lg:mb-40 animate-fade-in ">
                 <div class="flex flex-row items-center space-x-3">
-                    <x-application-logo class="block w-auto fill-current dark:text-gray-200 animate-slide-in-left" />
+                    <x-application-logo class="block w-auto fill-current  animate-slide-in-left" />
                     <a href="{{ route('home') }}"
-                        class="font-bold text-sm lg:text-xl text-gray-700 dark:text-gray-200 animate-slide-in-left">
+                        class="font-bold text-sm lg:text-xl text-gray-700  animate-slide-in-left">
                         Money Tracker
                     </a>
                 </div>

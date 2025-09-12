@@ -23,7 +23,7 @@
 
             <x-category.tab-buttons />
 
-            <div class="mt-4 py-8 px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 rounded-md shadow-md w-full">
+            <div class="mt-4 py-8 px-4 sm:px-6 lg:px-12 bg-white  rounded-md shadow-md w-full">
                 <div x-show="activeTab === 'icon'" x-cloak>
                     <x-icon-tab.savings-icons :savingsAccounts="$savingsAccounts" :type="'savings'" />
                 </div>
@@ -51,32 +51,31 @@
 
 
             <div x-show="activeTab === 'icon'" x-cloak
-                class="grid grid-cols-2 md:grid-cols-3 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
-                <div
-                    class=" rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6 flex flex-col justify-center">
-                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-green-600 dark:text-gray-300">
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 px-4 sm:px-6 lg:px-10 mt-5 mb-5">
+                <div class=" rounded-xl shadow-lg bg-white  p-4 md:p-5 lg:p-6 flex flex-col justify-center">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-green-600 ">
                         Monthly savings
                     </p>
-                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
+                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black ">
                         {{ Auth::user()->currency_symbol }}
                         {{ floor($monthlySavings ?? 0) != ($monthlySavings ?? 0) ? number_format($monthlySavings ?? 0, 2) : number_format($monthlySavings ?? 0) }}
                     </p>
-                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-red-600 dark:text-gray-300">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-red-600 ">
                         Overall savings
                     </p>
-                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black dark:text-gray-300">
+                    <p class=" text-center text-3xl sm:text-6xl mb-5 font-bold text-black ">
                         {{ Auth::user()->currency_symbol }}
                         {{ floor($totalSavings ?? 0) != ($totalSavings ?? 0) ? number_format($totalSavings ?? 0, 2) : number_format($totalSavings ?? 0) }}
                     </p>
                 </div>
-                <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6">
-                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black dark:text-gray-300">
+                <div class="rounded-xl shadow-lg bg-white  p-4 md:p-5 lg:p-6">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black ">
                         Recent Transactions
                     </p>
-                    <table class="table w-full text-sm sm:text-base text-left text-gray-800 dark:text-gray-200">
+                    <table class="table w-full text-sm sm:text-base text-left text-gray-800 ">
                         @forelse ($recentTransactions->take(5) as $transaction)
                             <tr onClick="window.location.href='{{ route('category.show', $transaction->savingsAccount->id) }}'"
-                                class="border-b border-gray-200 text-center text-gray-500 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                class="border-b border-gray-200 text-center text-gray-500  hover:bg-gray-50 :bg-gray-700 cursor-pointer">
                                 <td class="hidden lg:table-cell w-1/6 py-3 whitespace-nowrap text-xs lg:text-sm">
                                     {{ $transaction->date->format('F d, Y') }}
                                 </td>
@@ -98,8 +97,8 @@
                     </table>
                 </div>
 
-                <div class="rounded-xl shadow-lg bg-white dark:bg-gray-800 p-4 md:p-5 lg:p-6">
-                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black dark:text-gray-300">
+                <div class="rounded-xl shadow-lg bg-white  p-4 md:p-5 lg:p-6">
+                    <p class="text-base md:text-lg lg:text-xl font-bold mb-3 text-black ">
                         Top Savings Categories
                     </p>
 
@@ -251,7 +250,19 @@
                                         weight: '600'
                                     },
                                     color: '#4B5563',
-                                    padding: 20
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    boxWidth: 12,
+                                    boxHeight: 12,
+                                    generateLabels: (chart) => {
+                                        const original = Chart.overrides.doughnut.plugins.legend.labels
+                                            .generateLabels(chart);
+                                        return original.map(item => {
+                                            let txt = item.text.toLowerCase();
+                                            item.text = txt.charAt(0).toUpperCase() + txt.slice(1);
+                                            return item;
+                                        });
+                                    }
                                 }
                             },
                             title: {

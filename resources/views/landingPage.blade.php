@@ -1,22 +1,23 @@
 <!-- Navbar -->
 <header class="fixed top-0 left-0 w-full bg-white shadow-md z-50 ">
     <div class="flex flex-row items-center justify-between px-4 lg:px-20 py-3 border-b border-gray-300">
-        <div class="flex flex-row items-center space-x-2 lg:space-x-4 animate-slide-in-left-delay">
-            <x-application-logo class="block w-auto fill-current dark:text-gray-200 h-8 lg:h-12" />
-            <a href="#home" class="font-bold text-sm lg:text-xl text-gray-700 dark:text-gray-200 ">
+        <a href="#home" class="flex flex-row items-center gap-1 sm:gap-3 animate-slide-in-left-delay">
+            <x-application-logo class="block w-auto fill-current  h-8 lg:h-12" />
+            <p class="hidden sm:block font-bold text-xs lg:text-xl text-gray-700  ">
                 Money Tracker
-            </a>
-        </div>
-
+            </p>
+        </a>
         <nav>
-            <div class="flex flex-row items-center space-x-3 lg:space-x-6  animate-slide-in-right-delay">
-                <a href="#how-it-works" class="text-gray-800 text-sm lg:text-base">How it
-                    Works?</a>
-                <a href="#features" class="text-gray-800 text-sm lg:text-base">Features</a>
-                <a href="#faq" class="text-gray-800 text-sm lg:text-base">FAQ</a>
+            <div class="flex flex-row items-center space-x-2 lg:space-x-6 animate-slide-in-right-delay">
+                <a href="#how-it-works" class="text-gray-800 text-xs lg:text-base ">
+                    How it Works?
+                </a>
+
+                <a href="#features" class="text-gray-800 text-xs lg:text-base">Features</a>
+                <a href="#faq" class="text-gray-800 text-xs lg:text-base">FAQ</a>
                 @auth
                     <a href="{{ route('dashboard') }}"
-                        class="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-green-600 text-sm lg:text-base text-white font-medium rounded-lg shadow-md hover:bg-green-600 ">
+                        class="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-green-600 text-xs lg:text-base text-white font-medium rounded-lg shadow-md hover:bg-green-600 ">
                         Dashboard
                     </a>
                 @else
@@ -30,14 +31,13 @@
     </div>
 </header>
 
-
 <!-- Top Section -->
 <section id="home" class="bg-cover bg-center min-h-screen pt-20 lg:pt-0"
     style="background-image: url('{{ asset('landingpage/bg3.png') }}');">
     <div class="px-8 lg:px-20 min-h-screen grid grid-cols-1 lg:grid-cols-[1000px_800px] items-center">
         <div class="flex flex-col items-center justify-center lg:items-start animate-slide-in-left-delay">
             <h1 class="font-bold text-8xl mb-6 text-center lg:text-left">TRACK YOUR MONEY</h1>
-            <h2 class="font-bold text-4xl lg:text-5xl mb-6 text-gray-700 text-center lg:text-left lg:ml-5">
+            <h2 class="font-bold text-3xl sm:text-5xl mb-6 text-gray-700 text-center lg:text-left lg:ml-5">
                 Know Where Your <br class="block lg:hidden" /> Money Goes
             </h2>
             <p class="text-lg text-gray-700 mb-8 text-center lg:text-left lg:ml-5 max-w-xl">
@@ -46,7 +46,7 @@
             </p>
 
             <a href="{{ route('login') }}"
-                class="px-8 py-4 w-[230px] bg-green-500 text-white font-bold flex items-center justify-center text-2xl 
+                class="px-8 py-4 w-[230px] md:w-[230px] bg-green-500 text-white font-bold flex items-center justify-center text-2xl 
                        rounded-lg shadow-[0_8px_10px_rgba(0,0,0,0.2)] 
                        hover:bg-green-600 hover:shadow-[0_12px_15px_rgba(0,0,0,0.3)] 
                        transform hover:-translate-y-1 
@@ -57,12 +57,14 @@
             </a>
         </div>
 
-        <div>
+        <div class="overflow-hidden">
             <img src="{{ asset('landingpage/laptopCellphone.png') }}" alt="Laptop Cellphone Image"
-                class="w-[940px] -mt-6 animate-slide-in-right-delay">
+                class="w-full max-w-[940px] sm:-mt-6 h-auto animate-slide-in-right-delay" />
         </div>
+
     </div>
 </section>
+
 
 
 <!-- How It Works Section -->
@@ -160,7 +162,7 @@
             </div>
 
             <div>
-                <h2 class="text-4xl font-bold text-center mb-10">Frequently Asked Questions</h2>
+                <h2 class="text-3xl sm:text-4xl font-bold text-center mb-10">Frequently Asked Questions</h2>
 
                 <div x-data="{ openSections: [] }" class="space-y-5">
 
@@ -171,15 +173,15 @@
                             class="px-5 py-4 text-lg font-medium text-gray-800 flex items-center justify-between w-full text-left 
                                    transition duration-300 ease-in-out hover:bg-gray-50 rounded-xl"
                             @click="openSections.includes(1) ? openSections = openSections.filter(i => i !== 1) : openSections.push(1)">
-                            <span>Is Money Tracker <b>free</b>?</span>
+                            <span class="text-sm sm:text-base">Is Money Tracker <b>free</b>?</span>
                             <div class="bg-green-500 rounded-full p-2 flex items-center justify-center transition-transform duration-300"
                                 :class="openSections.includes(1) ? 'rotate-180' : ''">
                                 <x-heroicon-s-plus class="w-4 h-4 text-white" x-show="!openSections.includes(1)" />
                                 <x-heroicon-s-minus class="w-4 h-4 text-white" x-show="openSections.includes(1)" />
                             </div>
                         </button>
-                        <div x-show="openSections.includes(1)" x-collapse
-                            class="px-5 pb-5 text-gray-600 text-base leading-relaxed">
+                        <div x-show="openSections.includes(1)"
+                            class="px-5 pb-5 text-gray-600 text-sm sm:text-base leading-relaxed">
                             Yes, the money tracker is <b>free</b> to use for <b>all users</b>.
                         </div>
                     </div>
@@ -191,15 +193,15 @@
                             class="px-5 py-4 text-lg font-medium text-gray-800 flex items-center justify-between w-full text-left 
                                    transition duration-300 ease-in-out hover:bg-gray-50 rounded-xl"
                             @click="openSections.includes(2) ? openSections = openSections.filter(i => i !== 2) : openSections.push(2)">
-                            <span>Can I use it on <b>mobile</b>?</span>
+                            <span class="text-sm sm:text-base">Can I use it on <b>mobile</b>?</span>
                             <div class="bg-green-500 rounded-full p-2 flex items-center justify-center transition-transform duration-300"
                                 :class="openSections.includes(2) ? 'rotate-180' : ''">
                                 <x-heroicon-s-plus class="w-4 h-4 text-white" x-show="!openSections.includes(2)" />
                                 <x-heroicon-s-minus class="w-4 h-4 text-white" x-show="openSections.includes(2)" />
                             </div>
                         </button>
-                        <div x-show="openSections.includes(2)" x-collapse
-                            class="px-5 pb-5 text-gray-600 text-base leading-relaxed">
+                        <div x-show="openSections.includes(2)"
+                            class="px-5 pb-5 text-gray-600 text-sm sm:text-base leading-relaxed">
                             Absolutely! Money Tracker is <b>fully responsive</b> and works on any device.
                         </div>
                     </div>
@@ -211,15 +213,15 @@
                             class="px-5 py-4 text-lg font-medium text-gray-800 flex items-center justify-between w-full text-left 
                                    transition duration-300 ease-in-out hover:bg-gray-50 rounded-xl"
                             @click="openSections.includes(3) ? openSections = openSections.filter(i => i !== 3) : openSections.push(3)">
-                            <span>Is my financial <b>data safe</b>?</span>
+                            <span class="text-sm sm:text-base">Is my financial <b>data safe</b>?</span>
                             <div class="bg-green-500 rounded-full p-2 flex items-center justify-center transition-transform duration-300"
                                 :class="openSections.includes(3) ? 'rotate-180' : ''">
                                 <x-heroicon-s-plus class="w-4 h-4 text-white" x-show="!openSections.includes(3)" />
                                 <x-heroicon-s-minus class="w-4 h-4 text-white" x-show="openSections.includes(3)" />
                             </div>
                         </button>
-                        <div x-show="openSections.includes(3)" x-collapse
-                            class="px-5 pb-5 text-gray-600 text-base leading-relaxed">
+                        <div x-show="openSections.includes(3)"
+                            class="px-5 pb-5 text-gray-600 text-sm sm:text-base leading-relaxed">
                             Yes, all your data is <b>encrypted</b> and <b>stored securely</b>.
                         </div>
                     </div>
@@ -231,15 +233,16 @@
                             class="px-5 py-4 text-lg font-medium text-gray-800 flex items-center justify-between w-full text-left 
                                    transition duration-300 ease-in-out hover:bg-gray-50 rounded-xl"
                             @click="openSections.includes(4) ? openSections = openSections.filter(i => i !== 4) : openSections.push(4)">
-                            <span>Does <b>Money Tracker</b> support multiple currencies?</span>
+                            <span class="text-sm sm:text-base">Does <b>Money Tracker</b> support multiple
+                                currencies?</span>
                             <div class="bg-green-500 rounded-full p-2 flex items-center justify-center transition-transform duration-300"
                                 :class="openSections.includes(4) ? 'rotate-180' : ''">
                                 <x-heroicon-s-plus class="w-4 h-4 text-white" x-show="!openSections.includes(4)" />
                                 <x-heroicon-s-minus class="w-4 h-4 text-white" x-show="openSections.includes(4)" />
                             </div>
                         </button>
-                        <div x-show="openSections.includes(4)" x-collapse
-                            class="px-5 pb-5 text-gray-600 text-base leading-relaxed">
+                        <div x-show="openSections.includes(4)"
+                            class="px-5 pb-5 text-gray-600 text-sm sm:text-base leading-relaxed">
                             Yes, you can track your income and expenses in <b>different currencies</b>.
                         </div>
                     </div>
@@ -248,7 +251,6 @@
         </div>
     </div>
 </section>
-
 
 
 <!-- Call to Action Section -->

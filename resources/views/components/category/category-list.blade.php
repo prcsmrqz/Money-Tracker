@@ -55,7 +55,7 @@
             return `${this.action}/${this.formId}`;
         }
     }" x-init="setupPickr()" @custom-close-modal.window="resetEdit()"
-        class="w-full border-b border-gray-200 p rounded-lg dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-900 dark:text-white">
+        class="w-full border-b border-gray-200 p rounded-lg text-gray-900">
 
         <div class="flex items-center justify-between w-full gap-2 flex-wrap sm:flex-nowrap">
             <form :action="formAction()" method="POST" enctype="multipart/form-data"
@@ -64,7 +64,7 @@
                 @method('PATCH')
 
                 <label for="iconEdit{{ $category->id }}" :class="isEditing ? '' : 'pointer-events-none'"
-                    class="cursor-pointer w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden transition shrink-0">
+                    class="cursor-pointer w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden transition shrink-0">
                     <template x-if="previewUrlEdit">
                         <img :src="previewUrlEdit" alt="Preview" class="object-cover w-full h-full" />
                     </template>
@@ -103,14 +103,14 @@
                 <input type="hidden" name="type" value="{{ $type }}">
 
                 <input type="text" name="name_{{ $category->id }}" :disabled="!isEditing"
-                    class="flex-1 min-w-0 rounded-md border-gray-200 text-gray-900 dark:text-white disabled:opacity-100"
+                    class="flex-1 min-w-0 rounded-md border-gray-200 text-gray-900 disabled:opacity-100"
                     value="{{ old('name_' . $category->id, $category->name) }}" />
 
                 <div @click.stop>
                     <div id="color-picker-{{ $category->id }}"></div>
                     <input type="hidden" name="color_{{ $category->id }}" id="selectedColor{{ $category->id }}"
                         :disabled="!isEditing" value="{{ old('color_' . $category->id, $category->color) }}"
-                        class="rounded-md border-gray-200 text-gray-900 dark:text-white disabled:opacity-100">
+                        class="rounded-md border-gray-200 text-gray-900  disabled:opacity-100">
                 </div>
 
                 <template x-if="isEditing">

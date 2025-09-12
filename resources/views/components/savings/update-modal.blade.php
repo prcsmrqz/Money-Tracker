@@ -1,11 +1,13 @@
 <div x-show="open" x-cloak x-transition @click.self="open = false; $dispatch('close-modal')"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div @click.stop
-        class="relative bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-4xl p-6">
+        class="relative bg-white rounded-lg shadow-lg w-11/12 sm:w-full 
+            max-w-md sm:max-w-lg md:max-w-xl lg:max-w-4xl mx-auto p-6
+            max-h-[90vh] overflow-y-auto">
 
-        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-600 pb-3">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $title }}</h3>
-            <a href="{{ route('savings.index') }}" class="text-gray-400 hover:text-gray-900 dark:hover:text-white">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3">
+            <h3 class="text-lg font-semibold text-gray-900 ">{{ $title }}</h3>
+            <a href="{{ route('savings.index') }}" class="text-gray-400 hover:text-gray-900 ">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7l-6 6" />
@@ -24,6 +26,9 @@
             }">
                 @csrf
                 @method('PUT')
+
+
+
 
                 <div class="flex align-center justify-center mb-2">
                     <label for="icon_edit_{{ $savingsAccount->id }}"
@@ -76,13 +81,16 @@
                             {{ $errors->first('icon') }}
                         </div>
                     @endif
+
+
+
                 </div>
 
 
                 <div class="flex flex-col space-y-1 mb-5">
-                    <p class="font-medium text-black dark:text-gray-400">Savings Name:</p>
+                    <p class="font-medium text-black ">Savings Name:</p>
                     <input type="text" name="name" value="{{ $hasError ? old('name') : $savingsAccount->name }}"
-                        class="border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white">
+                        class="border border-gray-400 rounded-md px-2 py-2 ">
 
                     @error('name', 'update_' . $savingsAccount->id)
                         <div class="text-red-500 text-sm">
@@ -92,11 +100,11 @@
                 </div>
 
                 <div class="flex flex-col space-y-1 mb-5">
-                    <p class="font-medium text-black dark:text-gray-400">Type:
+                    <p class="font-medium text-black ">Type:
                         <em class="text-xs">(Debit, Credit, Investment, Cash, E-Wallet, etc.)</em>
                     </p>
                     <input type="text" name="type" value="{{ $hasError ? old('type') : $savingsAccount->type }}"
-                        class="border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white">
+                        class="border border-gray-400 rounded-md px-2 py-2 ">
                     @error('type', 'update_' . $savingsAccount->id)
                         <div class="text-red-500 text-sm">
                             {{ $message }}
@@ -105,10 +113,10 @@
                 </div>
 
                 <div class="flex flex-col space-y-1 mb-5">
-                    <p class="font-medium text-black dark:text-gray-400">Account Number:</p>
+                    <p class="font-medium text-black ">Account Number:</p>
                     <input type="text" name="account_number"
                         value="{{ $hasError ? old('account_number') : $savingsAccount->account_number }}"
-                        class="border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white">
+                        class="border border-gray-400 rounded-md px-2 py-2 d">
                     @error('account_number', 'update_' . $savingsAccount->id)
                         <div class="text-red-500 text-sm">
                             {{ $message }}
@@ -116,9 +124,9 @@
                     @enderror
                 </div>
 
-                <div x-data x-init="initPickr('selectedColor-{{ $savingsAccount->id }}', 'color-picker-{{ $savingsAccount->id }}', '{{ $hasError ? old('color') : $savingsAccount->color ?? '#88E773' }}')" class="flex flex-col w-20 shrink-0">
+                <div x-data x-init="initPickr('selectedColor-{{ $savingsAccount->id }}', 'color-picker-{{ $savingsAccount->id }}', '{{ $hasError ? old('color') : $savingsAccount->color ?? '#88E773' }}')" class="flex flex-col w-20 shrink-0 mb-5">
                     <label for="selectedColor-{{ $savingsAccount->id }}"
-                        class="mb-1 font-medium text-black dark:text-gray-400">Color:</label>
+                        class="mb-1 font-medium text-black ">Color:</label>
 
                     <div @click.stop>
                         <div id="color-picker-{{ $savingsAccount->id }}" class="w-full rounded-md"></div>

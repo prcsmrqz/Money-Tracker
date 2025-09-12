@@ -150,7 +150,7 @@ class DashboardController extends Controller
                 [
                     'label' => 'Savings',
                     'data' => $savingsData,
-                    'backgroundColor' => '#14da98ff',
+                    'backgroundColor' => '#07bd80ff',
                 ],
             ]
         ]);

@@ -1,12 +1,13 @@
 <div x-show="open" x-cloak x-transition @click.self="open = false; $dispatch('close-modal')"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div @click.stop
-        class="relative bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-4xl p-6">
+        class="relative bg-white rounded-lg shadow-lg w-11/12 sm:w-full 
+            max-w-md sm:max-w-lg md:max-w-xl lg:max-w-4xl mx-auto p-6
+            max-h-[90vh] overflow-y-auto">
 
-        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-600 pb-3">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $title }}</h3>
-            <button @click="open = false; $dispatch('close-modal')"
-                class="text-gray-400 hover:text-gray-900 dark:hover:text-white">
+        <div class="flex justify-between items-center border-b border-gray-200  pb-3">
+            <h3 class="text-lg font-semibold text-gray-900 ">{{ $title }}</h3>
+            <button @click="open = false; $dispatch('close-modal')" class="text-gray-400 hover:text-gray-900 ">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7l-6 6" />
@@ -71,9 +72,9 @@
                 </div>
 
                 <div class="flex flex-col space-y-1 mb-5">
-                    <p class="font-medium text-black dark:text-gray-400">Savings Name:</p>
+                    <p class="font-medium text-black ">Savings Name:</p>
                     <input type="text" name="name" value="{{ $hasCreateError ? old('name') : '' }}"
-                        class="border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white">
+                        class="border border-gray-400 rounded-md px-2 py-2 ">
                     @error('name', 'create')
                         <div class="text-red-500 text-sm">
                             {{ $message }}
@@ -82,11 +83,11 @@
                 </div>
 
                 <div class="flex flex-col space-y-1 mb-5">
-                    <p class="font-medium text-black dark:text-gray-400">Type:
+                    <p class="font-medium text-black 0">Type:
                         <em class="text-xs">(Debit, Credit, Investment, Cash, E-Wallet, etc.)</em>
                     </p>
                     <input type="text" name="type" value="{{ $hasCreateError ? old('type') : '' }}"
-                        class="border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white">
+                        class="border border-gray-400 rounded-md px-2 py-2 ">
                     @error('type', 'create')
                         <div class="text-red-500 text-sm">
                             {{ $message }}
@@ -95,10 +96,10 @@
                 </div>
 
                 <div class="flex flex-col space-y-1 mb-5">
-                    <p class="font-medium text-black dark:text-gray-400">Account Number:</p>
+                    <p class="font-medium text-black ">Account Number:</p>
                     <input type="text" name="account_number"
                         value="{{ $hasCreateError ? old('account_number') : '' }}"
-                        class="border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white">
+                        class="border border-gray-400 rounded-md px-2 py-2 ">
                     @error('account_number', 'create')
                         <div class="text-red-500 text-sm">
                             {{ $message }}
@@ -106,46 +107,30 @@
                     @enderror
                 </div>
 
-                <div class="flex flex-col mb-5 w-full">
-                    <div class="flex w-full space-x-4 items-start">
-                        <!-- Time & Date -->
-                        <div class="flex flex-col grow min-w-[300px]">
-                            <label for="date" class="mb-1 font-medium text-black dark:text-gray-400">
-                                Time & Date:
-                            </label>
-                            <input type="datetime-local" id="date" name="date"
-                                value="{{ $hasCreateError ? old('date') : '' }}"
-                                class="w-full border border-gray-400 rounded-md px-2 py-2 dark:bg-gray-800 dark:text-white">
-                            @error('date', 'create')
-                                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                <div class="flex flex-col space-y-1 mb-5">
+                    <label for="date" class="mb-1 font-medium text-black ">
+                        Time & Date:
+                    </label>
+                    <input type="datetime-local" id="date" name="date"
+                        value="{{ $hasCreateError ? old('date') : '' }}"
+                        class="w-full border border-gray-400 rounded-md px-2 py-2 ">
+                    @error('date', 'create')
+                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                    @enderror
 
-                        <!-- Color Picker -->
-                        <div class="flex flex-col w-20 shrink-0">
-                            <label for="selectedColor"
-                                class="mb-1 font-medium text-black dark:text-gray-400">Color:</label>
-                            <div @click.stop>
-                                <div id="color-picker" class="w-full rounded-md"></div>
-                                <input type="hidden" name="color" id="selectedColor"
-                                    value="{{ $hasCreateError ? old('color') : '#88E773' }}">
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="flex flex-col space-y-1 mb-5">
-                    <p class="font-medium text-black dark:text-gray-400">
+                    <p class="font-medium text-black ">
                         Amount:
                         <em class="text-xs">(Must not exceed to remaining income)</em>
                     </p>
                     <div class="relative">
-                        <div
-                            class="absolute inset-y-0 start-0 flex items-center ps-3.5 pe-3 border-e border-gray-300 dark:border-gray-600">
-                            <span class="text-gray-500 dark:text-gray-400">{{ Auth::user()->currency_symbol }}</span>
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pe-3 border-e border-gray-300 ">
+                            <span class="text-gray-500 ">{{ Auth::user()->currency_symbol }}</span>
                         </div>
                         <input type="number" name="amount" value="{{ $hasCreateError ? old('amount') : '' }}"
-                            class="border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-14 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            class="border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-14 p-2.5 ">
 
                     </div>
                     @error('amount', 'create')
@@ -153,6 +138,15 @@
                             {{ $message }}
                         </div>
                     @enderror
+                </div>
+
+                <div class="flex flex-col space-y-1 mb-5">
+                    <label for="selectedColor" class="mb-1 font-medium text-black ">Color:</label>
+                    <div @click.stop>
+                        <div id="color-picker" class="w-full rounded-md"></div>
+                        <input type="hidden" name="color" id="selectedColor"
+                            value="{{ $hasCreateError ? old('color') : '#88E773' }}">
+                    </div>
                 </div>
 
                 <input type="hidden" name="transaction_type" value="{{ $type }}">

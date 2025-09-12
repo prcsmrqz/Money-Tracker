@@ -1,8 +1,8 @@
-<nav class="flex flex-col flex-1 relative p-4 border-r border-gray-300 min-h-0">
+<nav class="flex flex-col flex-1 relative p-3 lg:p-4 border-r border-gray-300 min-h-0">
     <!-- Hamburger button (only on small screens) -->
     <div class="lg:hidden flex items-center justify-between bg-white text-black mb-4">
         <button @click="$dispatch('toggle-sidebar')" class=" focus:outline-none">
-            <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
+            <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M4 5h16v2H4V5zm0 6h16v2H4v-2zm0 6h16v2H4v-2z" />
             </svg>
         </button>
@@ -10,11 +10,11 @@
     </div>
 
     <!-- Sidebar content -->
-    <div :class="{ 'block': open, 'hidden': !open }"
+    <div x-cloak :class="{ 'block': open, 'hidden': !open }"
         class="lg:flex flex-1 flex-col p-2 bg-white text-black overflow-y-auto min-h-0">
 
         <a href="{{ route('dashboard') }}" class="flex items-center justify-center mb-5">
-            <x-application-logo class="block w-auto fill-current mr-4 dark:text-gray-200" />
+            <x-application-logo class="block w-auto fill-current mr-4 " />
             <span class="text-xl font-black"> Money Tracker </span>
         </a>
 
